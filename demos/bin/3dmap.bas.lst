@@ -1,0 +1,4068 @@
+------- FILE e:\Documents\bB\batariBasicGames\demos\3dmap.bas.asm LEVEL 1 PASS 2
+      1  10000 ????						; Provided under the CC0 license. See the included LICENSE.txt for details.
+      2  10000 ????
+      3  10000 ????				       processor	6502
+------- FILE vcs.h LEVEL 2 PASS 2
+      0  10000 ????				       include	"vcs.h"
+      1  10000 ????						; Provided under the CC0 license. See the included LICENSE.txt for details.
+      2  10000 ????
+      3  10000 ????						; VCS.H
+      4  10000 ????						; Version 1.05, 13/November/2003
+      5  10000 ????
+      6  10000 ????		00 69	    VERSION_VCS =	105
+      7  10000 ????
+      8  10000 ????						; THIS IS A PRELIMINARY RELEASE OF *THE* "STANDARD" VCS.H
+      9  10000 ????						; THIS FILE IS EXPLICITLY SUPPORTED AS A DASM-PREFERRED COMPANION FILE
+     10  10000 ????						; PLEASE DO *NOT* REDISTRIBUTE THIS FILE!
+     11  10000 ????						;
+     12  10000 ????						; This file defines hardware registers and memory mapping for the
+     13  10000 ????						; Atari 2600. It is distributed as a companion machine-specific support package
+     14  10000 ????						; for the DASM compiler. Updates to this file, DASM, and associated tools are
+     15  10000 ????						; available at at http://www.atari2600.org/dasm
+     16  10000 ????						;
+     17  10000 ????						; Many thanks to the original author(s) of this file, and to everyone who has
+     18  10000 ????						; contributed to understanding the Atari 2600.  If you take issue with the
+     19  10000 ????						; contents, or naming of registers, please write to me (atari2600@taswegian.com)
+     20  10000 ????						; with your views.  Please contribute, if you think you can improve this
+     21  10000 ????						; file!
+     22  10000 ????						;
+     23  10000 ????						; Latest Revisions...
+     24  10000 ????						; 1.05  13/NOV/2003	  - Correction to 1.04 - now functions as requested by MR.
+     25  10000 ????						;			  - Added VERSION_VCS equate (which will reflect 100x version #)
+     26  10000 ????						;			    This will allow conditional code to verify VCS.H being
+     27  10000 ????						;			    used for code assembly.
+     28  10000 ????						; 1.04  12/NOV/2003	 Added TIA_BASE_WRITE_ADDRESS and TIA_BASE_READ_ADDRESS for
+     29  10000 ????						;			 convenient disassembly/reassembly compatibility for hardware
+     30  10000 ????						;			 mirrored reading/writing differences.	This is more a 
+     31  10000 ????						;			 readability issue, and binary compatibility with disassembled
+     32  10000 ????						;			 and reassembled sources.  Per Manuel Rotschkar's suggestion.
+     33  10000 ????						; 1.03  12/MAY/2003	 Added SEG segment at end of file to fix old-code compatibility
+     34  10000 ????						;			 which was broken by the use of segments in this file, as
+     35  10000 ????						;			 reported by Manuel Polik on [stella] 11/MAY/2003
+     36  10000 ????						; 1.02  22/MAR/2003	 Added TIMINT($285)
+     37  10000 ????						; 1.01				Constant offset added to allow use for 3F-style bankswitching
+     38  10000 ????						;						 - define TIA_BASE_ADDRESS as $40 for Tigervision carts, otherwise
+     39  10000 ????						;						   it is safe to leave it undefined, and the base address will
+     40  10000 ????						;						   be set to 0.  Thanks to Eckhard Stolberg for the suggestion.
+     41  10000 ????						;			    Note, may use -DLABEL=EXPRESSION to define TIA_BASE_ADDRESS
+     42  10000 ????						;			  - register definitions are now generated through assignment
+     43  10000 ????						;			    in uninitialised segments.	This allows a changeable base
+     44  10000 ????						;			    address architecture.
+     45  10000 ????						; 1.0	22/MAR/2003		Initial release
+     46  10000 ????
+     47  10000 ????
+     48  10000 ????						;-------------------------------------------------------------------------------
+     49  10000 ????
+     50  10000 ????						; TIA_BASE_ADDRESS
+     51  10000 ????						; The TIA_BASE_ADDRESS defines the base address of access to TIA registers.
+     52  10000 ????						; Normally 0, the base address should (externally, before including this file)
+     53  10000 ????						; be set to $40 when creating 3F-bankswitched (and other?) cartridges.
+     54  10000 ????						; The reason is that this bankswitching scheme treats any access to locations
+     55  10000 ????						; < $40 as a bankswitch.
+     56  10000 ????
+     57  10000 ????			   -	       IFNCONST	TIA_BASE_ADDRESS
+     58  10000 ????			   -TIA_BASE_ADDRESS =	0
+     59  10000 ????				       ENDIF
+     60  10000 ????
+     61  10000 ????						; Note: The address may be defined on the command-line using the -D switch, eg:
+     62  10000 ????						; dasm.exe code.asm -DTIA_BASE_ADDRESS=$40 -f3 -v5 -ocode.bin
+     63  10000 ????						; *OR* by declaring the label before including this file, eg:
+     64  10000 ????						; TIA_BASE_ADDRESS = $40
+     65  10000 ????						;   include "vcs.h"
+     66  10000 ????
+     67  10000 ????						; Alternate read/write address capability - allows for some disassembly compatibility
+     68  10000 ????						; usage ; to allow reassembly to binary perfect copies).  This is essentially catering
+     69  10000 ????						; for the mirrored ROM hardware registers.
+     70  10000 ????
+     71  10000 ????						; Usage: As per above, define the TIA_BASE_READ_ADDRESS and/or TIA_BASE_WRITE_ADDRESS
+     72  10000 ????						; using the -D command-line switch, as required.  If the addresses are not defined, 
+     73  10000 ????						; they defaut to the TIA_BASE_ADDRESS.
+     74  10000 ????
+     75  10000 ????			   -	       IFNCONST	TIA_BASE_READ_ADDRESS
+     76  10000 ????			   -TIA_BASE_READ_ADDRESS =	TIA_BASE_ADDRESS
+     77  10000 ????				       ENDIF
+     78  10000 ????
+     79  10000 ????			   -	       IFNCONST	TIA_BASE_WRITE_ADDRESS
+     80  10000 ????			   -TIA_BASE_WRITE_ADDRESS =	TIA_BASE_ADDRESS
+     81  10000 ????				       ENDIF
+     82  10000 ????
+     83  10000 ????						;-------------------------------------------------------------------------------
+     84  10000 ????
+     85 U002d ????				      SEG.U	TIA_REGISTERS_WRITE
+     86 U0000					      ORG	TIA_BASE_WRITE_ADDRESS
+     87 U0000
+     88 U0000							; DO NOT CHANGE THE RELATIVE ORDERING OF REGISTERS!
+     89 U0000
+     90 U0000		       00	   VSYNC      ds	1	; $00	 0000 00x0   Vertical Sync Set-Clear
+     91 U0001		       00	   VBLANK     ds	1	; $01	 xx00 00x0   Vertical Blank Set-Clear
+     92 U0002		       00	   WSYNC      ds	1	; $02	 ---- ----   Wait for Horizontal Blank
+     93 U0003		       00	   RSYNC      ds	1	; $03	 ---- ----   Reset Horizontal Sync Counter
+     94 U0004		       00	   NUSIZ0     ds	1	; $04	 00xx 0xxx   Number-Size player/missle 0
+     95 U0005		       00	   NUSIZ1     ds	1	; $05	 00xx 0xxx   Number-Size player/missle 1
+     96 U0006		       00	   COLUP0     ds	1	; $06	 xxxx xxx0   Color-Luminance Player 0
+     97 U0007		       00	   COLUP1     ds	1	; $07	 xxxx xxx0   Color-Luminance Player 1
+     98 U0008		       00	   COLUPF     ds	1	; $08	 xxxx xxx0   Color-Luminance Playfield
+     99 U0009		       00	   COLUBK     ds	1	; $09	 xxxx xxx0   Color-Luminance Background
+    100 U000a		       00	   CTRLPF     ds	1	; $0A	 00xx 0xxx   Control Playfield, Ball, Collisions
+    101 U000b		       00	   REFP0      ds	1	; $0B	 0000 x000   Reflection Player 0
+    102 U000c		       00	   REFP1      ds	1	; $0C	 0000 x000   Reflection Player 1
+    103 U000d		       00	   PF0	      ds	1	; $0D	 xxxx 0000   Playfield Register Byte 0
+    104 U000e		       00	   PF1	      ds	1	; $0E	 xxxx xxxx   Playfield Register Byte 1
+    105 U000f		       00	   PF2	      ds	1	; $0F	 xxxx xxxx   Playfield Register Byte 2
+    106 U0010		       00	   RESP0      ds	1	; $10	 ---- ----   Reset Player 0
+    107 U0011		       00	   RESP1      ds	1	; $11	 ---- ----   Reset Player 1
+    108 U0012		       00	   RESM0      ds	1	; $12	 ---- ----   Reset Missle 0
+    109 U0013		       00	   RESM1      ds	1	; $13	 ---- ----   Reset Missle 1
+    110 U0014		       00	   RESBL      ds	1	; $14	 ---- ----   Reset Ball
+    111 U0015		       00	   AUDC0      ds	1	; $15	 0000 xxxx   Audio Control 0
+    112 U0016		       00	   AUDC1      ds	1	; $16	 0000 xxxx   Audio Control 1
+    113 U0017		       00	   AUDF0      ds	1	; $17	 000x xxxx   Audio Frequency 0
+    114 U0018		       00	   AUDF1      ds	1	; $18	 000x xxxx   Audio Frequency 1
+    115 U0019		       00	   AUDV0      ds	1	; $19	 0000 xxxx   Audio Volume 0
+    116 U001a		       00	   AUDV1      ds	1	; $1A	 0000 xxxx   Audio Volume 1
+    117 U001b		       00	   GRP0       ds	1	; $1B	 xxxx xxxx   Graphics Register Player 0
+    118 U001c		       00	   GRP1       ds	1	; $1C	 xxxx xxxx   Graphics Register Player 1
+    119 U001d		       00	   ENAM0      ds	1	; $1D	 0000 00x0   Graphics Enable Missle 0
+    120 U001e		       00	   ENAM1      ds	1	; $1E	 0000 00x0   Graphics Enable Missle 1
+    121 U001f		       00	   ENABL      ds	1	; $1F	 0000 00x0   Graphics Enable Ball
+    122 U0020		       00	   HMP0       ds	1	; $20	 xxxx 0000   Horizontal Motion Player 0
+    123 U0021		       00	   HMP1       ds	1	; $21	 xxxx 0000   Horizontal Motion Player 1
+    124 U0022		       00	   HMM0       ds	1	; $22	 xxxx 0000   Horizontal Motion Missle 0
+    125 U0023		       00	   HMM1       ds	1	; $23	 xxxx 0000   Horizontal Motion Missle 1
+    126 U0024		       00	   HMBL       ds	1	; $24	 xxxx 0000   Horizontal Motion Ball
+    127 U0025		       00	   VDELP0     ds	1	; $25	 0000 000x   Vertical Delay Player 0
+    128 U0026		       00	   VDELP1     ds	1	; $26	 0000 000x   Vertical Delay Player 1
+    129 U0027		       00	   VDELBL     ds	1	; $27	 0000 000x   Vertical Delay Ball
+    130 U0028		       00	   RESMP0     ds	1	; $28	 0000 00x0   Reset Missle 0 to Player 0
+    131 U0029		       00	   RESMP1     ds	1	; $29	 0000 00x0   Reset Missle 1 to Player 1
+    132 U002a		       00	   HMOVE      ds	1	; $2A	 ---- ----   Apply Horizontal Motion
+    133 U002b		       00	   HMCLR      ds	1	; $2B	 ---- ----   Clear Horizontal Move Registers
+    134 U002c		       00	   CXCLR      ds	1	; $2C	 ---- ----   Clear Collision Latches
+    135 U002d
+    136 U002d							;-------------------------------------------------------------------------------
+    137 U002d
+    138 U000e ????				      SEG.U	TIA_REGISTERS_READ
+    139 U0000					      ORG	TIA_BASE_READ_ADDRESS
+    140 U0000
+    141 U0000							;											bit 7	 bit 6
+    142 U0000		       00	   CXM0P      ds	1	; $00	     xx00 0000	     Read Collision  M0-P1   M0-P0
+    143 U0001		       00	   CXM1P      ds	1	; $01	     xx00 0000			     M1-P0   M1-P1
+    144 U0002		       00	   CXP0FB     ds	1	; $02	     xx00 0000			     P0-PF   P0-BL
+    145 U0003		       00	   CXP1FB     ds	1	; $03	     xx00 0000			     P1-PF   P1-BL
+    146 U0004		       00	   CXM0FB     ds	1	; $04	     xx00 0000			     M0-PF   M0-BL
+    147 U0005		       00	   CXM1FB     ds	1	; $05	     xx00 0000			     M1-PF   M1-BL
+    148 U0006		       00	   CXBLPF     ds	1	; $06	     x000 0000			     BL-PF   -----
+    149 U0007		       00	   CXPPMM     ds	1	; $07	     xx00 0000			     P0-P1   M0-M1
+    150 U0008		       00	   INPT0      ds	1	; $08	     x000 0000	     Read Pot Port 0
+    151 U0009		       00	   INPT1      ds	1	; $09	     x000 0000	     Read Pot Port 1
+    152 U000a		       00	   INPT2      ds	1	; $0A	     x000 0000	     Read Pot Port 2
+    153 U000b		       00	   INPT3      ds	1	; $0B	     x000 0000	     Read Pot Port 3
+    154 U000c		       00	   INPT4      ds	1	; $0C		x000 0000	 Read Input (Trigger) 0
+    155 U000d		       00	   INPT5      ds	1	; $0D		x000 0000	 Read Input (Trigger) 1
+    156 U000e
+    157 U000e							;-------------------------------------------------------------------------------
+    158 U000e
+    159 U0298 ????				      SEG.U	RIOT
+    160 U0280					      ORG	$280
+    161 U0280
+    162 U0280							; RIOT MEMORY MAP
+    163 U0280
+    164 U0280		       00	   SWCHA      ds	1	; $280      Port A data register for joysticks:
+    165 U0281							;			Bits 4-7 for player 1.  Bits 0-3 for player 2.
+    166 U0281
+    167 U0281		       00	   SWACNT     ds	1	; $281      Port A data direction register (DDR)
+    168 U0282		       00	   SWCHB      ds	1	; $282		Port B data (console switches)
+    169 U0283		       00	   SWBCNT     ds	1	; $283      Port B DDR
+    170 U0284		       00	   INTIM      ds	1	; $284		Timer output
+    171 U0285
+    172 U0285		       00	   TIMINT     ds	1	; $285
+    173 U0286
+    174 U0286							; Unused/undefined registers ($285-$294)
+    175 U0286
+    176 U0286		       00		      ds	1	; $286
+    177 U0287		       00		      ds	1	; $287
+    178 U0288		       00		      ds	1	; $288
+    179 U0289		       00		      ds	1	; $289
+    180 U028a		       00		      ds	1	; $28A
+    181 U028b		       00		      ds	1	; $28B
+    182 U028c		       00		      ds	1	; $28C
+    183 U028d		       00		      ds	1	; $28D
+    184 U028e		       00		      ds	1	; $28E
+    185 U028f		       00		      ds	1	; $28F
+    186 U0290		       00		      ds	1	; $290
+    187 U0291		       00		      ds	1	; $291
+    188 U0292		       00		      ds	1	; $292
+    189 U0293		       00		      ds	1	; $293
+    190 U0294
+    191 U0294		       00	   TIM1T      ds	1	; $294		set 1 clock interval
+    192 U0295		       00	   TIM8T      ds	1	; $295      set 8 clock interval
+    193 U0296		       00	   TIM64T     ds	1	; $296      set 64 clock interval
+    194 U0297		       00	   T1024T     ds	1	; $297      set 1024 clock interval
+    195 U0298
+    196 U0298							;-------------------------------------------------------------------------------
+    197 U0298							; The following required for back-compatibility with code which does not use
+    198 U0298							; segments.
+    199 U0298
+    200  10000 ????				       SEG
+    201  10000 ????
+    202  10000 ????						; EOF
+------- FILE e:\Documents\bB\batariBasicGames\demos\3dmap.bas.asm
+------- FILE macro.h LEVEL 2 PASS 2
+      0  10000 ????				       include	"macro.h"
+      1  10000 ????						; Provided under the CC0 license. See the included LICENSE.txt for details.
+      2  10000 ????
+      3  10000 ????						; MACRO.H
+      4  10000 ????						; Version 1.05, 13/NOVEMBER/2003
+      5  10000 ????
+      6  10000 ????		00 69	    VERSION_MACRO =	105
+      7  10000 ????
+      8  10000 ????						;
+      9  10000 ????						; THIS FILE IS EXPLICITLY SUPPORTED AS A DASM-PREFERRED COMPANION FILE
+     10  10000 ????						; PLEASE DO *NOT* REDISTRIBUTE MODIFIED VERSIONS OF THIS FILE!
+     11  10000 ????						;
+     12  10000 ????						; This file defines DASM macros useful for development for the Atari 2600.
+     13  10000 ????						; It is distributed as a companion machine-specific support package
+     14  10000 ????						; for the DASM compiler. Updates to this file, DASM, and associated tools are
+     15  10000 ????						; available at at http://www.atari2600.org/dasm
+     16  10000 ????						;
+     17  10000 ????						; Many thanks to the people who have contributed.  If you take issue with the
+     18  10000 ????						; contents, or would like to add something, please write to me
+     19  10000 ????						; (atari2600@taswegian.com) with your contribution.
+     20  10000 ????						;
+     21  10000 ????						; Latest Revisions...
+     22  10000 ????						;
+     23  10000 ????						; 1.05  14/NOV/2003	  - Added VERSION_MACRO equate (which will reflect 100x version #)
+     24  10000 ????						;			    This will allow conditional code to verify MACRO.H being
+     25  10000 ????						;			    used for code assembly.
+     26  10000 ????						; 1.04  13/NOV/2003	 - SET_POINTER macro added (16-bit address load)
+     27  10000 ????						;
+     28  10000 ????						; 1.03  23/JUN/2003	 - CLEAN_START macro added - clears TIA, RAM, registers
+     29  10000 ????						;
+     30  10000 ????						; 1.02  14/JUN/2003	 - VERTICAL_SYNC macro added
+     31  10000 ????						;			   (standardised macro for vertical synch code)
+     32  10000 ????						; 1.01  22/MAR/2003	 - SLEEP macro added. 
+     33  10000 ????						;			 - NO_ILLEGAL_OPCODES switch implemented
+     34  10000 ????						; 1.0	22/MAR/2003		Initial release
+     35  10000 ????
+     36  10000 ????						; Note: These macros use illegal opcodes.  To disable illegal opcode usage, 
+     37  10000 ????						;   define the symbol NO_ILLEGAL_OPCODES (-DNO_ILLEGAL_OPCODES=1 on command-line).
+     38  10000 ????						;   If you do not allow illegal opcode usage, you must include this file 
+     39  10000 ????						;   *after* including VCS.H (as the non-illegal opcodes access hardware
+     40  10000 ????						;   registers and require them to be defined first).
+     41  10000 ????
+     42  10000 ????						; Available macros...
+     43  10000 ????						;   SLEEP n		 - sleep for n cycles
+     44  10000 ????						;   VERTICAL_SYNC	 - correct 3 scanline vertical synch code
+     45  10000 ????						;   CLEAN_START	 - set machine to known state on startup
+     46  10000 ????						;   SET_POINTER	 - load a 16-bit absolute to a 16-bit variable
+     47  10000 ????
+     48  10000 ????						;-------------------------------------------------------------------------------
+     49  10000 ????						; SLEEP duration
+     50  10000 ????						; Original author: Thomas Jentzsch
+     51  10000 ????						; Inserts code which takes the specified number of cycles to execute.	This is
+     52  10000 ????						; useful for code where precise timing is required.
+     53  10000 ????						; ILLEGAL-OPCODE VERSION DOES NOT AFFECT FLAGS OR REGISTERS.
+     54  10000 ????						; LEGAL OPCODE VERSION MAY AFFECT FLAGS
+     55  10000 ????						; Uses illegal opcode (DASM 2.20.01 onwards).
+     56  10000 ????
+     57  10000 ????				       MAC	sleep
+     58  10000 ????			    .CYCLES    SET	{1}
+     59  10000 ????
+     60  10000 ????				       IF	.CYCLES < 2
+     61  10000 ????				       ECHO	"MACRO ERROR: 'SLEEP': Duration must be > 1"
+     62  10000 ????				       ERR
+     63  10000 ????				       ENDIF
+     64  10000 ????
+     65  10000 ????				       IF	.CYCLES & 1
+     66  10000 ????				       IFNCONST	NO_ILLEGAL_OPCODES
+     67  10000 ????				       nop	0
+     68  10000 ????				       ELSE
+     69  10000 ????				       bit	VSYNC
+     70  10000 ????				       ENDIF
+     71  10000 ????			    .CYCLES    SET	.CYCLES - 3
+     72  10000 ????				       ENDIF
+     73  10000 ????
+     74  10000 ????				       REPEAT	.CYCLES / 2
+     75  10000 ????				       nop
+     76  10000 ????				       REPEND
+     77  10000 ????				       ENDM		;usage: SLEEP n (n>1)
+     78  10000 ????
+     79  10000 ????						;-------------------------------------------------------------------------------
+     80  10000 ????						; VERTICAL_SYNC
+     81  10000 ????						; Original author: Manuel Polik
+     82  10000 ????						; Inserts the code required for a proper 3 scannline 
+     83  10000 ????						; vertical sync sequence
+     84  10000 ????						;
+     85  10000 ????						; Note: Alters the accumulator
+     86  10000 ????						;
+     87  10000 ????						; IN:
+     88  10000 ????						; OUT: A = 1
+     89  10000 ????
+     90  10000 ????				       MAC	vertical_sync
+     91  10000 ????				       LDA	#$02	; A = VSYNC enable
+     92  10000 ????				       STA	WSYNC	; Finish current line
+     93  10000 ????				       STA	VSYNC	; Start vertical sync
+     94  10000 ????				       STA	WSYNC	; 1st line vertical sync
+     95  10000 ????				       STA	WSYNC	; 2nd line vertical sync
+     96  10000 ????				       LSR		; A = VSYNC disable
+     97  10000 ????				       STA	WSYNC	; 3rd line vertical sync
+     98  10000 ????				       STA	VSYNC	; Stop vertical sync
+     99  10000 ????				       ENDM
+    100  10000 ????
+    101  10000 ????						;-------------------------------------------------------------------------------
+    102  10000 ????						; CLEAN_START
+    103  10000 ????						; Original author: Andrew Davie
+    104  10000 ????						; Standardised start-up code, clears stack, all TIA registers and RAM to 0
+    105  10000 ????						; Sets stack pointer to $FF, and all registers to 0
+    106  10000 ????						; Sets decimal mode off, sets interrupt flag (kind of un-necessary)
+    107  10000 ????						; Use as very first section of code on boot (ie: at reset)
+    108  10000 ????						; Code written to minimise total ROM usage - uses weird 6502 knowledge :)
+    109  10000 ????
+    110  10000 ????				       MAC	clean_start
+    111  10000 ????				       sei
+    112  10000 ????				       cld
+    113  10000 ????
+    114  10000 ????				       ldx	#0
+    115  10000 ????				       txa
+    116  10000 ????				       tay
+    117  10000 ????			    .CLEAR_STACK dex
+    118  10000 ????				       txs
+    119  10000 ????				       pha
+    120  10000 ????				       bne	.CLEAR_STACK	; SP=$FF, X = A = Y = 0
+    121  10000 ????
+    122  10000 ????				       ENDM
+    123  10000 ????
+    124  10000 ????						;-------------------------------------------------------
+    125  10000 ????						; SET_POINTER
+    126  10000 ????						; Original author: Manuel Rotschkar
+    127  10000 ????						;
+    128  10000 ????						; Sets a 2 byte RAM pointer to an absolute address.
+    129  10000 ????						;
+    130  10000 ????						; Usage: SET_POINTER pointer, address
+    131  10000 ????						; Example: SET_POINTER SpritePTR, SpriteData
+    132  10000 ????						;
+    133  10000 ????						; Note: Alters the accumulator, NZ flags
+    134  10000 ????						; IN 1: 2 byte RAM location reserved for pointer
+    135  10000 ????						; IN 2: absolute address
+    136  10000 ????
+    137  10000 ????				       MAC	set_pointer
+    138  10000 ????			    .POINTER   SET	{1}
+    139  10000 ????			    .ADDRESS   SET	{2}
+    140  10000 ????
+    141  10000 ????				       LDA	#<.ADDRESS	; Get Lowbyte of Address
+    142  10000 ????				       STA	.POINTER	; Store in pointer
+    143  10000 ????				       LDA	#>.ADDRESS	; Get Hibyte of Address
+    144  10000 ????				       STA	.POINTER+1	; Store in pointer+1
+    145  10000 ????
+    146  10000 ????				       ENDM
+    147  10000 ????
+    148  10000 ????						; EOF
+------- FILE e:\Documents\bB\batariBasicGames\demos\3dmap.bas.asm
+------- FILE 2600basic.h LEVEL 2 PASS 2
+      0  10000 ????				       include	"2600basic.h"
+      1  10000 ????						; Provided under the CC0 license. See the included LICENSE.txt for details.
+      2  10000 ????
+      3  10000 ????				       processor	6502
+------- FILE vcs.h LEVEL 3 PASS 2
+      0  10000 ????				       include	"vcs.h"
+      1  10000 ????						; Provided under the CC0 license. See the included LICENSE.txt for details.
+      2  10000 ????
+      3  10000 ????						; VCS.H
+      4  10000 ????						; Version 1.05, 13/November/2003
+      5  10000 ????
+      6  10000 ????		00 69	    VERSION_VCS =	105
+      7  10000 ????
+      8  10000 ????						; THIS IS A PRELIMINARY RELEASE OF *THE* "STANDARD" VCS.H
+      9  10000 ????						; THIS FILE IS EXPLICITLY SUPPORTED AS A DASM-PREFERRED COMPANION FILE
+     10  10000 ????						; PLEASE DO *NOT* REDISTRIBUTE THIS FILE!
+     11  10000 ????						;
+     12  10000 ????						; This file defines hardware registers and memory mapping for the
+     13  10000 ????						; Atari 2600. It is distributed as a companion machine-specific support package
+     14  10000 ????						; for the DASM compiler. Updates to this file, DASM, and associated tools are
+     15  10000 ????						; available at at http://www.atari2600.org/dasm
+     16  10000 ????						;
+     17  10000 ????						; Many thanks to the original author(s) of this file, and to everyone who has
+     18  10000 ????						; contributed to understanding the Atari 2600.  If you take issue with the
+     19  10000 ????						; contents, or naming of registers, please write to me (atari2600@taswegian.com)
+     20  10000 ????						; with your views.  Please contribute, if you think you can improve this
+     21  10000 ????						; file!
+     22  10000 ????						;
+     23  10000 ????						; Latest Revisions...
+     24  10000 ????						; 1.05  13/NOV/2003	  - Correction to 1.04 - now functions as requested by MR.
+     25  10000 ????						;			  - Added VERSION_VCS equate (which will reflect 100x version #)
+     26  10000 ????						;			    This will allow conditional code to verify VCS.H being
+     27  10000 ????						;			    used for code assembly.
+     28  10000 ????						; 1.04  12/NOV/2003	 Added TIA_BASE_WRITE_ADDRESS and TIA_BASE_READ_ADDRESS for
+     29  10000 ????						;			 convenient disassembly/reassembly compatibility for hardware
+     30  10000 ????						;			 mirrored reading/writing differences.	This is more a 
+     31  10000 ????						;			 readability issue, and binary compatibility with disassembled
+     32  10000 ????						;			 and reassembled sources.  Per Manuel Rotschkar's suggestion.
+     33  10000 ????						; 1.03  12/MAY/2003	 Added SEG segment at end of file to fix old-code compatibility
+     34  10000 ????						;			 which was broken by the use of segments in this file, as
+     35  10000 ????						;			 reported by Manuel Polik on [stella] 11/MAY/2003
+     36  10000 ????						; 1.02  22/MAR/2003	 Added TIMINT($285)
+     37  10000 ????						; 1.01				Constant offset added to allow use for 3F-style bankswitching
+     38  10000 ????						;						 - define TIA_BASE_ADDRESS as $40 for Tigervision carts, otherwise
+     39  10000 ????						;						   it is safe to leave it undefined, and the base address will
+     40  10000 ????						;						   be set to 0.  Thanks to Eckhard Stolberg for the suggestion.
+     41  10000 ????						;			    Note, may use -DLABEL=EXPRESSION to define TIA_BASE_ADDRESS
+     42  10000 ????						;			  - register definitions are now generated through assignment
+     43  10000 ????						;			    in uninitialised segments.	This allows a changeable base
+     44  10000 ????						;			    address architecture.
+     45  10000 ????						; 1.0	22/MAR/2003		Initial release
+     46  10000 ????
+     47  10000 ????
+     48  10000 ????						;-------------------------------------------------------------------------------
+     49  10000 ????
+     50  10000 ????						; TIA_BASE_ADDRESS
+     51  10000 ????						; The TIA_BASE_ADDRESS defines the base address of access to TIA registers.
+     52  10000 ????						; Normally 0, the base address should (externally, before including this file)
+     53  10000 ????						; be set to $40 when creating 3F-bankswitched (and other?) cartridges.
+     54  10000 ????						; The reason is that this bankswitching scheme treats any access to locations
+     55  10000 ????						; < $40 as a bankswitch.
+     56  10000 ????
+     57  10000 ????			   -	       IFNCONST	TIA_BASE_ADDRESS
+     58  10000 ????			   -TIA_BASE_ADDRESS =	0
+     59  10000 ????				       ENDIF
+     60  10000 ????
+     61  10000 ????						; Note: The address may be defined on the command-line using the -D switch, eg:
+     62  10000 ????						; dasm.exe code.asm -DTIA_BASE_ADDRESS=$40 -f3 -v5 -ocode.bin
+     63  10000 ????						; *OR* by declaring the label before including this file, eg:
+     64  10000 ????						; TIA_BASE_ADDRESS = $40
+     65  10000 ????						;   include "vcs.h"
+     66  10000 ????
+     67  10000 ????						; Alternate read/write address capability - allows for some disassembly compatibility
+     68  10000 ????						; usage ; to allow reassembly to binary perfect copies).  This is essentially catering
+     69  10000 ????						; for the mirrored ROM hardware registers.
+     70  10000 ????
+     71  10000 ????						; Usage: As per above, define the TIA_BASE_READ_ADDRESS and/or TIA_BASE_WRITE_ADDRESS
+     72  10000 ????						; using the -D command-line switch, as required.  If the addresses are not defined, 
+     73  10000 ????						; they defaut to the TIA_BASE_ADDRESS.
+     74  10000 ????
+     75  10000 ????			   -	       IFNCONST	TIA_BASE_READ_ADDRESS
+     76  10000 ????			   -TIA_BASE_READ_ADDRESS =	TIA_BASE_ADDRESS
+     77  10000 ????				       ENDIF
+     78  10000 ????
+     79  10000 ????			   -	       IFNCONST	TIA_BASE_WRITE_ADDRESS
+     80  10000 ????			   -TIA_BASE_WRITE_ADDRESS =	TIA_BASE_ADDRESS
+     81  10000 ????				       ENDIF
+     82  10000 ????
+     83  10000 ????						;-------------------------------------------------------------------------------
+     84  10000 ????
+     85 U002d					      SEG.U	TIA_REGISTERS_WRITE
+     86 U0000					      ORG	TIA_BASE_WRITE_ADDRESS
+     87 U0000
+     88 U0000							; DO NOT CHANGE THE RELATIVE ORDERING OF REGISTERS!
+     89 U0000
+     90 U0000		       00	   VSYNC      ds	1	; $00	 0000 00x0   Vertical Sync Set-Clear
+     91 U0001		       00	   VBLANK     ds	1	; $01	 xx00 00x0   Vertical Blank Set-Clear
+     92 U0002		       00	   WSYNC      ds	1	; $02	 ---- ----   Wait for Horizontal Blank
+     93 U0003		       00	   RSYNC      ds	1	; $03	 ---- ----   Reset Horizontal Sync Counter
+     94 U0004		       00	   NUSIZ0     ds	1	; $04	 00xx 0xxx   Number-Size player/missle 0
+     95 U0005		       00	   NUSIZ1     ds	1	; $05	 00xx 0xxx   Number-Size player/missle 1
+     96 U0006		       00	   COLUP0     ds	1	; $06	 xxxx xxx0   Color-Luminance Player 0
+     97 U0007		       00	   COLUP1     ds	1	; $07	 xxxx xxx0   Color-Luminance Player 1
+     98 U0008		       00	   COLUPF     ds	1	; $08	 xxxx xxx0   Color-Luminance Playfield
+     99 U0009		       00	   COLUBK     ds	1	; $09	 xxxx xxx0   Color-Luminance Background
+    100 U000a		       00	   CTRLPF     ds	1	; $0A	 00xx 0xxx   Control Playfield, Ball, Collisions
+    101 U000b		       00	   REFP0      ds	1	; $0B	 0000 x000   Reflection Player 0
+    102 U000c		       00	   REFP1      ds	1	; $0C	 0000 x000   Reflection Player 1
+    103 U000d		       00	   PF0	      ds	1	; $0D	 xxxx 0000   Playfield Register Byte 0
+    104 U000e		       00	   PF1	      ds	1	; $0E	 xxxx xxxx   Playfield Register Byte 1
+    105 U000f		       00	   PF2	      ds	1	; $0F	 xxxx xxxx   Playfield Register Byte 2
+    106 U0010		       00	   RESP0      ds	1	; $10	 ---- ----   Reset Player 0
+    107 U0011		       00	   RESP1      ds	1	; $11	 ---- ----   Reset Player 1
+    108 U0012		       00	   RESM0      ds	1	; $12	 ---- ----   Reset Missle 0
+    109 U0013		       00	   RESM1      ds	1	; $13	 ---- ----   Reset Missle 1
+    110 U0014		       00	   RESBL      ds	1	; $14	 ---- ----   Reset Ball
+    111 U0015		       00	   AUDC0      ds	1	; $15	 0000 xxxx   Audio Control 0
+    112 U0016		       00	   AUDC1      ds	1	; $16	 0000 xxxx   Audio Control 1
+    113 U0017		       00	   AUDF0      ds	1	; $17	 000x xxxx   Audio Frequency 0
+    114 U0018		       00	   AUDF1      ds	1	; $18	 000x xxxx   Audio Frequency 1
+    115 U0019		       00	   AUDV0      ds	1	; $19	 0000 xxxx   Audio Volume 0
+    116 U001a		       00	   AUDV1      ds	1	; $1A	 0000 xxxx   Audio Volume 1
+    117 U001b		       00	   GRP0       ds	1	; $1B	 xxxx xxxx   Graphics Register Player 0
+    118 U001c		       00	   GRP1       ds	1	; $1C	 xxxx xxxx   Graphics Register Player 1
+    119 U001d		       00	   ENAM0      ds	1	; $1D	 0000 00x0   Graphics Enable Missle 0
+    120 U001e		       00	   ENAM1      ds	1	; $1E	 0000 00x0   Graphics Enable Missle 1
+    121 U001f		       00	   ENABL      ds	1	; $1F	 0000 00x0   Graphics Enable Ball
+    122 U0020		       00	   HMP0       ds	1	; $20	 xxxx 0000   Horizontal Motion Player 0
+    123 U0021		       00	   HMP1       ds	1	; $21	 xxxx 0000   Horizontal Motion Player 1
+    124 U0022		       00	   HMM0       ds	1	; $22	 xxxx 0000   Horizontal Motion Missle 0
+    125 U0023		       00	   HMM1       ds	1	; $23	 xxxx 0000   Horizontal Motion Missle 1
+    126 U0024		       00	   HMBL       ds	1	; $24	 xxxx 0000   Horizontal Motion Ball
+    127 U0025		       00	   VDELP0     ds	1	; $25	 0000 000x   Vertical Delay Player 0
+    128 U0026		       00	   VDELP1     ds	1	; $26	 0000 000x   Vertical Delay Player 1
+    129 U0027		       00	   VDELBL     ds	1	; $27	 0000 000x   Vertical Delay Ball
+    130 U0028		       00	   RESMP0     ds	1	; $28	 0000 00x0   Reset Missle 0 to Player 0
+    131 U0029		       00	   RESMP1     ds	1	; $29	 0000 00x0   Reset Missle 1 to Player 1
+    132 U002a		       00	   HMOVE      ds	1	; $2A	 ---- ----   Apply Horizontal Motion
+    133 U002b		       00	   HMCLR      ds	1	; $2B	 ---- ----   Clear Horizontal Move Registers
+    134 U002c		       00	   CXCLR      ds	1	; $2C	 ---- ----   Clear Collision Latches
+    135 U002d
+    136 U002d							;-------------------------------------------------------------------------------
+    137 U002d
+    138 U000e					      SEG.U	TIA_REGISTERS_READ
+    139 U0000					      ORG	TIA_BASE_READ_ADDRESS
+    140 U0000
+    141 U0000							;											bit 7	 bit 6
+    142 U0000		       00	   CXM0P      ds	1	; $00	     xx00 0000	     Read Collision  M0-P1   M0-P0
+    143 U0001		       00	   CXM1P      ds	1	; $01	     xx00 0000			     M1-P0   M1-P1
+    144 U0002		       00	   CXP0FB     ds	1	; $02	     xx00 0000			     P0-PF   P0-BL
+    145 U0003		       00	   CXP1FB     ds	1	; $03	     xx00 0000			     P1-PF   P1-BL
+    146 U0004		       00	   CXM0FB     ds	1	; $04	     xx00 0000			     M0-PF   M0-BL
+    147 U0005		       00	   CXM1FB     ds	1	; $05	     xx00 0000			     M1-PF   M1-BL
+    148 U0006		       00	   CXBLPF     ds	1	; $06	     x000 0000			     BL-PF   -----
+    149 U0007		       00	   CXPPMM     ds	1	; $07	     xx00 0000			     P0-P1   M0-M1
+    150 U0008		       00	   INPT0      ds	1	; $08	     x000 0000	     Read Pot Port 0
+    151 U0009		       00	   INPT1      ds	1	; $09	     x000 0000	     Read Pot Port 1
+    152 U000a		       00	   INPT2      ds	1	; $0A	     x000 0000	     Read Pot Port 2
+    153 U000b		       00	   INPT3      ds	1	; $0B	     x000 0000	     Read Pot Port 3
+    154 U000c		       00	   INPT4      ds	1	; $0C		x000 0000	 Read Input (Trigger) 0
+    155 U000d		       00	   INPT5      ds	1	; $0D		x000 0000	 Read Input (Trigger) 1
+    156 U000e
+    157 U000e							;-------------------------------------------------------------------------------
+    158 U000e
+    159 U0298					      SEG.U	RIOT
+    160 U0280					      ORG	$280
+    161 U0280
+    162 U0280							; RIOT MEMORY MAP
+    163 U0280
+    164 U0280		       00	   SWCHA      ds	1	; $280      Port A data register for joysticks:
+    165 U0281							;			Bits 4-7 for player 1.  Bits 0-3 for player 2.
+    166 U0281
+    167 U0281		       00	   SWACNT     ds	1	; $281      Port A data direction register (DDR)
+    168 U0282		       00	   SWCHB      ds	1	; $282		Port B data (console switches)
+    169 U0283		       00	   SWBCNT     ds	1	; $283      Port B DDR
+    170 U0284		       00	   INTIM      ds	1	; $284		Timer output
+    171 U0285
+    172 U0285		       00	   TIMINT     ds	1	; $285
+    173 U0286
+    174 U0286							; Unused/undefined registers ($285-$294)
+    175 U0286
+    176 U0286		       00		      ds	1	; $286
+    177 U0287		       00		      ds	1	; $287
+    178 U0288		       00		      ds	1	; $288
+    179 U0289		       00		      ds	1	; $289
+    180 U028a		       00		      ds	1	; $28A
+    181 U028b		       00		      ds	1	; $28B
+    182 U028c		       00		      ds	1	; $28C
+    183 U028d		       00		      ds	1	; $28D
+    184 U028e		       00		      ds	1	; $28E
+    185 U028f		       00		      ds	1	; $28F
+    186 U0290		       00		      ds	1	; $290
+    187 U0291		       00		      ds	1	; $291
+    188 U0292		       00		      ds	1	; $292
+    189 U0293		       00		      ds	1	; $293
+    190 U0294
+    191 U0294		       00	   TIM1T      ds	1	; $294		set 1 clock interval
+    192 U0295		       00	   TIM8T      ds	1	; $295      set 8 clock interval
+    193 U0296		       00	   TIM64T     ds	1	; $296      set 64 clock interval
+    194 U0297		       00	   T1024T     ds	1	; $297      set 1024 clock interval
+    195 U0298
+    196 U0298							;-------------------------------------------------------------------------------
+    197 U0298							; The following required for back-compatibility with code which does not use
+    198 U0298							; segments.
+    199 U0298
+    200  10000 ????				       SEG
+    201  10000 ????
+    202  10000 ????						; EOF
+------- FILE 2600basic.h
+------- FILE macro.h LEVEL 3 PASS 2
+      0  10000 ????				       include	"macro.h"
+      1  10000 ????						; Provided under the CC0 license. See the included LICENSE.txt for details.
+      2  10000 ????
+      3  10000 ????						; MACRO.H
+      4  10000 ????						; Version 1.05, 13/NOVEMBER/2003
+      5  10000 ????
+      6  10000 ????		00 69	    VERSION_MACRO =	105
+      7  10000 ????
+      8  10000 ????						;
+      9  10000 ????						; THIS FILE IS EXPLICITLY SUPPORTED AS A DASM-PREFERRED COMPANION FILE
+     10  10000 ????						; PLEASE DO *NOT* REDISTRIBUTE MODIFIED VERSIONS OF THIS FILE!
+     11  10000 ????						;
+     12  10000 ????						; This file defines DASM macros useful for development for the Atari 2600.
+     13  10000 ????						; It is distributed as a companion machine-specific support package
+     14  10000 ????						; for the DASM compiler. Updates to this file, DASM, and associated tools are
+     15  10000 ????						; available at at http://www.atari2600.org/dasm
+     16  10000 ????						;
+     17  10000 ????						; Many thanks to the people who have contributed.  If you take issue with the
+     18  10000 ????						; contents, or would like to add something, please write to me
+     19  10000 ????						; (atari2600@taswegian.com) with your contribution.
+     20  10000 ????						;
+     21  10000 ????						; Latest Revisions...
+     22  10000 ????						;
+     23  10000 ????						; 1.05  14/NOV/2003	  - Added VERSION_MACRO equate (which will reflect 100x version #)
+     24  10000 ????						;			    This will allow conditional code to verify MACRO.H being
+     25  10000 ????						;			    used for code assembly.
+     26  10000 ????						; 1.04  13/NOV/2003	 - SET_POINTER macro added (16-bit address load)
+     27  10000 ????						;
+     28  10000 ????						; 1.03  23/JUN/2003	 - CLEAN_START macro added - clears TIA, RAM, registers
+     29  10000 ????						;
+     30  10000 ????						; 1.02  14/JUN/2003	 - VERTICAL_SYNC macro added
+     31  10000 ????						;			   (standardised macro for vertical synch code)
+     32  10000 ????						; 1.01  22/MAR/2003	 - SLEEP macro added. 
+     33  10000 ????						;			 - NO_ILLEGAL_OPCODES switch implemented
+     34  10000 ????						; 1.0	22/MAR/2003		Initial release
+     35  10000 ????
+     36  10000 ????						; Note: These macros use illegal opcodes.  To disable illegal opcode usage, 
+     37  10000 ????						;   define the symbol NO_ILLEGAL_OPCODES (-DNO_ILLEGAL_OPCODES=1 on command-line).
+     38  10000 ????						;   If you do not allow illegal opcode usage, you must include this file 
+     39  10000 ????						;   *after* including VCS.H (as the non-illegal opcodes access hardware
+     40  10000 ????						;   registers and require them to be defined first).
+     41  10000 ????
+     42  10000 ????						; Available macros...
+     43  10000 ????						;   SLEEP n		 - sleep for n cycles
+     44  10000 ????						;   VERTICAL_SYNC	 - correct 3 scanline vertical synch code
+     45  10000 ????						;   CLEAN_START	 - set machine to known state on startup
+     46  10000 ????						;   SET_POINTER	 - load a 16-bit absolute to a 16-bit variable
+     47  10000 ????
+     48  10000 ????						;-------------------------------------------------------------------------------
+     49  10000 ????						; SLEEP duration
+     50  10000 ????						; Original author: Thomas Jentzsch
+     51  10000 ????						; Inserts code which takes the specified number of cycles to execute.	This is
+     52  10000 ????						; useful for code where precise timing is required.
+     53  10000 ????						; ILLEGAL-OPCODE VERSION DOES NOT AFFECT FLAGS OR REGISTERS.
+     54  10000 ????						; LEGAL OPCODE VERSION MAY AFFECT FLAGS
+     55  10000 ????						; Uses illegal opcode (DASM 2.20.01 onwards).
+     56  10000 ????
+     57  10000 ????				       MAC	sleep
+     58  10000 ????			    .CYCLES    SET	{1}
+     59  10000 ????
+     60  10000 ????				       IF	.CYCLES < 2
+     61  10000 ????				       ECHO	"MACRO ERROR: 'SLEEP': Duration must be > 1"
+     62  10000 ????				       ERR
+     63  10000 ????				       ENDIF
+     64  10000 ????
+     65  10000 ????				       IF	.CYCLES & 1
+     66  10000 ????				       IFNCONST	NO_ILLEGAL_OPCODES
+     67  10000 ????				       nop	0
+     68  10000 ????				       ELSE
+     69  10000 ????				       bit	VSYNC
+     70  10000 ????				       ENDIF
+     71  10000 ????			    .CYCLES    SET	.CYCLES - 3
+     72  10000 ????				       ENDIF
+     73  10000 ????
+     74  10000 ????				       REPEAT	.CYCLES / 2
+     75  10000 ????				       nop
+     76  10000 ????				       REPEND
+     77  10000 ????				       ENDM		;usage: SLEEP n (n>1)
+     78  10000 ????
+     79  10000 ????						;-------------------------------------------------------------------------------
+     80  10000 ????						; VERTICAL_SYNC
+     81  10000 ????						; Original author: Manuel Polik
+     82  10000 ????						; Inserts the code required for a proper 3 scannline 
+     83  10000 ????						; vertical sync sequence
+     84  10000 ????						;
+     85  10000 ????						; Note: Alters the accumulator
+     86  10000 ????						;
+     87  10000 ????						; IN:
+     88  10000 ????						; OUT: A = 1
+     89  10000 ????
+     90  10000 ????				       MAC	vertical_sync
+     91  10000 ????				       LDA	#$02	; A = VSYNC enable
+     92  10000 ????				       STA	WSYNC	; Finish current line
+     93  10000 ????				       STA	VSYNC	; Start vertical sync
+     94  10000 ????				       STA	WSYNC	; 1st line vertical sync
+     95  10000 ????				       STA	WSYNC	; 2nd line vertical sync
+     96  10000 ????				       LSR		; A = VSYNC disable
+     97  10000 ????				       STA	WSYNC	; 3rd line vertical sync
+     98  10000 ????				       STA	VSYNC	; Stop vertical sync
+     99  10000 ????				       ENDM
+    100  10000 ????
+    101  10000 ????						;-------------------------------------------------------------------------------
+    102  10000 ????						; CLEAN_START
+    103  10000 ????						; Original author: Andrew Davie
+    104  10000 ????						; Standardised start-up code, clears stack, all TIA registers and RAM to 0
+    105  10000 ????						; Sets stack pointer to $FF, and all registers to 0
+    106  10000 ????						; Sets decimal mode off, sets interrupt flag (kind of un-necessary)
+    107  10000 ????						; Use as very first section of code on boot (ie: at reset)
+    108  10000 ????						; Code written to minimise total ROM usage - uses weird 6502 knowledge :)
+    109  10000 ????
+    110  10000 ????				       MAC	clean_start
+    111  10000 ????				       sei
+    112  10000 ????				       cld
+    113  10000 ????
+    114  10000 ????				       ldx	#0
+    115  10000 ????				       txa
+    116  10000 ????				       tay
+    117  10000 ????			    .CLEAR_STACK dex
+    118  10000 ????				       txs
+    119  10000 ????				       pha
+    120  10000 ????				       bne	.CLEAR_STACK	; SP=$FF, X = A = Y = 0
+    121  10000 ????
+    122  10000 ????				       ENDM
+    123  10000 ????
+    124  10000 ????						;-------------------------------------------------------
+    125  10000 ????						; SET_POINTER
+    126  10000 ????						; Original author: Manuel Rotschkar
+    127  10000 ????						;
+    128  10000 ????						; Sets a 2 byte RAM pointer to an absolute address.
+    129  10000 ????						;
+    130  10000 ????						; Usage: SET_POINTER pointer, address
+    131  10000 ????						; Example: SET_POINTER SpritePTR, SpriteData
+    132  10000 ????						;
+    133  10000 ????						; Note: Alters the accumulator, NZ flags
+    134  10000 ????						; IN 1: 2 byte RAM location reserved for pointer
+    135  10000 ????						; IN 2: absolute address
+    136  10000 ????
+    137  10000 ????				       MAC	set_pointer
+    138  10000 ????			    .POINTER   SET	{1}
+    139  10000 ????			    .ADDRESS   SET	{2}
+    140  10000 ????
+    141  10000 ????				       LDA	#<.ADDRESS	; Get Lowbyte of Address
+    142  10000 ????				       STA	.POINTER	; Store in pointer
+    143  10000 ????				       LDA	#>.ADDRESS	; Get Hibyte of Address
+    144  10000 ????				       STA	.POINTER+1	; Store in pointer+1
+    145  10000 ????
+    146  10000 ????				       ENDM
+    147  10000 ????
+    148  10000 ????						; EOF
+------- FILE 2600basic.h
+------- FILE 2600basic_variable_redefs.h LEVEL 3 PASS 2
+      0  10000 ????				       include	"2600basic_variable_redefs.h"
+      1  10000 ????						; This file contains variable mapping and other information for the current project.
+      2  10000 ????
+      3  10000 ????		00 fe	    _FE        =	$FE
+      4  10000 ????
+      5  10000 ????		00 fc	    _FC        =	$FC
+      6  10000 ????
+      7  10000 ????		00 fa	    _FA        =	$FA
+      8  10000 ????
+      9  10000 ????		00 f8	    _F8        =	$F8
+     10  10000 ????
+     11  10000 ????		00 f6	    _F6        =	$F6
+     12  10000 ????
+     13  10000 ????		00 f4	    _F4        =	$F4
+     14  10000 ????
+     15  10000 ????		00 f2	    _F2        =	$F2
+     16  10000 ????
+     17  10000 ????		00 f0	    _F0        =	$F0
+     18  10000 ????
+     19  10000 ????		00 ee	    _EE        =	$EE
+     20  10000 ????
+     21  10000 ????		00 ec	    _EC        =	$EC
+     22  10000 ????
+     23  10000 ????		00 ea	    _EA        =	$EA
+     24  10000 ????
+     25  10000 ????		00 e8	    _E8        =	$E8
+     26  10000 ????
+     27  10000 ????		00 e6	    _E6        =	$E6
+     28  10000 ????
+     29  10000 ????		00 e4	    _E4        =	$E4
+     30  10000 ????
+     31  10000 ????		00 e2	    _E2        =	$E2
+     32  10000 ????
+     33  10000 ????		00 e0	    _E0        =	$E0
+     34  10000 ????
+     35  10000 ????		00 de	    _DE        =	$DE
+     36  10000 ????
+     37  10000 ????		00 dc	    _DC        =	$DC
+     38  10000 ????
+     39  10000 ????		00 da	    _DA        =	$DA
+     40  10000 ????
+     41  10000 ????		00 d8	    _D8        =	$D8
+     42  10000 ????
+     43  10000 ????		00 d6	    _D6        =	$D6
+     44  10000 ????
+     45  10000 ????		00 d4	    _D4        =	$D4
+     46  10000 ????
+     47  10000 ????		00 d2	    _D2        =	$D2
+     48  10000 ????
+     49  10000 ????		00 d0	    _D0        =	$D0
+     50  10000 ????
+     51  10000 ????		00 ce	    _CE        =	$CE
+     52  10000 ????
+     53  10000 ????		00 cc	    _CC        =	$CC
+     54  10000 ????
+     55  10000 ????		00 ca	    _CA        =	$CA
+     56  10000 ????
+     57  10000 ????		00 c8	    _C8        =	$C8
+     58  10000 ????
+     59  10000 ????		00 c6	    _C6        =	$C6
+     60  10000 ????
+     61  10000 ????		00 c4	    _C4        =	$C4
+     62  10000 ????
+     63  10000 ????		00 c2	    _C2        =	$C2
+     64  10000 ????
+     65  10000 ????		00 c0	    _C0        =	$C0
+     66  10000 ????
+     67  10000 ????		00 be	    _BE        =	$BE
+     68  10000 ????
+     69  10000 ????		00 bc	    _BC        =	$BC
+     70  10000 ????
+     71  10000 ????		00 ba	    _BA        =	$BA
+     72  10000 ????
+     73  10000 ????		00 b8	    _B8        =	$B8
+     74  10000 ????
+     75  10000 ????		00 b6	    _B6        =	$B6
+     76  10000 ????
+     77  10000 ????		00 b4	    _B4        =	$B4
+     78  10000 ????
+     79  10000 ????		00 b2	    _B2        =	$B2
+     80  10000 ????
+     81  10000 ????		00 b0	    _B0        =	$B0
+     82  10000 ????
+     83  10000 ????		00 ae	    _AE        =	$AE
+     84  10000 ????
+     85  10000 ????		00 ac	    _AC        =	$AC
+     86  10000 ????
+     87  10000 ????		00 aa	    _AA        =	$AA
+     88  10000 ????
+     89  10000 ????		00 a8	    _A8        =	$A8
+     90  10000 ????
+     91  10000 ????		00 a6	    _A6        =	$A6
+     92  10000 ????
+     93  10000 ????		00 a4	    _A4        =	$A4
+     94  10000 ????
+     95  10000 ????		00 a2	    _A2        =	$A2
+     96  10000 ????
+     97  10000 ????		00 a0	    _A0        =	$A0
+     98  10000 ????
+     99  10000 ????		00 9e	    _9E        =	$9E
+    100  10000 ????
+    101  10000 ????		00 9c	    _9C        =	$9C
+    102  10000 ????
+    103  10000 ????		00 9a	    _9A        =	$9A
+    104  10000 ????
+    105  10000 ????		00 98	    _98        =	$98
+    106  10000 ????
+    107  10000 ????		00 96	    _96        =	$96
+    108  10000 ????
+    109  10000 ????		00 94	    _94        =	$94
+    110  10000 ????
+    111  10000 ????		00 92	    _92        =	$92
+    112  10000 ????
+    113  10000 ????		00 90	    _90        =	$90
+    114  10000 ????
+    115  10000 ????		00 8e	    _8E        =	$8E
+    116  10000 ????
+    117  10000 ????		00 8c	    _8C        =	$8C
+    118  10000 ????
+    119  10000 ????		00 8a	    _8A        =	$8A
+    120  10000 ????
+    121  10000 ????		00 88	    _88        =	$88
+    122  10000 ????
+    123  10000 ????		00 86	    _86        =	$86
+    124  10000 ????
+    125  10000 ????		00 84	    _84        =	$84
+    126  10000 ????
+    127  10000 ????		00 82	    _82        =	$82
+    128  10000 ????
+    129  10000 ????		00 80	    _80        =	$80
+    130  10000 ????
+    131  10000 ????		00 7e	    _7E        =	$7E
+    132  10000 ????
+    133  10000 ????		00 7c	    _7C        =	$7C
+    134  10000 ????
+    135  10000 ????		00 7a	    _7A        =	$7A
+    136  10000 ????
+    137  10000 ????		00 78	    _78        =	$78
+    138  10000 ????
+    139  10000 ????		00 76	    _76        =	$76
+    140  10000 ????
+    141  10000 ????		00 74	    _74        =	$74
+    142  10000 ????
+    143  10000 ????		00 72	    _72        =	$72
+    144  10000 ????
+    145  10000 ????		00 70	    _70        =	$70
+    146  10000 ????
+    147  10000 ????		00 6e	    _6E        =	$6E
+    148  10000 ????
+    149  10000 ????		00 6c	    _6C        =	$6C
+    150  10000 ????
+    151  10000 ????		00 6a	    _6A        =	$6A
+    152  10000 ????
+    153  10000 ????		00 68	    _68        =	$68
+    154  10000 ????
+    155  10000 ????		00 66	    _66        =	$66
+    156  10000 ????
+    157  10000 ????		00 64	    _64        =	$64
+    158  10000 ????
+    159  10000 ????		00 62	    _62        =	$62
+    160  10000 ????
+    161  10000 ????		00 60	    _60        =	$60
+    162  10000 ????
+    163  10000 ????		00 5e	    _5E        =	$5E
+    164  10000 ????
+    165  10000 ????		00 5c	    _5C        =	$5C
+    166  10000 ????
+    167  10000 ????		00 5a	    _5A        =	$5A
+    168  10000 ????
+    169  10000 ????		00 58	    _58        =	$58
+    170  10000 ????
+    171  10000 ????		00 56	    _56        =	$56
+    172  10000 ????
+    173  10000 ????		00 54	    _54        =	$54
+    174  10000 ????
+    175  10000 ????		00 52	    _52        =	$52
+    176  10000 ????
+    177  10000 ????		00 50	    _50        =	$50
+    178  10000 ????
+    179  10000 ????		00 4e	    _4E        =	$4E
+    180  10000 ????
+    181  10000 ????		00 4c	    _4C        =	$4C
+    182  10000 ????
+    183  10000 ????		00 4a	    _4A        =	$4A
+    184  10000 ????
+    185  10000 ????		00 48	    _48        =	$48
+    186  10000 ????
+    187  10000 ????		00 46	    _46        =	$46
+    188  10000 ????
+    189  10000 ????		00 44	    _44        =	$44
+    190  10000 ????
+    191  10000 ????		00 42	    _42        =	$42
+    192  10000 ????
+    193  10000 ????		00 40	    _40        =	$40
+    194  10000 ????
+    195  10000 ????		00 3e	    _3E        =	$3E
+    196  10000 ????
+    197  10000 ????		00 3c	    _3C        =	$3C
+    198  10000 ????
+    199  10000 ????		00 3a	    _3A        =	$3A
+    200  10000 ????
+    201  10000 ????		00 38	    _38        =	$38
+    202  10000 ????
+    203  10000 ????		00 36	    _36        =	$36
+    204  10000 ????
+    205  10000 ????		00 34	    _34        =	$34
+    206  10000 ????
+    207  10000 ????		00 32	    _32        =	$32
+    208  10000 ????
+    209  10000 ????		00 30	    _30        =	$30
+    210  10000 ????
+    211  10000 ????		00 2e	    _2E        =	$2E
+    212  10000 ????
+    213  10000 ????		00 2c	    _2C        =	$2C
+    214  10000 ????
+    215  10000 ????		00 2a	    _2A        =	$2A
+    216  10000 ????
+    217  10000 ????		00 28	    _28        =	$28
+    218  10000 ????
+    219  10000 ????		00 26	    _26        =	$26
+    220  10000 ????
+    221  10000 ????		00 24	    _24        =	$24
+    222  10000 ????
+    223  10000 ????		00 22	    _22        =	$22
+    224  10000 ????
+    225  10000 ????		00 20	    _20        =	$20
+    226  10000 ????
+    227  10000 ????		00 1e	    _1E        =	$1E
+    228  10000 ????
+    229  10000 ????		00 1c	    _1C        =	$1C
+    230  10000 ????
+    231  10000 ????		00 1a	    _1A        =	$1A
+    232  10000 ????
+    233  10000 ????		00 18	    _18        =	$18
+    234  10000 ????
+    235  10000 ????		00 16	    _16        =	$16
+    236  10000 ????
+    237  10000 ????		00 14	    _14        =	$14
+    238  10000 ????
+    239  10000 ????		00 12	    _12        =	$12
+    240  10000 ????
+    241  10000 ????		00 10	    _10        =	$10
+    242  10000 ????
+    243  10000 ????		00 0e	    _0E        =	$0E
+    244  10000 ????
+    245  10000 ????		00 0c	    _0C        =	$0C
+    246  10000 ????
+    247  10000 ????		00 0a	    _0A        =	$0A
+    248  10000 ????
+    249  10000 ????		00 08	    _08        =	$08
+    250  10000 ????
+    251  10000 ????		00 06	    _06        =	$06
+    252  10000 ????
+    253  10000 ????		00 04	    _04        =	$04
+    254  10000 ????
+    255  10000 ????		00 02	    _02        =	$02
+    256  10000 ????
+    257  10000 ????		00 00	    _00        =	$00
+    258  10000 ????
+    259  10000 ????		00 2b	    vblank_time =	43
+    260  10000 ????		00 25	    overscan_time =	37
+    261  10000 ????		00 01	    PFcolors   =	1
+------- FILE 2600basic.h
+      7  10000 ????
+      8  10000 ????		00 80	    player0x   =	$80
+      9  10000 ????		00 81	    player1x   =	$81
+     10  10000 ????		00 82	    missile0x  =	$82
+     11  10000 ????		00 83	    missile1x  =	$83
+     12  10000 ????		00 84	    ballx      =	$84
+     13  10000 ????
+     14  10000 ????		00 85	    objecty    =	$85
+     15  10000 ????		00 85	    player0y   =	$85
+     16  10000 ????		00 86	    player1y   =	$86
+     17  10000 ????		00 87	    missile1height =	$87
+     18  10000 ????		00 88	    missile1y  =	$88
+     19  10000 ????		00 89	    bally      =	$89
+     20  10000 ????
+     21  10000 ????		00 87	    player1color =	$87	; replaces missile 1
+     22  10000 ????
+     23  10000 ????		00 8a	    player0pointer =	$8A	;uses $8A-$8B
+     24  10000 ????		00 8a	    player0pointerlo =	$8A
+     25  10000 ????		00 8b	    player0pointerhi =	$8B
+     26  10000 ????		00 8c	    player1pointer =	$8C	; $8C-$8D
+     27  10000 ????		00 8c	    player1pointerlo =	$8C
+     28  10000 ????		00 8d	    player1pointerhi =	$8D
+     29  10000 ????
+     30  10000 ????		00 8e	    player0height =	$8E
+     31  10000 ????		00 8f	    player1height =	$8F
+     32  10000 ????		00 90	    missile0height =	$90
+     33  10000 ????		00 91	    missile0y  =	$91
+     34  10000 ????		00 92	    ballheight =	$92
+     35  10000 ????
+     36  10000 ????		00 90	    currentpaddle =	$90	; replaces missile 0 (and can't be used with playercolor)
+     37  10000 ????		00 91	    paddle     =	$91	; replaces missile 0
+     38  10000 ????		00 82	    player0colorstore =	$82	; replaces missile 0
+     39  10000 ????		00 90	    player0color =	$90	; replaces missile 0
+     40  10000 ????
+     41  10000 ????		00 93	    score      =	$93	; $93-$95
+     42  10000 ????		00 96	    scorepointers =	$96	; $96-$9B = 6 bytes
+     43  10000 ????		00 9c	    temp1      =	$9C	;used by kernel.  can be used in program too, but
+     44  10000 ????		00 9d	    temp2      =	$9D	;are obliterated when drawscreen is called.
+     45  10000 ????		00 9e	    temp3      =	$9E
+     46  10000 ????		00 9f	    temp4      =	$9F
+     47  10000 ????		00 a0	    temp5      =	$A0
+     48  10000 ????		00 a1	    temp6      =	$A1
+     49  10000 ????
+     50  10000 ????		00 a2	    rand       =	$A2
+     51  10000 ????		00 a3	    scorecolor =	$A3
+     52  10000 ????
+     53  10000 ????		00 a4	    var0       =	$A4
+     54  10000 ????		00 a5	    var1       =	$A5
+     55  10000 ????		00 a6	    var2       =	$A6
+     56  10000 ????		00 a7	    var3       =	$A7
+     57  10000 ????		00 a8	    var4       =	$A8
+     58  10000 ????		00 a9	    var5       =	$A9
+     59  10000 ????		00 aa	    var6       =	$AA
+     60  10000 ????		00 ab	    var7       =	$AB
+     61  10000 ????		00 ac	    var8       =	$AC
+     62  10000 ????		00 ad	    var9       =	$AD
+     63  10000 ????		00 ae	    var10      =	$AE
+     64  10000 ????		00 af	    var11      =	$AF
+     65  10000 ????		00 b0	    var12      =	$B0
+     66  10000 ????		00 b1	    var13      =	$B1
+     67  10000 ????		00 b2	    var14      =	$B2
+     68  10000 ????		00 b3	    var15      =	$B3
+     69  10000 ????		00 b4	    var16      =	$B4
+     70  10000 ????		00 b5	    var17      =	$B5
+     71  10000 ????		00 b6	    var18      =	$B6
+     72  10000 ????		00 b7	    var19      =	$B7
+     73  10000 ????		00 b8	    var20      =	$B8
+     74  10000 ????		00 b9	    var21      =	$B9
+     75  10000 ????		00 ba	    var22      =	$BA
+     76  10000 ????		00 bb	    var23      =	$BB
+     77  10000 ????		00 bc	    var24      =	$BC
+     78  10000 ????		00 bd	    var25      =	$BD
+     79  10000 ????		00 be	    var26      =	$BE
+     80  10000 ????		00 bf	    var27      =	$BF
+     81  10000 ????		00 c0	    var28      =	$C0
+     82  10000 ????		00 c1	    var29      =	$C1
+     83  10000 ????		00 c2	    var30      =	$C2
+     84  10000 ????		00 c3	    var31      =	$C3
+     85  10000 ????		00 c4	    var32      =	$C4
+     86  10000 ????		00 c5	    var33      =	$C5
+     87  10000 ????		00 c6	    var34      =	$C6
+     88  10000 ????		00 c7	    var35      =	$C7
+     89  10000 ????		00 c8	    var36      =	$C8
+     90  10000 ????		00 c9	    var37      =	$C9
+     91  10000 ????		00 ca	    var38      =	$CA
+     92  10000 ????		00 cb	    var39      =	$CB
+     93  10000 ????		00 cc	    var40      =	$CC
+     94  10000 ????		00 cd	    var41      =	$CD
+     95  10000 ????		00 ce	    var42      =	$CE
+     96  10000 ????		00 cf	    var43      =	$CF
+     97  10000 ????		00 d0	    var44      =	$D0
+     98  10000 ????		00 d1	    var45      =	$D1
+     99  10000 ????		00 d2	    var46      =	$D2
+    100  10000 ????		00 d3	    var47      =	$D3
+    101  10000 ????
+    102  10000 ????		00 d4	    A	       =	$d4
+    103  10000 ????		00 d4	    a	       =	$d4
+    104  10000 ????		00 d5	    B	       =	$d5
+    105  10000 ????		00 d5	    b	       =	$d5
+    106  10000 ????		00 d6	    C	       =	$d6
+    107  10000 ????		00 d6	    c	       =	$d6
+    108  10000 ????		00 d7	    D	       =	$d7
+    109  10000 ????		00 d7	    d	       =	$d7
+    110  10000 ????		00 d8	    E	       =	$d8
+    111  10000 ????		00 d8	    e	       =	$d8
+    112  10000 ????		00 d9	    F	       =	$d9
+    113  10000 ????		00 d9	    f	       =	$d9
+    114  10000 ????		00 da	    G	       =	$da
+    115  10000 ????		00 da	    g	       =	$da
+    116  10000 ????		00 db	    H	       =	$db
+    117  10000 ????		00 db	    h	       =	$db
+    118  10000 ????		00 dc	    I	       =	$dc
+    119  10000 ????		00 dc	    i	       =	$dc
+    120  10000 ????		00 dd	    J	       =	$dd
+    121  10000 ????		00 dd	    j	       =	$dd
+    122  10000 ????		00 de	    K	       =	$de
+    123  10000 ????		00 de	    k	       =	$de
+    124  10000 ????		00 df	    L	       =	$df
+    125  10000 ????		00 df	    l	       =	$df
+    126  10000 ????		00 e0	    M	       =	$e0
+    127  10000 ????		00 e0	    m	       =	$e0
+    128  10000 ????		00 e1	    N	       =	$e1
+    129  10000 ????		00 e1	    n	       =	$e1
+    130  10000 ????		00 e2	    O	       =	$e2
+    131  10000 ????		00 e2	    o	       =	$e2
+    132  10000 ????		00 e3	    P	       =	$e3
+    133  10000 ????		00 e3	    p	       =	$e3
+    134  10000 ????		00 e4	    Q	       =	$e4
+    135  10000 ????		00 e4	    q	       =	$e4
+    136  10000 ????		00 e5	    R	       =	$e5
+    137  10000 ????		00 e5	    r	       =	$e5
+    138  10000 ????		00 e6	    S	       =	$e6
+    139  10000 ????		00 e6	    s	       =	$e6
+    140  10000 ????		00 e7	    T	       =	$e7
+    141  10000 ????		00 e7	    t	       =	$e7
+    142  10000 ????		00 e8	    U	       =	$e8
+    143  10000 ????		00 e8	    u	       =	$e8
+    144  10000 ????		00 e9	    V	       =	$e9
+    145  10000 ????		00 e9	    v	       =	$e9
+    146  10000 ????		00 ea	    W	       =	$ea
+    147  10000 ????		00 ea	    w	       =	$ea
+    148  10000 ????		00 eb	    X	       =	$eb
+    149  10000 ????		00 eb	    x	       =	$eb
+    150  10000 ????		00 ec	    Y	       =	$ec
+    151  10000 ????		00 ec	    y	       =	$ec
+    152  10000 ????		00 ed	    Z	       =	$ed
+    153  10000 ????		00 ed	    z	       =	$ed
+    154  10000 ????
+    155  10000 ????		00 ee	    temp7      =	$ee	; This is used to aid in bankswitching
+    156  10000 ????		00 ef	    playfieldpos =	$ef
+    157  10000 ????
+    158  10000 ????						; available for other uses, or if unused, provide more stack space
+    159  10000 ????
+    160  10000 ????		00 f0	    aux1       =	$f0
+    161  10000 ????		00 f1	    aux2       =	$f1
+    162  10000 ????		00 f2	    aux3       =	$f2
+    163  10000 ????		00 f3	    aux4       =	$f3
+    164  10000 ????		00 f4	    aux5       =	$f4
+    165  10000 ????		00 f5	    aux6       =	$f5
+    166  10000 ????
+    167  10000 ????						; playfield color/height pointers
+    168  10000 ????		00 f0	    pfcolortable =	$f0	; and $d5
+    169  10000 ????		00 f0	    pfheighttable =	$f0	; and $d5
+    170  10000 ????						; the above pointers are the same because if color and height are both used together,
+    171  10000 ????						; they must used absolute indexed and cannot use pointers
+    172  10000 ????
+    173  10000 ????		00 f2	    lifepointer =	$f2	; pointer to "lives" shape
+    174  10000 ????						; upper 3 bits of $f2 contain the number of lives
+    175  10000 ????		00 f4	    lifecolor  =	$f4
+    176  10000 ????		00 f3	    lives      =	$f3	; # lives >> 5
+    177  10000 ????		00 f5	    statusbarlength =	$f5	; only uses upper 5 bits; other bits free
+    178  10000 ????
+    179  10000 ????		00 f2	    pfscore1   =	$f2	; optional playfield bytes in score
+    180  10000 ????		00 f3	    pfscore2   =	$f3
+    181  10000 ????		00 f4	    pfscorecolor =	$f4
+    182  10000 ????
+    183  10000 ????		00 f6	    stack1     =	$f6
+    184  10000 ????		00 f7	    stack2     =	$f7
+    185  10000 ????		00 f8	    stack3     =	$f8
+    186  10000 ????		00 f9	    stack4     =	$f9
+    187  10000 ????						; the stack bytes above may be used in the kernel
+    188  10000 ????						; stack = F6-F7, F8-F9, FA-FB, FC-FD, FE-FF
+    189  10000 ????
+    190  10000 ????				       MAC	return
+    191  10000 ????				       ifnconst	bankswitch
+    192  10000 ????				       rts
+    193  10000 ????				       else
+    194  10000 ????				       jmp	BS_return
+    195  10000 ????				       endif
+    196  10000 ????				       ENDM		; auto-return from either a regular or bankswitched module
+    197  10000 ????
+    198  10000 ????			   -	       ifconst	superchip
+    199  10000 ????			   -playfieldbase =	$10D0
+    200  10000 ????			   -	       include	superchip.h
+    201  10000 ????				       else
+    202  10000 ????		00 a4	    playfieldbase =	$A4
+    203  10000 ????				       endif
+    204  10000 ????
+    205  10000 ????				       ifnconst	pfhalfwidth
+    206  10000 ????		00 04	    pfwidth    =	4
+    207  10000 ????		00 0e	    PF1L       =	PF1
+    208  10000 ????		00 0f	    PF2L       =	PF2
+    209  10000 ????		00 0e	    PF1R       =	PF1
+    210  10000 ????		00 0f	    PF2R       =	PF2
+    211  10000 ????		00 00	    pfadjust   =	0
+    212  10000 ????			   -	       else
+    213  10000 ????			   -pfwidth    =	2
+    214  10000 ????			   -	       ifconst	pfcenter
+    215  10000 ????			   -PF1L       =	$3F	; no effect
+    216  10000 ????			   -PF2L       =	PF2
+    217  10000 ????			   -PF1R       =	$3F
+    218  10000 ????			   -PF2R       =	PF2	; no effect
+    219  10000 ????			   -pfadjust   =	1
+    220  10000 ????			   -	       else
+    221  10000 ????			   -PF1L       =	PF1
+    222  10000 ????			   -PF2L       =	PF2
+    223  10000 ????			   -PF1R       =	$3F	; no effect
+    224  10000 ????			   -PF2R       =	$3F	; no effect
+    225  10000 ????			   -pfadjust   =	0
+    226  10000 ????			   -	       endif
+    227  10000 ????				       endif
+    228  10000 ????
+    229  10000 ????						; define playfield start based on height
+    230  10000 ????				       ifnconst	pfres
+    231  10000 ????		00 a4	    playfield  =	playfieldbase
+    232  10000 ????			   -	       else
+    233  10000 ????			   -playfield  =	playfieldbase-(pfres-12*(4/pfwidth))*pfwidth
+    234  10000 ????				       endif
+------- FILE e:\Documents\bB\batariBasicGames\demos\3dmap.bas.asm
+------- FILE 2600basic_variable_redefs.h LEVEL 2 PASS 2
+      0  10000 ????				       include	"2600basic_variable_redefs.h"
+      1  10000 ????						; This file contains variable mapping and other information for the current project.
+      2  10000 ????
+      3  10000 ????		00 fe	    _FE        =	$FE
+      4  10000 ????
+      5  10000 ????		00 fc	    _FC        =	$FC
+      6  10000 ????
+      7  10000 ????		00 fa	    _FA        =	$FA
+      8  10000 ????
+      9  10000 ????		00 f8	    _F8        =	$F8
+     10  10000 ????
+     11  10000 ????		00 f6	    _F6        =	$F6
+     12  10000 ????
+     13  10000 ????		00 f4	    _F4        =	$F4
+     14  10000 ????
+     15  10000 ????		00 f2	    _F2        =	$F2
+     16  10000 ????
+     17  10000 ????		00 f0	    _F0        =	$F0
+     18  10000 ????
+     19  10000 ????		00 ee	    _EE        =	$EE
+     20  10000 ????
+     21  10000 ????		00 ec	    _EC        =	$EC
+     22  10000 ????
+     23  10000 ????		00 ea	    _EA        =	$EA
+     24  10000 ????
+     25  10000 ????		00 e8	    _E8        =	$E8
+     26  10000 ????
+     27  10000 ????		00 e6	    _E6        =	$E6
+     28  10000 ????
+     29  10000 ????		00 e4	    _E4        =	$E4
+     30  10000 ????
+     31  10000 ????		00 e2	    _E2        =	$E2
+     32  10000 ????
+     33  10000 ????		00 e0	    _E0        =	$E0
+     34  10000 ????
+     35  10000 ????		00 de	    _DE        =	$DE
+     36  10000 ????
+     37  10000 ????		00 dc	    _DC        =	$DC
+     38  10000 ????
+     39  10000 ????		00 da	    _DA        =	$DA
+     40  10000 ????
+     41  10000 ????		00 d8	    _D8        =	$D8
+     42  10000 ????
+     43  10000 ????		00 d6	    _D6        =	$D6
+     44  10000 ????
+     45  10000 ????		00 d4	    _D4        =	$D4
+     46  10000 ????
+     47  10000 ????		00 d2	    _D2        =	$D2
+     48  10000 ????
+     49  10000 ????		00 d0	    _D0        =	$D0
+     50  10000 ????
+     51  10000 ????		00 ce	    _CE        =	$CE
+     52  10000 ????
+     53  10000 ????		00 cc	    _CC        =	$CC
+     54  10000 ????
+     55  10000 ????		00 ca	    _CA        =	$CA
+     56  10000 ????
+     57  10000 ????		00 c8	    _C8        =	$C8
+     58  10000 ????
+     59  10000 ????		00 c6	    _C6        =	$C6
+     60  10000 ????
+     61  10000 ????		00 c4	    _C4        =	$C4
+     62  10000 ????
+     63  10000 ????		00 c2	    _C2        =	$C2
+     64  10000 ????
+     65  10000 ????		00 c0	    _C0        =	$C0
+     66  10000 ????
+     67  10000 ????		00 be	    _BE        =	$BE
+     68  10000 ????
+     69  10000 ????		00 bc	    _BC        =	$BC
+     70  10000 ????
+     71  10000 ????		00 ba	    _BA        =	$BA
+     72  10000 ????
+     73  10000 ????		00 b8	    _B8        =	$B8
+     74  10000 ????
+     75  10000 ????		00 b6	    _B6        =	$B6
+     76  10000 ????
+     77  10000 ????		00 b4	    _B4        =	$B4
+     78  10000 ????
+     79  10000 ????		00 b2	    _B2        =	$B2
+     80  10000 ????
+     81  10000 ????		00 b0	    _B0        =	$B0
+     82  10000 ????
+     83  10000 ????		00 ae	    _AE        =	$AE
+     84  10000 ????
+     85  10000 ????		00 ac	    _AC        =	$AC
+     86  10000 ????
+     87  10000 ????		00 aa	    _AA        =	$AA
+     88  10000 ????
+     89  10000 ????		00 a8	    _A8        =	$A8
+     90  10000 ????
+     91  10000 ????		00 a6	    _A6        =	$A6
+     92  10000 ????
+     93  10000 ????		00 a4	    _A4        =	$A4
+     94  10000 ????
+     95  10000 ????		00 a2	    _A2        =	$A2
+     96  10000 ????
+     97  10000 ????		00 a0	    _A0        =	$A0
+     98  10000 ????
+     99  10000 ????		00 9e	    _9E        =	$9E
+    100  10000 ????
+    101  10000 ????		00 9c	    _9C        =	$9C
+    102  10000 ????
+    103  10000 ????		00 9a	    _9A        =	$9A
+    104  10000 ????
+    105  10000 ????		00 98	    _98        =	$98
+    106  10000 ????
+    107  10000 ????		00 96	    _96        =	$96
+    108  10000 ????
+    109  10000 ????		00 94	    _94        =	$94
+    110  10000 ????
+    111  10000 ????		00 92	    _92        =	$92
+    112  10000 ????
+    113  10000 ????		00 90	    _90        =	$90
+    114  10000 ????
+    115  10000 ????		00 8e	    _8E        =	$8E
+    116  10000 ????
+    117  10000 ????		00 8c	    _8C        =	$8C
+    118  10000 ????
+    119  10000 ????		00 8a	    _8A        =	$8A
+    120  10000 ????
+    121  10000 ????		00 88	    _88        =	$88
+    122  10000 ????
+    123  10000 ????		00 86	    _86        =	$86
+    124  10000 ????
+    125  10000 ????		00 84	    _84        =	$84
+    126  10000 ????
+    127  10000 ????		00 82	    _82        =	$82
+    128  10000 ????
+    129  10000 ????		00 80	    _80        =	$80
+    130  10000 ????
+    131  10000 ????		00 7e	    _7E        =	$7E
+    132  10000 ????
+    133  10000 ????		00 7c	    _7C        =	$7C
+    134  10000 ????
+    135  10000 ????		00 7a	    _7A        =	$7A
+    136  10000 ????
+    137  10000 ????		00 78	    _78        =	$78
+    138  10000 ????
+    139  10000 ????		00 76	    _76        =	$76
+    140  10000 ????
+    141  10000 ????		00 74	    _74        =	$74
+    142  10000 ????
+    143  10000 ????		00 72	    _72        =	$72
+    144  10000 ????
+    145  10000 ????		00 70	    _70        =	$70
+    146  10000 ????
+    147  10000 ????		00 6e	    _6E        =	$6E
+    148  10000 ????
+    149  10000 ????		00 6c	    _6C        =	$6C
+    150  10000 ????
+    151  10000 ????		00 6a	    _6A        =	$6A
+    152  10000 ????
+    153  10000 ????		00 68	    _68        =	$68
+    154  10000 ????
+    155  10000 ????		00 66	    _66        =	$66
+    156  10000 ????
+    157  10000 ????		00 64	    _64        =	$64
+    158  10000 ????
+    159  10000 ????		00 62	    _62        =	$62
+    160  10000 ????
+    161  10000 ????		00 60	    _60        =	$60
+    162  10000 ????
+    163  10000 ????		00 5e	    _5E        =	$5E
+    164  10000 ????
+    165  10000 ????		00 5c	    _5C        =	$5C
+    166  10000 ????
+    167  10000 ????		00 5a	    _5A        =	$5A
+    168  10000 ????
+    169  10000 ????		00 58	    _58        =	$58
+    170  10000 ????
+    171  10000 ????		00 56	    _56        =	$56
+    172  10000 ????
+    173  10000 ????		00 54	    _54        =	$54
+    174  10000 ????
+    175  10000 ????		00 52	    _52        =	$52
+    176  10000 ????
+    177  10000 ????		00 50	    _50        =	$50
+    178  10000 ????
+    179  10000 ????		00 4e	    _4E        =	$4E
+    180  10000 ????
+    181  10000 ????		00 4c	    _4C        =	$4C
+    182  10000 ????
+    183  10000 ????		00 4a	    _4A        =	$4A
+    184  10000 ????
+    185  10000 ????		00 48	    _48        =	$48
+    186  10000 ????
+    187  10000 ????		00 46	    _46        =	$46
+    188  10000 ????
+    189  10000 ????		00 44	    _44        =	$44
+    190  10000 ????
+    191  10000 ????		00 42	    _42        =	$42
+    192  10000 ????
+    193  10000 ????		00 40	    _40        =	$40
+    194  10000 ????
+    195  10000 ????		00 3e	    _3E        =	$3E
+    196  10000 ????
+    197  10000 ????		00 3c	    _3C        =	$3C
+    198  10000 ????
+    199  10000 ????		00 3a	    _3A        =	$3A
+    200  10000 ????
+    201  10000 ????		00 38	    _38        =	$38
+    202  10000 ????
+    203  10000 ????		00 36	    _36        =	$36
+    204  10000 ????
+    205  10000 ????		00 34	    _34        =	$34
+    206  10000 ????
+    207  10000 ????		00 32	    _32        =	$32
+    208  10000 ????
+    209  10000 ????		00 30	    _30        =	$30
+    210  10000 ????
+    211  10000 ????		00 2e	    _2E        =	$2E
+    212  10000 ????
+    213  10000 ????		00 2c	    _2C        =	$2C
+    214  10000 ????
+    215  10000 ????		00 2a	    _2A        =	$2A
+    216  10000 ????
+    217  10000 ????		00 28	    _28        =	$28
+    218  10000 ????
+    219  10000 ????		00 26	    _26        =	$26
+    220  10000 ????
+    221  10000 ????		00 24	    _24        =	$24
+    222  10000 ????
+    223  10000 ????		00 22	    _22        =	$22
+    224  10000 ????
+    225  10000 ????		00 20	    _20        =	$20
+    226  10000 ????
+    227  10000 ????		00 1e	    _1E        =	$1E
+    228  10000 ????
+    229  10000 ????		00 1c	    _1C        =	$1C
+    230  10000 ????
+    231  10000 ????		00 1a	    _1A        =	$1A
+    232  10000 ????
+    233  10000 ????		00 18	    _18        =	$18
+    234  10000 ????
+    235  10000 ????		00 16	    _16        =	$16
+    236  10000 ????
+    237  10000 ????		00 14	    _14        =	$14
+    238  10000 ????
+    239  10000 ????		00 12	    _12        =	$12
+    240  10000 ????
+    241  10000 ????		00 10	    _10        =	$10
+    242  10000 ????
+    243  10000 ????		00 0e	    _0E        =	$0E
+    244  10000 ????
+    245  10000 ????		00 0c	    _0C        =	$0C
+    246  10000 ????
+    247  10000 ????		00 0a	    _0A        =	$0A
+    248  10000 ????
+    249  10000 ????		00 08	    _08        =	$08
+    250  10000 ????
+    251  10000 ????		00 06	    _06        =	$06
+    252  10000 ????
+    253  10000 ????		00 04	    _04        =	$04
+    254  10000 ????
+    255  10000 ????		00 02	    _02        =	$02
+    256  10000 ????
+    257  10000 ????		00 00	    _00        =	$00
+    258  10000 ????
+    259  10000 ????		00 2b	    vblank_time =	43
+    260  10000 ????		00 25	    overscan_time =	37
+    261  10000 ????		00 01	    PFcolors   =	1
+------- FILE e:\Documents\bB\batariBasicGames\demos\3dmap.bas.asm
+      8  10000 ????			   -	       ifconst	bankswitch
+      9  10000 ????			   -	       if	bankswitch == 8
+     10  10000 ????			   -	       ORG	$1000
+     11  10000 ????			   -	       RORG	$D000
+     12  10000 ????			   -	       endif
+     13  10000 ????			   -	       if	bankswitch == 16
+     14  10000 ????			   -	       ORG	$1000
+     15  10000 ????			   -	       RORG	$9000
+     16  10000 ????			   -	       endif
+     17  10000 ????			   -	       if	bankswitch == 32
+     18  10000 ????			   -	       ORG	$1000
+     19  10000 ????			   -	       RORG	$1000
+     20  10000 ????			   -	       endif
+     21  10000 ????			   -	       if	bankswitch == 64
+     22  10000 ????			   -	       ORG	$1000
+     23  10000 ????			   -	       RORG	$1000
+     24  10000 ????			   -	       endif
+     25  10000 ????				       else
+     26  f000					      ORG	$F000
+     27  f000					      endif
+     28  f000
+     29  f000				  -	      ifconst	bankswitch_hotspot
+     30  f000				  -	      if	bankswitch_hotspot = $083F	; 0840 bankswitching hotspot
+     31  f000				  -	      .byte	0	; stop unexpected bankswitches
+     32  f000				  -	      endif
+     33  f000					      endif
+     34  f000							; Provided under the CC0 license. See the included LICENSE.txt for details.
+     35  f000
+     36  f000				   start
+     37  f000		       78		      sei
+     38  f001		       d8		      cld
+     39  f002		       a0 00		      ldy	#0
+     40  f004		       a5 d0		      lda	$D0
+     41  f006		       c9 2c		      cmp	#$2C	;check RAM location #1
+     42  f008		       d0 07		      bne	MachineIs2600
+     43  f00a		       a5 d1		      lda	$D1
+     44  f00c		       c9 a9		      cmp	#$A9	;check RAM location #2
+     45  f00e		       d0 01		      bne	MachineIs2600
+     46  f010		       88		      dey
+     47  f011				   MachineIs2600
+     48  f011		       a2 00		      ldx	#0
+     49  f013		       8a		      txa
+     50  f014				   clearmem
+     51  f014		       e8		      inx
+     52  f015		       9a		      txs
+     53  f016		       48		      pha
+     54  f017		       d0 fb		      bne	clearmem
+     55  f019		       84 9c		      sty	temp1
+     56  f01b					      ifnconst	multisprite
+     57  f01b				  -	      ifconst	pfrowheight
+     58  f01b				  -	      lda	#pfrowheight
+     59  f01b					      else
+     60  f01b				  -	      ifconst	pfres
+     61  f01b				  -	      lda	#(96/pfres)
+     62  f01b					      else
+     63  f01b		       a9 08		      lda	#8
+     64  f01d					      endif
+     65  f01d					      endif
+     66  f01d		       85 ef		      sta	playfieldpos
+     67  f01f					      endif
+     68  f01f		       a2 05		      ldx	#5
+     69  f021				   initscore
+     70  f021		       a9 9c		      lda	#<scoretable
+     71  f023		       95 96		      sta	scorepointers,x
+     72  f025		       ca		      dex
+     73  f026		       10 f9		      bpl	initscore
+     74  f028		       a9 01		      lda	#1
+     75  f02a		       85 0a		      sta	CTRLPF
+     76  f02c		       0d 84 02 	      ora	INTIM
+     77  f02f		       85 a2		      sta	rand
+     78  f031
+     79  f031				  -	      ifconst	multisprite
+     80  f031				  -	      jsr	multisprite_setup
+     81  f031					      endif
+     82  f031
+     83  f031					      ifnconst	bankswitch
+     84  f031		       4c 5e f4 	      jmp	game
+     85  f034				  -	      else
+     86  f034				  -	      lda	#>(game-1)
+     87  f034				  -	      pha
+     88  f034				  -	      lda	#<(game-1)
+     89  f034				  -	      pha
+     90  f034				  -	      pha
+     91  f034				  -	      pha
+     92  f034				  -	      ldx	#1
+     93  f034				  -	      jmp	BS_jsr
+     94  f034					      endif
+     95  f034							; Provided under the CC0 license. See the included LICENSE.txt for details.
+     96  f034
+     97  f034							; This is a 2-line kernel!
+     98  f034					      ifnconst	vertical_reflect
+     99  f034				   kernel
+    100  f034					      endif
+    101  f034		       85 02		      sta	WSYNC
+    102  f036		       a9 ff		      lda	#255
+    103  f038		       8d 96 02 	      sta	TIM64T
+    104  f03b
+    105  f03b		       a9 01		      lda	#1
+    106  f03d		       85 27		      sta	VDELBL
+    107  f03f		       85 25		      sta	VDELP0
+    108  f041		       a6 92		      ldx	ballheight
+    109  f043		       e8		      inx
+    110  f044		       e8		      inx
+    111  f045		       86 9f		      stx	temp4
+    112  f047		       a5 86		      lda	player1y
+    113  f049		       85 9e		      sta	temp3
+    114  f04b
+    115  f04b				  -	      ifconst	shakescreen
+    116  f04b				  -	      jsr	doshakescreen
+    117  f04b					      else
+    118  f04b		       a6 90		      ldx	missile0height
+    119  f04d		       e8		      inx
+    120  f04e					      endif
+    121  f04e
+    122  f04e		       e8		      inx
+    123  f04f		       86 f6		      stx	stack1
+    124  f051
+    125  f051		       a5 89		      lda	bally
+    126  f053		       85 f7		      sta	stack2
+    127  f055
+    128  f055		       a5 85		      lda	player0y
+    129  f057		       a2 00		      ldx	#0
+    130  f059		       85 02		      sta	WSYNC
+    131  f05b		       86 1b		      stx	GRP0
+    132  f05d		       86 1c		      stx	GRP1
+    133  f05f		       86 0e		      stx	PF1L
+    134  f061		       86 0f		      stx	PF2
+    135  f063		       86 2c		      stx	CXCLR
+    136  f065				  -	      ifconst	readpaddle
+    137  f065				  -	      stx	paddle
+    138  f065					      else
+      0  f065					      sleep	3
+      1  f065				   .CYCLES    SET	3
+      2  f065
+      3  f065				  -	      IF	.CYCLES < 2
+      4  f065				  -	      ECHO	"MACRO ERROR: 'SLEEP': Duration must be > 1"
+      5  f065				  -	      ERR
+      6  f065					      ENDIF
+      7  f065
+      8  f065					      IF	.CYCLES & 1
+      9  f065					      IFNCONST	NO_ILLEGAL_OPCODES
+     10  f065		       04 00		      nop	0
+     11  f067				  -	      ELSE
+     12  f067				  -	      bit	VSYNC
+     13  f067					      ENDIF
+     14  f067				   .CYCLES    SET	.CYCLES - 3
+     15  f067					      ENDIF
+     16  f067
+     17  f067				  -	      REPEAT	.CYCLES / 2
+     18  f067				  -	      nop
+     19  f067					      REPEND
+    140  f067					      endif
+    141  f067
+    142  f067		       95 9d		      sta	temp2,x
+    143  f069
+    144  f069							;store these so they can be retrieved later
+    145  f069					      ifnconst	pfres
+    146  f069		       a2 54		      ldx	#128-44+(4-pfwidth)*12
+    147  f06b				  -	      else
+    148  f06b				  -	      ldx	#132-pfres*pfwidth
+    149  f06b					      endif
+    150  f06b
+    151  f06b		       c6 85		      dec	player0y
+    152  f06d
+    153  f06d		       a5 91		      lda	missile0y
+    154  f06f		       85 a0		      sta	temp5
+    155  f071		       a5 88		      lda	missile1y
+    156  f073		       85 a1		      sta	temp6
+    157  f075
+    158  f075		       a5 ef		      lda	playfieldpos
+    159  f077		       85 9c		      sta	temp1
+    160  f079
+    161  f079				  -	      ifconst	pfrowheight
+    162  f079				  -	      lda	#pfrowheight+2
+    163  f079					      else
+    164  f079					      ifnconst	pfres
+    165  f079		       a9 0a		      lda	#10
+    166  f07b				  -	      else
+    167  f07b				  -	      lda	#(96/pfres)+2	; try to come close to the real size
+    168  f07b					      endif
+    169  f07b					      endif
+    170  f07b		       18		      clc
+    171  f07c		       e5 ef		      sbc	playfieldpos
+    172  f07e		       85 ef		      sta	playfieldpos
+    173  f080		       4c a8 f0 	      jmp	.startkernel
+    174  f083
+    175  f083				   .skipDrawP0
+    176  f083		       a9 00		      lda	#0
+    177  f085		       a8		      tay
+    178  f086		       4c d6 f0 	      jmp	.continueP0
+    179  f089
+    180  f089				   .skipDrawP1
+    181  f089		       a9 00		      lda	#0
+    182  f08b		       a8		      tay
+    183  f08c		       4c b2 f0 	      jmp	.continueP1
+    184  f08f
+    185  f08f				   .kerloop		; enter at cycle 59??
+    186  f08f
+    187  f08f				   continuekernel
+      0  f08f					      sleep	2
+      1  f08f				   .CYCLES    SET	2
+      2  f08f
+      3  f08f				  -	      IF	.CYCLES < 2
+      4  f08f				  -	      ECHO	"MACRO ERROR: 'SLEEP': Duration must be > 1"
+      5  f08f				  -	      ERR
+      6  f08f					      ENDIF
+      7  f08f
+      8  f08f				  -	      IF	.CYCLES & 1
+      9  f08f				  -	      IFNCONST	NO_ILLEGAL_OPCODES
+     10  f08f				  -	      nop	0
+     11  f08f				  -	      ELSE
+     12  f08f				  -	      bit	VSYNC
+     13  f08f				  -	      ENDIF
+     14  f08f				  -.CYCLES    SET	.CYCLES - 3
+     15  f08f					      ENDIF
+     16  f08f
+     17  f08f					      REPEAT	.CYCLES / 2
+     18  f08f		       ea		      nop
+     19  f090					      REPEND
+    189  f090				   continuekernel2
+    190  f090		       a5 92		      lda	ballheight
+    191  f092
+    192  f092				  -	      ifconst	pfres
+    193  f092				  -	      ldy	playfield+pfres*pfwidth-132,x
+    194  f092				  -	      sty	PF1L	;3
+    195  f092				  -	      ldy	playfield+pfres*pfwidth-131-pfadjust,x
+    196  f092				  -	      sty	PF2L	;3
+    197  f092				  -	      ldy	playfield+pfres*pfwidth-129,x
+    198  f092				  -	      sty	PF1R	; 3 too early?
+    199  f092				  -	      ldy	playfield+pfres*pfwidth-130-pfadjust,x
+    200  f092				  -	      sty	PF2R	;3
+    201  f092					      else
+    202  f092		       b4 50		      ldy	playfield-48+pfwidth*12+44-128,x
+    203  f094		       84 0e		      sty	PF1L	;3
+    204  f096		       b4 51		      ldy	playfield-48+pfwidth*12+45-128-pfadjust,x	;4
+    205  f098		       84 0f		      sty	PF2L	;3
+    206  f09a		       b4 53		      ldy	playfield-48+pfwidth*12+47-128,x	;4
+    207  f09c		       84 0e		      sty	PF1R	; 3 too early?
+    208  f09e		       b4 52		      ldy	playfield-48+pfwidth*12+46-128-pfadjust,x	;4
+    209  f0a0		       84 0f		      sty	PF2R	;3
+    210  f0a2					      endif
+    211  f0a2
+    212  f0a2							; should be playfield+$38 for width=2
+    213  f0a2
+    214  f0a2		       c7 89		      dcp	bally
+    215  f0a4		       2a		      rol
+    216  f0a5		       2a		      rol
+    217  f0a6							; rol
+    218  f0a6							; rol
+    219  f0a6				   goback
+    220  f0a6		       85 1f		      sta	ENABL
+    221  f0a8				   .startkernel
+    222  f0a8		       a5 8f		      lda	player1height	;3
+    223  f0aa		       c7 86		      dcp	player1y	;5
+    224  f0ac		       90 db		      bcc	.skipDrawP1	;2
+    225  f0ae		       a4 86		      ldy	player1y	;3
+    226  f0b0		       b1 8c		      lda	(player1pointer),y	;5; player0pointer must be selected carefully by the compiler
+    227  f0b2							; so it doesn't cross a page boundary!
+    228  f0b2
+    229  f0b2				   .continueP1
+    230  f0b2		       85 1c		      sta	GRP1	;3
+    231  f0b4
+    232  f0b4					      ifnconst	player1colors
+    233  f0b4		       a5 87		      lda	missile1height	;3
+    234  f0b6		       c7 88		      dcp	missile1y	;5
+    235  f0b8		       2a		      rol		;2
+    236  f0b9		       2a		      rol		;2
+    237  f0ba		       85 1e		      sta	ENAM1	;3
+    238  f0bc				  -	      else
+    239  f0bc				  -	      lda	(player1color),y
+    240  f0bc				  -	      sta	COLUP1
+    241  f0bc				  -	      ifnconst	playercolors
+    242  f0bc				  -	      sleep	7
+    243  f0bc				  -	      else
+    244  f0bc				  -	      lda.w	player0colorstore
+    245  f0bc				  -	      sta	COLUP0
+    246  f0bc				  -	      endif
+    247  f0bc					      endif
+    248  f0bc
+    249  f0bc				  -	      ifconst	pfres
+    250  f0bc				  -	      lda	playfield+pfres*pfwidth-132,x
+    251  f0bc				  -	      sta	PF1L	;3
+    252  f0bc				  -	      lda	playfield+pfres*pfwidth-131-pfadjust,x
+    253  f0bc				  -	      sta	PF2L	;3
+    254  f0bc				  -	      lda	playfield+pfres*pfwidth-129,x
+    255  f0bc				  -	      sta	PF1R	; 3 too early?
+    256  f0bc				  -	      lda	playfield+pfres*pfwidth-130-pfadjust,x
+    257  f0bc				  -	      sta	PF2R	;3
+    258  f0bc					      else
+    259  f0bc		       b5 50		      lda	playfield-48+pfwidth*12+44-128,x	;4
+    260  f0be		       85 0e		      sta	PF1L	;3
+    261  f0c0		       b5 51		      lda	playfield-48+pfwidth*12+45-128-pfadjust,x	;4
+    262  f0c2		       85 0f		      sta	PF2L	;3
+    263  f0c4		       b5 53		      lda	playfield-48+pfwidth*12+47-128,x	;4
+    264  f0c6		       85 0e		      sta	PF1R	; 3 too early?
+    265  f0c8		       b5 52		      lda	playfield-48+pfwidth*12+46-128-pfadjust,x	;4
+    266  f0ca		       85 0f		      sta	PF2R	;3
+    267  f0cc					      endif
+    268  f0cc							; sleep 3
+    269  f0cc
+    270  f0cc		       a5 8e		      lda	player0height
+    271  f0ce		       c7 85		      dcp	player0y
+    272  f0d0		       90 b1		      bcc	.skipDrawP0
+    273  f0d2		       a4 85		      ldy	player0y
+    274  f0d4		       b1 8a		      lda	(player0pointer),y
+    275  f0d6				   .continueP0
+    276  f0d6		       85 1b		      sta	GRP0
+    277  f0d8
+    278  f0d8					      ifnconst	no_blank_lines
+    279  f0d8					      ifnconst	playercolors
+    280  f0d8		       a5 90		      lda	missile0height	;3
+    281  f0da		       c7 91		      dcp	missile0y	;5
+    282  f0dc		       e5 f6		      sbc	stack1
+    283  f0de		       85 1d		      sta	ENAM0	;3
+    284  f0e0				  -	      else
+    285  f0e0				  -	      lda	(player0color),y
+    286  f0e0				  -	      sta	player0colorstore
+    287  f0e0				  -	      sleep	6
+    288  f0e0					      endif
+    289  f0e0		       c6 9c		      dec	temp1
+    290  f0e2		       d0 ab		      bne	continuekernel
+    291  f0e4				  -	      else
+    292  f0e4				  -	      dec	temp1
+    293  f0e4				  -	      beq	altkernel2
+    294  f0e4				  -	      ifconst	readpaddle
+    295  f0e4				  -	      ldy	currentpaddle
+    296  f0e4				  -	      lda	INPT0,y
+    297  f0e4				  -	      bpl	noreadpaddle
+    298  f0e4				  -	      inc	paddle
+    299  f0e4				  -	      jmp	continuekernel2
+    300  f0e4				  -noreadpaddle
+    301  f0e4				  -	      sleep	2
+    302  f0e4				  -	      jmp	continuekernel
+    303  f0e4				  -	      else
+    304  f0e4				  -	      ifnconst	playercolors
+    305  f0e4				  -	      ifconst	PFcolors
+    306  f0e4				  -	      txa
+    307  f0e4				  -	      tay
+    308  f0e4				  -	      lda	(pfcolortable),y
+    309  f0e4				  -	      ifnconst	backgroundchange
+    310  f0e4				  -	      sta	COLUPF
+    311  f0e4				  -	      else
+    312  f0e4				  -	      sta	COLUBK
+    313  f0e4				  -	      endif
+    314  f0e4				  -	      jmp	continuekernel
+    315  f0e4				  -	      else
+    316  f0e4				  -	      ifconst	kernelmacrodef
+    317  f0e4				  -	      kernelmacro
+    318  f0e4				  -	      else
+    319  f0e4				  -	      sleep	12
+    320  f0e4				  -	      endif
+    321  f0e4				  -	      endif
+    322  f0e4				  -	      else
+    323  f0e4				  -	      lda	(player0color),y
+    324  f0e4				  -	      sta	player0colorstore
+    325  f0e4				  -	      sleep	4
+    326  f0e4				  -	      endif
+    327  f0e4				  -	      jmp	continuekernel
+    328  f0e4				  -	      endif
+    329  f0e4				  -altkernel2
+    330  f0e4				  -	      txa
+    331  f0e4				  -	      ifnconst	vertical_reflect
+    332  f0e4				  -	      sbx	#256-pfwidth
+    333  f0e4				  -	      else
+    334  f0e4				  -	      sbx	#256-pfwidth/2
+    335  f0e4				  -	      endif
+    336  f0e4				  -	      bmi	lastkernelline
+    337  f0e4				  -	      ifconst	pfrowheight
+    338  f0e4				  -	      lda	#pfrowheight
+    339  f0e4				  -	      else
+    340  f0e4				  -	      ifnconst	pfres
+    341  f0e4				  -	      lda	#8
+    342  f0e4				  -	      else
+    343  f0e4				  -	      lda	#(96/pfres)	; try to come close to the real size
+    344  f0e4				  -	      endif
+    345  f0e4				  -	      endif
+    346  f0e4				  -	      sta	temp1
+    347  f0e4				  -	      jmp	continuekernel
+    348  f0e4					      endif
+    349  f0e4
+    350  f0e4				   altkernel
+    351  f0e4
+    352  f0e4				  -	      ifconst	PFmaskvalue
+    353  f0e4				  -	      lda	#PFmaskvalue
+    354  f0e4					      else
+    355  f0e4		       a9 00		      lda	#0
+    356  f0e6					      endif
+    357  f0e6		       85 0e		      sta	PF1L
+    358  f0e8		       85 0f		      sta	PF2
+    359  f0ea
+    360  f0ea
+    361  f0ea							;sleep 3
+    362  f0ea
+    363  f0ea							;28 cycles to fix things
+    364  f0ea							;minus 11=17
+    365  f0ea
+    366  f0ea							; lax temp4
+    367  f0ea							; clc
+    368  f0ea		       8a		      txa
+    369  f0eb					      ifnconst	vertical_reflect
+    370  f0eb		       cb fc		      sbx	#256-pfwidth
+    371  f0ed				  -	      else
+    372  f0ed				  -	      sbx	#256-pfwidth/2
+    373  f0ed					      endif
+    374  f0ed
+    375  f0ed		       30 12		      bmi	lastkernelline
+    376  f0ef
+    377  f0ef				  -	      ifconst	PFcolorandheight
+    378  f0ef				  -	      ifconst	pfres
+    379  f0ef				  -	      ldy	playfieldcolorandheight-131+pfres*pfwidth,x
+    380  f0ef				  -	      else
+    381  f0ef				  -	      ldy	playfieldcolorandheight-87,x
+    382  f0ef				  -	      endif
+    383  f0ef				  -	      ifnconst	backgroundchange
+    384  f0ef				  -	      sty	COLUPF
+    385  f0ef				  -	      else
+    386  f0ef				  -	      sty	COLUBK
+    387  f0ef				  -	      endif
+    388  f0ef				  -	      ifconst	pfres
+    389  f0ef				  -	      lda	playfieldcolorandheight-132+pfres*pfwidth,x
+    390  f0ef				  -	      else
+    391  f0ef				  -	      lda	playfieldcolorandheight-88,x
+    392  f0ef				  -	      endif
+    393  f0ef				  -	      sta.w	temp1
+    394  f0ef					      endif
+    395  f0ef				  -	      ifconst	PFheights
+    396  f0ef				  -	      lsr
+    397  f0ef				  -	      lsr
+    398  f0ef				  -	      tay
+    399  f0ef				  -	      lda	(pfheighttable),y
+    400  f0ef				  -	      sta.w	temp1
+    401  f0ef					      endif
+    402  f0ef					      ifconst	PFcolors
+    403  f0ef		       a8		      tay
+    404  f0f0		       b1 f0		      lda	(pfcolortable),y
+    405  f0f2					      ifnconst	backgroundchange
+    406  f0f2		       85 08		      sta	COLUPF
+    407  f0f4				  -	      else
+    408  f0f4				  -	      sta	COLUBK
+    409  f0f4					      endif
+    410  f0f4				  -	      ifconst	pfrowheight
+    411  f0f4				  -	      lda	#pfrowheight
+    412  f0f4					      else
+    413  f0f4					      ifnconst	pfres
+    414  f0f4		       a9 08		      lda	#8
+    415  f0f6				  -	      else
+    416  f0f6				  -	      lda	#(96/pfres)	; try to come close to the real size
+    417  f0f6					      endif
+    418  f0f6					      endif
+    419  f0f6		       85 9c		      sta	temp1
+    420  f0f8					      endif
+    421  f0f8					      ifnconst	PFcolorandheight
+    422  f0f8				  -	      ifnconst	PFcolors
+    423  f0f8				  -	      ifnconst	PFheights
+    424  f0f8				  -	      ifnconst	no_blank_lines
+    425  f0f8				  -			; read paddle 0
+    426  f0f8				  -			; lo-res paddle read
+    427  f0f8				  -			; bit INPT0
+    428  f0f8				  -			; bmi paddleskipread
+    429  f0f8				  -			; inc paddle0
+    430  f0f8				  -			;donepaddleskip
+    431  f0f8				  -	      sleep	10
+    432  f0f8				  -	      ifconst	pfrowheight
+    433  f0f8				  -	      lda	#pfrowheight
+    434  f0f8				  -	      else
+    435  f0f8				  -	      ifnconst	pfres
+    436  f0f8				  -	      lda	#8
+    437  f0f8				  -	      else
+    438  f0f8				  -	      lda	#(96/pfres)	; try to come close to the real size
+    439  f0f8				  -	      endif
+    440  f0f8				  -	      endif
+    441  f0f8				  -	      sta	temp1
+    442  f0f8				  -	      endif
+    443  f0f8				  -	      endif
+    444  f0f8					      endif
+    445  f0f8					      endif
+    446  f0f8
+    447  f0f8
+    448  f0f8		       a5 92		      lda	ballheight
+    449  f0fa		       c7 89		      dcp	bally
+    450  f0fc		       e5 9f		      sbc	temp4
+    451  f0fe
+    452  f0fe
+    453  f0fe		       4c a6 f0 	      jmp	goback
+    454  f101
+    455  f101
+    456  f101					      ifnconst	no_blank_lines
+    457  f101				   lastkernelline
+    458  f101				  -	      ifnconst	PFcolors
+    459  f101				  -	      sleep	10
+    460  f101					      else
+    461  f101		       a0 7c		      ldy	#124
+    462  f103		       b1 f0		      lda	(pfcolortable),y
+    463  f105		       85 08		      sta	COLUPF
+    464  f107					      endif
+    465  f107
+    466  f107				  -	      ifconst	PFheights
+    467  f107				  -	      ldx	#1
+    468  f107				  -			;sleep 4
+    469  f107				  -	      sleep	3	; this was over 1 cycle
+    470  f107					      else
+    471  f107		       a6 ef		      ldx	playfieldpos
+    472  f109							;sleep 3
+      0  f109					      sleep	2	; this was over 1 cycle
+      1  f109				   .CYCLES    SET	2
+      2  f109
+      3  f109				  -	      IF	.CYCLES < 2
+      4  f109				  -	      ECHO	"MACRO ERROR: 'SLEEP': Duration must be > 1"
+      5  f109				  -	      ERR
+      6  f109					      ENDIF
+      7  f109
+      8  f109				  -	      IF	.CYCLES & 1
+      9  f109				  -	      IFNCONST	NO_ILLEGAL_OPCODES
+     10  f109				  -	      nop	0
+     11  f109				  -	      ELSE
+     12  f109				  -	      bit	VSYNC
+     13  f109				  -	      ENDIF
+     14  f109				  -.CYCLES    SET	.CYCLES - 3
+     15  f109					      ENDIF
+     16  f109
+     17  f109					      REPEAT	.CYCLES / 2
+     18  f109		       ea		      nop
+     19  f10a					      REPEND
+    474  f10a					      endif
+    475  f10a
+    476  f10a		       4c 28 f1 	      jmp	enterlastkernel
+    477  f10d
+    478  f10d				  -	      else
+    479  f10d				  -lastkernelline
+    480  f10d				  -
+    481  f10d				  -	      ifconst	PFheights
+    482  f10d				  -	      ldx	#1
+    483  f10d				  -			;sleep 5
+    484  f10d				  -	      sleep	4	; this was over 1 cycle
+    485  f10d				  -	      else
+    486  f10d				  -	      ldx	playfieldpos
+    487  f10d				  -			;sleep 4
+    488  f10d				  -	      sleep	3	; this was over 1 cycle
+    489  f10d				  -	      endif
+    490  f10d				  -
+    491  f10d				  -	      cpx	#0
+    492  f10d				  -	      bne	.enterfromNBL
+    493  f10d				  -	      jmp	no_blank_lines_bailout
+    494  f10d					      endif
+    495  f10d
+    496  f10d				  -	      if	((<*)>$d5)
+    497  f10d				  -	      align	256
+    498  f10d					      endif
+    499  f10d							; this is a kludge to prevent page wrapping - fix!!!
+    500  f10d
+    501  f10d				   .skipDrawlastP1
+    502  f10d		       a9 00		      lda	#0
+    503  f10f		       a8		      tay		; added so we don't cross a page
+    504  f110		       4c 3a f1 	      jmp	.continuelastP1
+    505  f113
+    506  f113				   .endkerloop		; enter at cycle 59??
+    507  f113
+    508  f113		       ea		      nop
+    509  f114
+    510  f114				   .enterfromNBL
+    511  f114				  -	      ifconst	pfres
+    512  f114				  -	      ldy.w	playfield+pfres*pfwidth-4
+    513  f114				  -	      sty	PF1L	;3
+    514  f114				  -	      ldy.w	playfield+pfres*pfwidth-3-pfadjust
+    515  f114				  -	      sty	PF2L	;3
+    516  f114				  -	      ldy.w	playfield+pfres*pfwidth-1
+    517  f114				  -	      sty	PF1R	; possibly too early?
+    518  f114				  -	      ldy.w	playfield+pfres*pfwidth-2-pfadjust
+    519  f114				  -	      sty	PF2R	;3
+    520  f114					      else
+    521  f114		       ac d0 00 	      ldy.w	playfield-48+pfwidth*12+44
+    522  f117		       84 0e		      sty	PF1L	;3
+    523  f119		       ac d1 00 	      ldy.w	playfield-48+pfwidth*12+45-pfadjust
+    524  f11c		       84 0f		      sty	PF2L	;3
+    525  f11e		       ac d3 00 	      ldy.w	playfield-48+pfwidth*12+47
+    526  f121		       84 0e		      sty	PF1R	; possibly too early?
+    527  f123		       ac d2 00 	      ldy.w	playfield-48+pfwidth*12+46-pfadjust
+    528  f126		       84 0f		      sty	PF2R	;3
+    529  f128					      endif
+    530  f128
+    531  f128				   enterlastkernel
+    532  f128		       a5 92		      lda	ballheight
+    533  f12a
+    534  f12a							; tya
+    535  f12a		       c7 89		      dcp	bally
+    536  f12c							; sleep 4
+    537  f12c
+    538  f12c							; sbc stack3
+    539  f12c		       2a		      rol
+    540  f12d		       2a		      rol
+    541  f12e		       85 1f		      sta	ENABL
+    542  f130
+    543  f130		       a5 8f		      lda	player1height	;3
+    544  f132		       c7 86		      dcp	player1y	;5
+    545  f134		       90 d7		      bcc	.skipDrawlastP1
+    546  f136		       a4 86		      ldy	player1y	;3
+    547  f138		       b1 8c		      lda	(player1pointer),y	;5; player0pointer must be selected carefully by the compiler
+    548  f13a							; so it doesn't cross a page boundary!
+    549  f13a
+    550  f13a				   .continuelastP1
+    551  f13a		       85 1c		      sta	GRP1	;3
+    552  f13c
+    553  f13c					      ifnconst	player1colors
+    554  f13c		       a5 87		      lda	missile1height	;3
+    555  f13e		       c7 88		      dcp	missile1y	;5
+    556  f140				  -	      else
+    557  f140				  -	      lda	(player1color),y
+    558  f140				  -	      sta	COLUP1
+    559  f140					      endif
+    560  f140
+    561  f140		       ca		      dex
+    562  f141							;dec temp4 ; might try putting this above PF writes
+    563  f141		       f0 36		      beq	endkernel
+    564  f143
+    565  f143
+    566  f143				  -	      ifconst	pfres
+    567  f143				  -	      ldy.w	playfield+pfres*pfwidth-4
+    568  f143				  -	      sty	PF1L	;3
+    569  f143				  -	      ldy.w	playfield+pfres*pfwidth-3-pfadjust
+    570  f143				  -	      sty	PF2L	;3
+    571  f143				  -	      ldy.w	playfield+pfres*pfwidth-1
+    572  f143				  -	      sty	PF1R	; possibly too early?
+    573  f143				  -	      ldy.w	playfield+pfres*pfwidth-2-pfadjust
+    574  f143				  -	      sty	PF2R	;3
+    575  f143					      else
+    576  f143		       ac d0 00 	      ldy.w	playfield-48+pfwidth*12+44
+    577  f146		       84 0e		      sty	PF1L	;3
+    578  f148		       ac d1 00 	      ldy.w	playfield-48+pfwidth*12+45-pfadjust
+    579  f14b		       84 0f		      sty	PF2L	;3
+    580  f14d		       ac d3 00 	      ldy.w	playfield-48+pfwidth*12+47
+    581  f150		       84 0e		      sty	PF1R	; possibly too early?
+    582  f152		       ac d2 00 	      ldy.w	playfield-48+pfwidth*12+46-pfadjust
+    583  f155		       84 0f		      sty	PF2R	;3
+    584  f157					      endif
+    585  f157
+    586  f157					      ifnconst	player1colors
+    587  f157		       2a		      rol		;2
+    588  f158		       2a		      rol		;2
+    589  f159		       85 1e		      sta	ENAM1	;3
+    590  f15b				  -	      else
+    591  f15b				  -	      ifnconst	playercolors
+    592  f15b				  -	      sleep	7
+    593  f15b				  -	      else
+    594  f15b				  -	      lda.w	player0colorstore
+    595  f15b				  -	      sta	COLUP0
+    596  f15b				  -	      endif
+    597  f15b					      endif
+    598  f15b
+    599  f15b		       ad 8e 00 	      lda.w	player0height
+    600  f15e		       c7 85		      dcp	player0y
+    601  f160		       90 11		      bcc	.skipDrawlastP0
+    602  f162		       a4 85		      ldy	player0y
+    603  f164		       b1 8a		      lda	(player0pointer),y
+    604  f166				   .continuelastP0
+    605  f166		       85 1b		      sta	GRP0
+    606  f168
+    607  f168
+    608  f168
+    609  f168					      ifnconst	no_blank_lines
+    610  f168		       a5 90		      lda	missile0height	;3
+    611  f16a		       c7 91		      dcp	missile0y	;5
+    612  f16c		       e5 f6		      sbc	stack1
+    613  f16e		       85 1d		      sta	ENAM0	;3
+    614  f170		       4c 13 f1 	      jmp	.endkerloop
+    615  f173				  -	      else
+    616  f173				  -	      ifconst	readpaddle
+    617  f173				  -	      ldy	currentpaddle
+    618  f173				  -	      lda	INPT0,y
+    619  f173				  -	      bpl	noreadpaddle2
+    620  f173				  -	      inc	paddle
+    621  f173				  -	      jmp	.endkerloop
+    622  f173				  -noreadpaddle2
+    623  f173				  -	      sleep	4
+    624  f173				  -	      jmp	.endkerloop
+    625  f173				  -	      else		; no_blank_lines and no paddle reading
+    626  f173				  -	      pla
+    627  f173				  -	      pha		; 14 cycles in 4 bytes
+    628  f173				  -	      pla
+    629  f173				  -	      pha
+    630  f173				  -			; sleep 14
+    631  f173				  -	      jmp	.endkerloop
+    632  f173				  -	      endif
+    633  f173					      endif
+    634  f173
+    635  f173
+    636  f173							; ifconst donepaddleskip
+    637  f173							;paddleskipread
+    638  f173							; this is kind of lame, since it requires 4 cycles from a page boundary crossing
+    639  f173							; plus we get a lo-res paddle read
+    640  f173							; bmi donepaddleskip
+    641  f173							; endif
+    642  f173
+    643  f173				   .skipDrawlastP0
+    644  f173		       a9 00		      lda	#0
+    645  f175		       a8		      tay
+    646  f176		       4c 66 f1 	      jmp	.continuelastP0
+    647  f179
+    648  f179				  -	      ifconst	no_blank_lines
+    649  f179				  -no_blank_lines_bailout
+    650  f179				  -	      ldx	#0
+    651  f179					      endif
+    652  f179
+    653  f179				   endkernel
+    654  f179							; 6 digit score routine
+    655  f179		       86 0e		      stx	PF1
+    656  f17b		       86 0f		      stx	PF2
+    657  f17d		       86 0d		      stx	PF0
+    658  f17f		       18		      clc
+    659  f180
+    660  f180				  -	      ifconst	pfrowheight
+    661  f180				  -	      lda	#pfrowheight+2
+    662  f180					      else
+    663  f180					      ifnconst	pfres
+    664  f180		       a9 0a		      lda	#10
+    665  f182				  -	      else
+    666  f182				  -	      lda	#(96/pfres)+2	; try to come close to the real size
+    667  f182					      endif
+    668  f182					      endif
+    669  f182
+    670  f182		       e5 ef		      sbc	playfieldpos
+    671  f184		       85 ef		      sta	playfieldpos
+    672  f186		       8a		      txa
+    673  f187
+    674  f187				  -	      ifconst	shakescreen
+    675  f187				  -	      bit	shakescreen
+    676  f187				  -	      bmi	noshakescreen2
+    677  f187				  -	      ldx	#$3D
+    678  f187				  -noshakescreen2
+    679  f187					      endif
+    680  f187
+    681  f187		       95 02		      sta	WSYNC,x
+    682  f189
+    683  f189							; STA WSYNC ;first one, need one more
+    684  f189		       85 0b		      sta	REFP0
+    685  f18b		       85 0c		      sta	REFP1
+    686  f18d		       85 1b		      STA	GRP0
+    687  f18f		       85 1c		      STA	GRP1
+    688  f191							; STA PF1
+    689  f191							; STA PF2
+    690  f191		       85 2b		      sta	HMCLR
+    691  f193		       85 1d		      sta	ENAM0
+    692  f195		       85 1e		      sta	ENAM1
+    693  f197		       85 1f		      sta	ENABL
+    694  f199
+    695  f199		       a5 9d		      lda	temp2	;restore variables that were obliterated by kernel
+    696  f19b		       85 85		      sta	player0y
+    697  f19d		       a5 9e		      lda	temp3
+    698  f19f		       85 86		      sta	player1y
+    699  f1a1					      ifnconst	player1colors
+    700  f1a1		       a5 a1		      lda	temp6
+    701  f1a3		       85 88		      sta	missile1y
+    702  f1a5					      endif
+    703  f1a5					      ifnconst	playercolors
+    704  f1a5					      ifnconst	readpaddle
+    705  f1a5		       a5 a0		      lda	temp5
+    706  f1a7		       85 91		      sta	missile0y
+    707  f1a9					      endif
+    708  f1a9					      endif
+    709  f1a9		       a5 f7		      lda	stack2
+    710  f1ab		       85 89		      sta	bally
+    711  f1ad
+    712  f1ad							; strangely, this isn't required any more. might have
+    713  f1ad							; resulted from the no_blank_lines score bounce fix
+    714  f1ad							;ifconst no_blank_lines
+    715  f1ad							;sta WSYNC
+    716  f1ad							;endif
+    717  f1ad
+    718  f1ad		       ad 84 02 	      lda	INTIM
+    719  f1b0		       18		      clc
+    720  f1b1				  -	      ifnconst	vblank_time
+    721  f1b1				  -	      adc	#43+12+87
+    722  f1b1					      else
+    723  f1b1		       69 8e		      adc	#vblank_time+12+87
+    724  f1b3
+    725  f1b3					      endif
+    726  f1b3							; sta WSYNC
+    727  f1b3		       8d 96 02 	      sta	TIM64T
+    728  f1b6
+    729  f1b6				  -	      ifconst	minikernel
+    730  f1b6				  -	      jsr	minikernel
+    731  f1b6					      endif
+    732  f1b6
+    733  f1b6							; now reassign temp vars for score pointers
+    734  f1b6
+    735  f1b6							; score pointers contain:
+    736  f1b6							; score1-5: lo1,lo2,lo3,lo4,lo5,lo6
+    737  f1b6							; swap lo2->temp1
+    738  f1b6							; swap lo4->temp3
+    739  f1b6							; swap lo6->temp5
+    740  f1b6					      ifnconst	noscore
+    741  f1b6		       a5 97		      lda	scorepointers+1
+    742  f1b8							; ldy temp1
+    743  f1b8		       85 9c		      sta	temp1
+    744  f1ba							; sty scorepointers+1
+    745  f1ba
+    746  f1ba		       a5 99		      lda	scorepointers+3
+    747  f1bc							; ldy temp3
+    748  f1bc		       85 9e		      sta	temp3
+    749  f1be							; sty scorepointers+3
+    750  f1be
+    751  f1be
+    752  f1be		       85 2b		      sta	HMCLR
+    753  f1c0		       ba		      tsx
+    754  f1c1		       86 f6		      stx	stack1
+    755  f1c3		       a2 e0		      ldx	#$E0
+    756  f1c5		       86 20		      stx	HMP0
+    757  f1c7
+    758  f1c7		       a5 a3		      LDA	scorecolor
+    759  f1c9		       85 06		      STA	COLUP0
+    760  f1cb		       85 07		      STA	COLUP1
+    761  f1cd				  -	      ifconst	scorefade
+    762  f1cd				  -	      STA	stack2
+    763  f1cd					      endif
+    764  f1cd				  -	      ifconst	pfscore
+    765  f1cd				  -	      lda	pfscorecolor
+    766  f1cd				  -	      sta	COLUPF
+    767  f1cd					      endif
+    768  f1cd		       85 02		      sta	WSYNC
+    769  f1cf		       a2 00		      ldx	#0
+    770  f1d1		       86 1b		      STx	GRP0
+    771  f1d3		       86 1c		      STx	GRP1	; seems to be needed because of vdel
+    772  f1d5
+    773  f1d5		       a5 9b		      lda	scorepointers+5
+    774  f1d7							; ldy temp5
+    775  f1d7		       95 a0		      sta	temp5,x
+    776  f1d9							; sty scorepointers+5
+    777  f1d9		       a9 ff		      lda	#>scoretable
+    778  f1db		       85 97		      sta	scorepointers+1
+    779  f1dd		       85 99		      sta	scorepointers+3
+    780  f1df		       85 9b		      sta	scorepointers+5
+    781  f1e1		       85 9d		      sta	temp2
+    782  f1e3		       85 9f		      sta	temp4
+    783  f1e5		       85 a1		      sta	temp6
+    784  f1e7		       a0 07		      LDY	#7
+    785  f1e9		       84 25		      STY	VDELP0
+    786  f1eb		       85 10		      STA	RESP0
+    787  f1ed		       85 11		      STA	RESP1
+    788  f1ef
+    789  f1ef
+    790  f1ef		       a9 03		      LDA	#$03
+    791  f1f1		       85 04		      STA	NUSIZ0
+    792  f1f3		       85 05		      STA	NUSIZ1
+    793  f1f5		       85 26		      STA	VDELP1
+    794  f1f7		       a9 f0		      LDA	#$F0
+    795  f1f9		       85 21		      STA	HMP1
+    796  f1fb		       b1 96		      lda	(scorepointers),y
+    797  f1fd		       85 1b		      sta	GRP0
+    798  f1ff		       85 2a		      STA	HMOVE	; cycle 73 ?
+    799  f201		       4c 0c f2 	      jmp	beginscore
+    800  f204
+    801  f204
+    802  f204				  -	      if	((<*)>$d4)
+    803  f204				  -	      align	256	; kludge that potentially wastes space! should be fixed!
+    804  f204					      endif
+    805  f204
+    806  f204				   loop2
+    807  f204		       b1 96		      lda	(scorepointers),y	;+5 68 204
+    808  f206		       85 1b		      sta	GRP0	;+3 71 213 D1 -- -- --
+    809  f208				  -	      ifconst	pfscore
+    810  f208				  -	      lda.w	pfscore1
+    811  f208				  -	      sta	PF1
+    812  f208					      else
+    813  f208				  -	      ifconst	scorefade
+    814  f208				  -	      sleep	2
+    815  f208				  -	      dec	stack2	; decrement the temporary scorecolor
+    816  f208					      else
+      0  f208					      sleep	7
+      1  f208				   .CYCLES    SET	7
+      2  f208
+      3  f208				  -	      IF	.CYCLES < 2
+      4  f208				  -	      ECHO	"MACRO ERROR: 'SLEEP': Duration must be > 1"
+      5  f208				  -	      ERR
+      6  f208					      ENDIF
+      7  f208
+      8  f208					      IF	.CYCLES & 1
+      9  f208					      IFNCONST	NO_ILLEGAL_OPCODES
+     10  f208		       04 00		      nop	0
+     11  f20a				  -	      ELSE
+     12  f20a				  -	      bit	VSYNC
+     13  f20a					      ENDIF
+     14  f20a				   .CYCLES    SET	.CYCLES - 3
+     15  f20a					      ENDIF
+     16  f20a
+     17  f20a					      REPEAT	.CYCLES / 2
+     18  f20a		       ea		      nop
+     17  f20a					      REPEND
+     18  f20b		       ea		      nop
+     19  f20c					      REPEND
+    818  f20c					      endif
+    819  f20c					      endif
+    820  f20c							; cycle 0
+    821  f20c				   beginscore
+    822  f20c		       b1 9e		      lda	(scorepointers+$8),y	;+5 5 15
+    823  f20e		       85 1c		      sta	GRP1	;+3 8 24 D1 D1 D2 --
+    824  f210		       b1 9c		      lda	(scorepointers+$6),y	;+5 13 39
+    825  f212		       85 1b		      sta	GRP0	;+3 16 48 D3 D1 D2 D2
+    826  f214		       b3 98		      lax	(scorepointers+$2),y	;+5 29 87
+    827  f216		       9a		      txs
+    828  f217		       b3 9a		      lax	(scorepointers+$4),y	;+5 36 108
+    829  f219				  -	      ifconst	scorefade
+    830  f219				  -	      lda	stack2
+    831  f219					      else
+      0  f219					      sleep	3
+      1  f219				   .CYCLES    SET	3
+      2  f219
+      3  f219				  -	      IF	.CYCLES < 2
+      4  f219				  -	      ECHO	"MACRO ERROR: 'SLEEP': Duration must be > 1"
+      5  f219				  -	      ERR
+      6  f219					      ENDIF
+      7  f219
+      8  f219					      IF	.CYCLES & 1
+      9  f219					      IFNCONST	NO_ILLEGAL_OPCODES
+     10  f219		       04 00		      nop	0
+     11  f21b				  -	      ELSE
+     12  f21b				  -	      bit	VSYNC
+     13  f21b					      ENDIF
+     14  f21b				   .CYCLES    SET	.CYCLES - 3
+     15  f21b					      ENDIF
+     16  f21b
+     17  f21b				  -	      REPEAT	.CYCLES / 2
+     18  f21b				  -	      nop
+     19  f21b					      REPEND
+    833  f21b					      endif
+    834  f21b
+    835  f21b				  -	      ifconst	pfscore
+    836  f21b				  -	      lda	pfscore2
+    837  f21b				  -	      sta	PF1
+    838  f21b					      else
+    839  f21b				  -	      ifconst	scorefade
+    840  f21b				  -	      sta	COLUP0
+    841  f21b				  -	      sta	COLUP1
+    842  f21b					      else
+      0  f21b					      sleep	6
+      1  f21b				   .CYCLES    SET	6
+      2  f21b
+      3  f21b				  -	      IF	.CYCLES < 2
+      4  f21b				  -	      ECHO	"MACRO ERROR: 'SLEEP': Duration must be > 1"
+      5  f21b				  -	      ERR
+      6  f21b					      ENDIF
+      7  f21b
+      8  f21b				  -	      IF	.CYCLES & 1
+      9  f21b				  -	      IFNCONST	NO_ILLEGAL_OPCODES
+     10  f21b				  -	      nop	0
+     11  f21b				  -	      ELSE
+     12  f21b				  -	      bit	VSYNC
+     13  f21b				  -	      ENDIF
+     14  f21b				  -.CYCLES    SET	.CYCLES - 3
+     15  f21b					      ENDIF
+     16  f21b
+     17  f21b					      REPEAT	.CYCLES / 2
+     18  f21b		       ea		      nop
+     17  f21b					      REPEND
+     18  f21c		       ea		      nop
+     17  f21c					      REPEND
+     18  f21d		       ea		      nop
+     19  f21e					      REPEND
+    844  f21e					      endif
+    845  f21e					      endif
+    846  f21e
+    847  f21e		       b1 a0		      lda	(scorepointers+$A),y	;+5 21 63
+    848  f220		       86 1c		      stx	GRP1	;+3 44 132 D3 D3 D4 D2!
+    849  f222		       ba		      tsx
+    850  f223		       86 1b		      stx	GRP0	;+3 47 141 D5 D3! D4 D4
+    851  f225		       85 1c		      sta	GRP1	;+3 50 150 D5 D5 D6 D4!
+    852  f227		       84 1b		      sty	GRP0	;+3 53 159 D4* D5! D6 D6
+    853  f229		       88		      dey
+    854  f22a		       10 d8		      bpl	loop2	;+2 60 180
+    855  f22c
+    856  f22c		       a6 f6		      ldx	stack1
+    857  f22e		       9a		      txs
+    858  f22f							; lda scorepointers+1
+    859  f22f		       a4 9c		      ldy	temp1
+    860  f231							; sta temp1
+    861  f231		       84 97		      sty	scorepointers+1
+    862  f233
+    863  f233		       a9 00		      LDA	#0
+    864  f235		       85 0e		      sta	PF1
+    865  f237		       85 1b		      STA	GRP0
+    866  f239		       85 1c		      STA	GRP1
+    867  f23b		       85 25		      STA	VDELP0
+    868  f23d		       85 26		      STA	VDELP1	;do we need these
+    869  f23f		       85 04		      STA	NUSIZ0
+    870  f241		       85 05		      STA	NUSIZ1
+    871  f243
+    872  f243							; lda scorepointers+3
+    873  f243		       a4 9e		      ldy	temp3
+    874  f245							; sta temp3
+    875  f245		       84 99		      sty	scorepointers+3
+    876  f247
+    877  f247							; lda scorepointers+5
+    878  f247		       a4 a0		      ldy	temp5
+    879  f249							; sta temp5
+    880  f249		       84 9b		      sty	scorepointers+5
+    881  f24b					      endif		;noscore
+    882  f24b				  -	      ifconst	readpaddle
+    883  f24b				  -	      lda	#%11000010
+    884  f24b					      else
+    885  f24b				  -	      ifconst	qtcontroller
+    886  f24b				  -	      lda	qtcontroller
+    887  f24b				  -	      lsr		; bit 0 in carry
+    888  f24b				  -	      lda	#4
+    889  f24b				  -	      ror		; carry into top of A
+    890  f24b					      else
+    891  f24b		       a9 02		      lda	#2
+    892  f24d					      endif		; qtcontroller
+    893  f24d					      endif		; readpaddle
+    894  f24d		       85 02		      sta	WSYNC
+    895  f24f		       85 01		      sta	VBLANK
+      0  f251					      RETURN
+      1  f251					      ifnconst	bankswitch
+      2  f251		       60		      rts
+      3  f252				  -	      else
+      4  f252				  -	      jmp	BS_return
+      5  f252					      endif
+    897  f252				  -	      ifconst	shakescreen
+    898  f252				  -doshakescreen
+    899  f252				  -	      bit	shakescreen
+    900  f252				  -	      bmi	noshakescreen
+    901  f252				  -	      sta	WSYNC
+    902  f252				  -noshakescreen
+    903  f252				  -	      ldx	missile0height
+    904  f252				  -	      inx
+    905  f252				  -	      rts
+    906  f252					      endif
+    907  f252
+    908  f252							; Provided under the CC0 license. See the included LICENSE.txt for details.
+    909  f252
+    910  f252							; playfield drawing routines
+    911  f252							; you get a 32x12 bitmapped display in a single color :)
+    912  f252							; 0-31 and 0-11
+    913  f252
+    914  f252				   pfclear		; clears playfield - or fill with pattern
+    915  f252				  -	      ifconst	pfres
+    916  f252				  -	      ldx	#pfres*pfwidth-1
+    917  f252					      else
+    918  f252		       a2 2f		      ldx	#47-(4-pfwidth)*12	; will this work?
+    919  f254					      endif
+    920  f254				   pfclear_loop
+    921  f254					      ifnconst	superchip
+    922  f254		       95 a4		      sta	playfield,x
+    923  f256				  -	      else
+    924  f256				  -	      sta	playfield-128,x
+    925  f256					      endif
+    926  f256		       ca		      dex
+    927  f257		       10 fb		      bpl	pfclear_loop
+      0  f259					      RETURN
+      1  f259					      ifnconst	bankswitch
+      2  f259		       60		      rts
+      3  f25a				  -	      else
+      4  f25a				  -	      jmp	BS_return
+      5  f25a					      endif
+    929  f25a
+    930  f25a				   setuppointers
+    931  f25a		       86 9d		      stx	temp2	; store on.off.flip value
+    932  f25c		       aa		      tax		; put x-value in x 
+    933  f25d		       4a		      lsr
+    934  f25e		       4a		      lsr
+    935  f25f		       4a		      lsr		; divide x pos by 8 
+    936  f260		       85 9c		      sta	temp1
+    937  f262		       98		      tya
+    938  f263		       0a		      asl
+    939  f264					      if	pfwidth=4
+    940  f264		       0a		      asl		; multiply y pos by 4
+    941  f265					      endif		; else multiply by 2
+    942  f265		       18		      clc
+    943  f266		       65 9c		      adc	temp1	; add them together to get actual memory location offset
+    944  f268		       a8		      tay		; put the value in y
+    945  f269		       a5 9d		      lda	temp2	; restore on.off.flip value
+    946  f26b		       60		      rts
+    947  f26c
+    948  f26c				   pfread
+    949  f26c							;x=xvalue, y=yvalue
+    950  f26c		       20 5a f2 	      jsr	setuppointers
+    951  f26f		       bd d4 f2 	      lda	setbyte,x
+    952  f272		       39 a4 00 	      and	playfield,y
+    953  f275		       5d d4 f2 	      eor	setbyte,x
+    954  f278							; beq readzero
+    955  f278							; lda #1
+    956  f278							; readzero
+      0  f278					      RETURN
+      1  f278					      ifnconst	bankswitch
+      2  f278		       60		      rts
+      3  f279				  -	      else
+      4  f279				  -	      jmp	BS_return
+      5  f279					      endif
+    958  f279
+    959  f279				   pfpixel
+    960  f279							;x=xvalue, y=yvalue, a=0,1,2
+    961  f279		       20 5a f2 	      jsr	setuppointers
+    962  f27c
+    963  f27c				  -	      ifconst	bankswitch
+    964  f27c				  -	      lda	temp2	; load on.off.flip value (0,1, or 2)
+    965  f27c				  -	      beq	pixelon_r	; if "on" go to on
+    966  f27c				  -	      lsr
+    967  f27c				  -	      bcs	pixeloff_r	; value is 1 if true
+    968  f27c				  -	      lda	playfield,y	; if here, it's "flip"
+    969  f27c				  -	      eor	setbyte,x
+    970  f27c				  -	      ifconst	superchip
+    971  f27c				  -	      sta	playfield-128,y
+    972  f27c				  -	      else
+    973  f27c				  -	      sta	playfield,y
+    974  f27c				  -	      endif
+    975  f27c				  -	      RETURN
+    976  f27c				  -pixelon_r
+    977  f27c				  -	      lda	playfield,y
+    978  f27c				  -	      ora	setbyte,x
+    979  f27c				  -	      ifconst	superchip
+    980  f27c				  -	      sta	playfield-128,y
+    981  f27c				  -	      else
+    982  f27c				  -	      sta	playfield,y
+    983  f27c				  -	      endif
+    984  f27c				  -	      RETURN
+    985  f27c				  -pixeloff_r
+    986  f27c				  -	      lda	setbyte,x
+    987  f27c				  -	      eor	#$ff
+    988  f27c				  -	      and	playfield,y
+    989  f27c				  -	      ifconst	superchip
+    990  f27c				  -	      sta	playfield-128,y
+    991  f27c				  -	      else
+    992  f27c				  -	      sta	playfield,y
+    993  f27c				  -	      endif
+    994  f27c				  -	      RETURN
+    995  f27c				  -
+    996  f27c					      else
+    997  f27c		       4c ad f2 	      jmp	plotpoint
+    998  f27f					      endif
+    999  f27f
+   1000  f27f				   pfhline
+   1001  f27f							;x=xvalue, y=yvalue, a=0,1,2, temp3=endx
+   1002  f27f		       20 5a f2 	      jsr	setuppointers
+   1003  f282		       4c 8c f2 	      jmp	noinc
+   1004  f285				   keepgoing
+   1005  f285		       e8		      inx
+   1006  f286		       8a		      txa
+   1007  f287		       29 07		      and	#7
+   1008  f289		       d0 01		      bne	noinc
+   1009  f28b		       c8		      iny
+   1010  f28c				   noinc
+   1011  f28c		       20 ad f2 	      jsr	plotpoint
+   1012  f28f		       e4 9e		      cpx	temp3
+   1013  f291		       30 f2		      bmi	keepgoing
+      0  f293					      RETURN
+      1  f293					      ifnconst	bankswitch
+      2  f293		       60		      rts
+      3  f294				  -	      else
+      4  f294				  -	      jmp	BS_return
+      5  f294					      endif
+   1015  f294
+   1016  f294				   pfvline
+   1017  f294							;x=xvalue, y=yvalue, a=0,1,2, temp3=endx
+   1018  f294		       20 5a f2 	      jsr	setuppointers
+   1019  f297		       84 9c		      sty	temp1	; store memory location offset
+   1020  f299		       e6 9e		      inc	temp3	; increase final x by 1 
+   1021  f29b		       a5 9e		      lda	temp3
+   1022  f29d		       0a		      asl
+   1023  f29e					      if	pfwidth=4
+   1024  f29e		       0a		      asl		; multiply by 4
+   1025  f29f					      endif		; else multiply by 2
+   1026  f29f		       85 9e		      sta	temp3	; store it
+   1027  f2a1							; Thanks to Michael Rideout for fixing a bug in this code
+   1028  f2a1							; right now, temp1=y=starting memory location, temp3=final
+   1029  f2a1							; x should equal original x value
+   1030  f2a1				   keepgoingy
+   1031  f2a1		       20 ad f2 	      jsr	plotpoint
+   1032  f2a4		       c8		      iny
+   1033  f2a5		       c8		      iny
+   1034  f2a6					      if	pfwidth=4
+   1035  f2a6		       c8		      iny
+   1036  f2a7		       c8		      iny
+   1037  f2a8					      endif
+   1038  f2a8		       c4 9e		      cpy	temp3
+   1039  f2aa		       30 f5		      bmi	keepgoingy
+      0  f2ac					      RETURN
+      1  f2ac					      ifnconst	bankswitch
+      2  f2ac		       60		      rts
+      3  f2ad				  -	      else
+      4  f2ad				  -	      jmp	BS_return
+      5  f2ad					      endif
+   1041  f2ad
+   1042  f2ad				   plotpoint
+   1043  f2ad		       a5 9d		      lda	temp2	; load on.off.flip value (0,1, or 2)
+   1044  f2af		       f0 0d		      beq	pixelon	; if "on" go to on
+   1045  f2b1		       4a		      lsr
+   1046  f2b2		       b0 14		      bcs	pixeloff	; value is 1 if true
+   1047  f2b4		       b9 a4 00 	      lda	playfield,y	; if here, it's "flip"
+   1048  f2b7		       5d d4 f2 	      eor	setbyte,x
+   1049  f2ba				  -	      ifconst	superchip
+   1050  f2ba				  -	      sta	playfield-128,y
+   1051  f2ba					      else
+   1052  f2ba		       99 a4 00 	      sta	playfield,y
+   1053  f2bd					      endif
+   1054  f2bd		       60		      rts
+   1055  f2be				   pixelon
+   1056  f2be		       b9 a4 00 	      lda	playfield,y
+   1057  f2c1		       1d d4 f2 	      ora	setbyte,x
+   1058  f2c4				  -	      ifconst	superchip
+   1059  f2c4				  -	      sta	playfield-128,y
+   1060  f2c4					      else
+   1061  f2c4		       99 a4 00 	      sta	playfield,y
+   1062  f2c7					      endif
+   1063  f2c7		       60		      rts
+   1064  f2c8				   pixeloff
+   1065  f2c8		       bd d4 f2 	      lda	setbyte,x
+   1066  f2cb		       49 ff		      eor	#$ff
+   1067  f2cd		       39 a4 00 	      and	playfield,y
+   1068  f2d0				  -	      ifconst	superchip
+   1069  f2d0				  -	      sta	playfield-128,y
+   1070  f2d0					      else
+   1071  f2d0		       99 a4 00 	      sta	playfield,y
+   1072  f2d3					      endif
+   1073  f2d3		       60		      rts
+   1074  f2d4
+   1075  f2d4				   setbyte
+   1076  f2d4					      ifnconst	pfcenter
+   1077  f2d4		       80		      .byte.b	$80
+   1078  f2d5		       40		      .byte.b	$40
+   1079  f2d6		       20		      .byte.b	$20
+   1080  f2d7		       10		      .byte.b	$10
+   1081  f2d8		       08		      .byte.b	$08
+   1082  f2d9		       04		      .byte.b	$04
+   1083  f2da		       02		      .byte.b	$02
+   1084  f2db		       01		      .byte.b	$01
+   1085  f2dc					      endif
+   1086  f2dc		       01		      .byte.b	$01
+   1087  f2dd		       02		      .byte.b	$02
+   1088  f2de		       04		      .byte.b	$04
+   1089  f2df		       08		      .byte.b	$08
+   1090  f2e0		       10		      .byte.b	$10
+   1091  f2e1		       20		      .byte.b	$20
+   1092  f2e2		       40		      .byte.b	$40
+   1093  f2e3		       80		      .byte.b	$80
+   1094  f2e4		       80		      .byte.b	$80
+   1095  f2e5		       40		      .byte.b	$40
+   1096  f2e6		       20		      .byte.b	$20
+   1097  f2e7		       10		      .byte.b	$10
+   1098  f2e8		       08		      .byte.b	$08
+   1099  f2e9		       04		      .byte.b	$04
+   1100  f2ea		       02		      .byte.b	$02
+   1101  f2eb		       01		      .byte.b	$01
+   1102  f2ec		       01		      .byte.b	$01
+   1103  f2ed		       02		      .byte.b	$02
+   1104  f2ee		       04		      .byte.b	$04
+   1105  f2ef		       08		      .byte.b	$08
+   1106  f2f0		       10		      .byte.b	$10
+   1107  f2f1		       20		      .byte.b	$20
+   1108  f2f2		       40		      .byte.b	$40
+   1109  f2f3		       80		      .byte.b	$80
+   1110  f2f4							; Provided under the CC0 license. See the included LICENSE.txt for details.
+   1111  f2f4
+   1112  f2f4				   pfscroll		;(a=0 left, 1 right, 2 up, 4 down, 6=upup, 12=downdown)
+   1113  f2f4		       d0 13		      bne	notleft
+   1114  f2f6							;left
+   1115  f2f6				  -	      ifconst	pfres
+   1116  f2f6				  -	      ldx	#pfres*4
+   1117  f2f6					      else
+   1118  f2f6		       a2 30		      ldx	#48
+   1119  f2f8					      endif
+   1120  f2f8				   leftloop
+   1121  f2f8		       b5 a3		      lda	playfield-1,x
+   1122  f2fa		       4a		      lsr
+   1123  f2fb
+   1124  f2fb				  -	      ifconst	superchip
+   1125  f2fb				  -	      lda	playfield-2,x
+   1126  f2fb				  -	      rol
+   1127  f2fb				  -	      sta	playfield-130,x
+   1128  f2fb				  -	      lda	playfield-3,x
+   1129  f2fb				  -	      ror
+   1130  f2fb				  -	      sta	playfield-131,x
+   1131  f2fb				  -	      lda	playfield-4,x
+   1132  f2fb				  -	      rol
+   1133  f2fb				  -	      sta	playfield-132,x
+   1134  f2fb				  -	      lda	playfield-1,x
+   1135  f2fb				  -	      ror
+   1136  f2fb				  -	      sta	playfield-129,x
+   1137  f2fb					      else
+   1138  f2fb		       36 a2		      rol	playfield-2,x
+   1139  f2fd		       76 a1		      ror	playfield-3,x
+   1140  f2ff		       36 a0		      rol	playfield-4,x
+   1141  f301		       76 a3		      ror	playfield-1,x
+   1142  f303					      endif
+   1143  f303
+   1144  f303		       8a		      txa
+   1145  f304		       cb 04		      sbx	#4
+   1146  f306		       d0 f0		      bne	leftloop
+      0  f308					      RETURN
+      1  f308					      ifnconst	bankswitch
+      2  f308		       60		      rts
+      3  f309				  -	      else
+      4  f309				  -	      jmp	BS_return
+      5  f309					      endif
+   1148  f309
+   1149  f309				   notleft
+   1150  f309		       4a		      lsr
+   1151  f30a		       90 13		      bcc	notright
+   1152  f30c							;right
+   1153  f30c
+   1154  f30c				  -	      ifconst	pfres
+   1155  f30c				  -	      ldx	#pfres*4
+   1156  f30c					      else
+   1157  f30c		       a2 30		      ldx	#48
+   1158  f30e					      endif
+   1159  f30e				   rightloop
+   1160  f30e		       b5 a0		      lda	playfield-4,x
+   1161  f310		       4a		      lsr
+   1162  f311				  -	      ifconst	superchip
+   1163  f311				  -	      lda	playfield-3,x
+   1164  f311				  -	      rol
+   1165  f311				  -	      sta	playfield-131,x
+   1166  f311				  -	      lda	playfield-2,x
+   1167  f311				  -	      ror
+   1168  f311				  -	      sta	playfield-130,x
+   1169  f311				  -	      lda	playfield-1,x
+   1170  f311				  -	      rol
+   1171  f311				  -	      sta	playfield-129,x
+   1172  f311				  -	      lda	playfield-4,x
+   1173  f311				  -	      ror
+   1174  f311				  -	      sta	playfield-132,x
+   1175  f311					      else
+   1176  f311		       36 a1		      rol	playfield-3,x
+   1177  f313		       76 a2		      ror	playfield-2,x
+   1178  f315		       36 a3		      rol	playfield-1,x
+   1179  f317		       76 a0		      ror	playfield-4,x
+   1180  f319					      endif
+   1181  f319		       8a		      txa
+   1182  f31a		       cb 04		      sbx	#4
+   1183  f31c		       d0 f0		      bne	rightloop
+      0  f31e					      RETURN
+      1  f31e					      ifnconst	bankswitch
+      2  f31e		       60		      rts
+      3  f31f				  -	      else
+      4  f31f				  -	      jmp	BS_return
+      5  f31f					      endif
+   1185  f31f
+   1186  f31f				   notright
+   1187  f31f		       4a		      lsr
+   1188  f320		       90 49		      bcc	notup
+   1189  f322							;up
+   1190  f322		       4a		      lsr
+   1191  f323		       90 02		      bcc	onedecup
+   1192  f325		       c6 ef		      dec	playfieldpos
+   1193  f327				   onedecup
+   1194  f327		       c6 ef		      dec	playfieldpos
+   1195  f329		       f0 02		      beq	shiftdown
+   1196  f32b		       10 3d		      bpl	noshiftdown2
+   1197  f32d				   shiftdown
+   1198  f32d				  -	      ifconst	pfrowheight
+   1199  f32d				  -	      lda	#pfrowheight
+   1200  f32d					      else
+   1201  f32d					      ifnconst	pfres
+   1202  f32d		       a9 08		      lda	#8
+   1203  f32f				  -	      else
+   1204  f32f				  -	      lda	#(96/pfres)	; try to come close to the real size
+   1205  f32f					      endif
+   1206  f32f					      endif
+   1207  f32f
+   1208  f32f		       85 ef		      sta	playfieldpos
+   1209  f331		       a5 a7		      lda	playfield+3
+   1210  f333		       85 9f		      sta	temp4
+   1211  f335		       a5 a6		      lda	playfield+2
+   1212  f337		       85 9e		      sta	temp3
+   1213  f339		       a5 a5		      lda	playfield+1
+   1214  f33b		       85 9d		      sta	temp2
+   1215  f33d		       a5 a4		      lda	playfield
+   1216  f33f		       85 9c		      sta	temp1
+   1217  f341		       a2 00		      ldx	#0
+   1218  f343				   up2
+   1219  f343		       b5 a8		      lda	playfield+4,x
+   1220  f345				  -	      ifconst	superchip
+   1221  f345				  -	      sta	playfield-128,x
+   1222  f345				  -	      lda	playfield+5,x
+   1223  f345				  -	      sta	playfield-127,x
+   1224  f345				  -	      lda	playfield+6,x
+   1225  f345				  -	      sta	playfield-126,x
+   1226  f345				  -	      lda	playfield+7,x
+   1227  f345				  -	      sta	playfield-125,x
+   1228  f345					      else
+   1229  f345		       95 a4		      sta	playfield,x
+   1230  f347		       b5 a9		      lda	playfield+5,x
+   1231  f349		       95 a5		      sta	playfield+1,x
+   1232  f34b		       b5 aa		      lda	playfield+6,x
+   1233  f34d		       95 a6		      sta	playfield+2,x
+   1234  f34f		       b5 ab		      lda	playfield+7,x
+   1235  f351		       95 a7		      sta	playfield+3,x
+   1236  f353					      endif
+   1237  f353		       8a		      txa
+   1238  f354		       cb fc		      sbx	#252
+   1239  f356				  -	      ifconst	pfres
+   1240  f356				  -	      cpx	#(pfres-1)*4
+   1241  f356					      else
+   1242  f356		       e0 2c		      cpx	#44
+   1243  f358					      endif
+   1244  f358		       d0 e9		      bne	up2
+   1245  f35a
+   1246  f35a		       a5 9f		      lda	temp4
+   1247  f35c
+   1248  f35c				  -	      ifconst	superchip
+   1249  f35c				  -	      ifconst	pfres
+   1250  f35c				  -	      sta	playfield+pfres*4-129
+   1251  f35c				  -	      lda	temp3
+   1252  f35c				  -	      sta	playfield+pfres*4-130
+   1253  f35c				  -	      lda	temp2
+   1254  f35c				  -	      sta	playfield+pfres*4-131
+   1255  f35c				  -	      lda	temp1
+   1256  f35c				  -	      sta	playfield+pfres*4-132
+   1257  f35c				  -	      else
+   1258  f35c				  -	      sta	playfield+47-128
+   1259  f35c				  -	      lda	temp3
+   1260  f35c				  -	      sta	playfield+46-128
+   1261  f35c				  -	      lda	temp2
+   1262  f35c				  -	      sta	playfield+45-128
+   1263  f35c				  -	      lda	temp1
+   1264  f35c				  -	      sta	playfield+44-128
+   1265  f35c				  -	      endif
+   1266  f35c					      else
+   1267  f35c				  -	      ifconst	pfres
+   1268  f35c				  -	      sta	playfield+pfres*4-1
+   1269  f35c				  -	      lda	temp3
+   1270  f35c				  -	      sta	playfield+pfres*4-2
+   1271  f35c				  -	      lda	temp2
+   1272  f35c				  -	      sta	playfield+pfres*4-3
+   1273  f35c				  -	      lda	temp1
+   1274  f35c				  -	      sta	playfield+pfres*4-4
+   1275  f35c					      else
+   1276  f35c		       85 d3		      sta	playfield+47
+   1277  f35e		       a5 9e		      lda	temp3
+   1278  f360		       85 d2		      sta	playfield+46
+   1279  f362		       a5 9d		      lda	temp2
+   1280  f364		       85 d1		      sta	playfield+45
+   1281  f366		       a5 9c		      lda	temp1
+   1282  f368		       85 d0		      sta	playfield+44
+   1283  f36a					      endif
+   1284  f36a					      endif
+   1285  f36a				   noshiftdown2
+      0  f36a					      RETURN
+      1  f36a					      ifnconst	bankswitch
+      2  f36a		       60		      rts
+      3  f36b				  -	      else
+      4  f36b				  -	      jmp	BS_return
+      5  f36b					      endif
+   1287  f36b
+   1288  f36b
+   1289  f36b				   notup
+   1290  f36b							;down
+   1291  f36b		       4a		      lsr
+   1292  f36c		       b0 02		      bcs	oneincup
+   1293  f36e		       e6 ef		      inc	playfieldpos
+   1294  f370				   oneincup
+   1295  f370		       e6 ef		      inc	playfieldpos
+   1296  f372		       a5 ef		      lda	playfieldpos
+   1297  f374
+   1298  f374				  -	      ifconst	pfrowheight
+   1299  f374				  -	      cmp	#pfrowheight+1
+   1300  f374					      else
+   1301  f374					      ifnconst	pfres
+   1302  f374		       c9 09		      cmp	#9
+   1303  f376				  -	      else
+   1304  f376				  -	      cmp	#(96/pfres)+1	; try to come close to the real size
+   1305  f376					      endif
+   1306  f376					      endif
+   1307  f376
+   1308  f376		       90 3b		      bcc	noshiftdown
+   1309  f378		       a9 01		      lda	#1
+   1310  f37a		       85 ef		      sta	playfieldpos
+   1311  f37c
+   1312  f37c				  -	      ifconst	pfres
+   1313  f37c				  -	      lda	playfield+pfres*4-1
+   1314  f37c				  -	      sta	temp4
+   1315  f37c				  -	      lda	playfield+pfres*4-2
+   1316  f37c				  -	      sta	temp3
+   1317  f37c				  -	      lda	playfield+pfres*4-3
+   1318  f37c				  -	      sta	temp2
+   1319  f37c				  -	      lda	playfield+pfres*4-4
+   1320  f37c					      else
+   1321  f37c		       a5 d3		      lda	playfield+47
+   1322  f37e		       85 9f		      sta	temp4
+   1323  f380		       a5 d2		      lda	playfield+46
+   1324  f382		       85 9e		      sta	temp3
+   1325  f384		       a5 d1		      lda	playfield+45
+   1326  f386		       85 9d		      sta	temp2
+   1327  f388		       a5 d0		      lda	playfield+44
+   1328  f38a					      endif
+   1329  f38a
+   1330  f38a		       85 9c		      sta	temp1
+   1331  f38c
+   1332  f38c				  -	      ifconst	pfres
+   1333  f38c				  -	      ldx	#(pfres-1)*4
+   1334  f38c					      else
+   1335  f38c		       a2 2c		      ldx	#44
+   1336  f38e					      endif
+   1337  f38e				   down2
+   1338  f38e		       b5 a3		      lda	playfield-1,x
+   1339  f390				  -	      ifconst	superchip
+   1340  f390				  -	      sta	playfield-125,x
+   1341  f390				  -	      lda	playfield-2,x
+   1342  f390				  -	      sta	playfield-126,x
+   1343  f390				  -	      lda	playfield-3,x
+   1344  f390				  -	      sta	playfield-127,x
+   1345  f390				  -	      lda	playfield-4,x
+   1346  f390				  -	      sta	playfield-128,x
+   1347  f390					      else
+   1348  f390		       95 a7		      sta	playfield+3,x
+   1349  f392		       b5 a2		      lda	playfield-2,x
+   1350  f394		       95 a6		      sta	playfield+2,x
+   1351  f396		       b5 a1		      lda	playfield-3,x
+   1352  f398		       95 a5		      sta	playfield+1,x
+   1353  f39a		       b5 a0		      lda	playfield-4,x
+   1354  f39c		       95 a4		      sta	playfield,x
+   1355  f39e					      endif
+   1356  f39e		       8a		      txa
+   1357  f39f		       cb 04		      sbx	#4
+   1358  f3a1		       d0 eb		      bne	down2
+   1359  f3a3
+   1360  f3a3		       a5 9f		      lda	temp4
+   1361  f3a5				  -	      ifconst	superchip
+   1362  f3a5				  -	      sta	playfield-125
+   1363  f3a5				  -	      lda	temp3
+   1364  f3a5				  -	      sta	playfield-126
+   1365  f3a5				  -	      lda	temp2
+   1366  f3a5				  -	      sta	playfield-127
+   1367  f3a5				  -	      lda	temp1
+   1368  f3a5				  -	      sta	playfield-128
+   1369  f3a5					      else
+   1370  f3a5		       85 a7		      sta	playfield+3
+   1371  f3a7		       a5 9e		      lda	temp3
+   1372  f3a9		       85 a6		      sta	playfield+2
+   1373  f3ab		       a5 9d		      lda	temp2
+   1374  f3ad		       85 a5		      sta	playfield+1
+   1375  f3af		       a5 9c		      lda	temp1
+   1376  f3b1		       85 a4		      sta	playfield
+   1377  f3b3					      endif
+   1378  f3b3				   noshiftdown
+      0  f3b3					      RETURN
+      1  f3b3					      ifnconst	bankswitch
+      2  f3b3		       60		      rts
+      3  f3b4				  -	      else
+      4  f3b4				  -	      jmp	BS_return
+      5  f3b4					      endif
+   1380  f3b4							; Provided under the CC0 license. See the included LICENSE.txt for details.
+   1381  f3b4
+   1382  f3b4							;standard routines needed for pretty much all games
+   1383  f3b4							; just the random number generator is left - maybe we should remove this asm file altogether?
+   1384  f3b4							; repositioning code and score pointer setup moved to overscan
+   1385  f3b4							; read switches, joysticks now compiler generated (more efficient)
+   1386  f3b4
+   1387  f3b4				   randomize
+   1388  f3b4		       a5 a2		      lda	rand
+   1389  f3b6		       4a		      lsr
+   1390  f3b7				  -	      ifconst	rand16
+   1391  f3b7				  -	      rol	rand16
+   1392  f3b7					      endif
+   1393  f3b7		       90 02		      bcc	noeor
+   1394  f3b9		       49 b4		      eor	#$B4
+   1395  f3bb				   noeor
+   1396  f3bb		       85 a2		      sta	rand
+   1397  f3bd				  -	      ifconst	rand16
+   1398  f3bd				  -	      eor	rand16
+   1399  f3bd					      endif
+      0  f3bd					      RETURN
+      1  f3bd					      ifnconst	bankswitch
+      2  f3bd		       60		      rts
+      3  f3be				  -	      else
+      4  f3be				  -	      jmp	BS_return
+      5  f3be					      endif
+   1401  f3be							; Provided under the CC0 license. See the included LICENSE.txt for details.
+   1402  f3be
+   1403  f3be				   drawscreen
+   1404  f3be				  -	      ifconst	debugscore
+   1405  f3be				  -	      ldx	#14
+   1406  f3be				  -	      lda	INTIM	; display # cycles left in the score
+   1407  f3be				  -
+   1408  f3be				  -	      ifconst	mincycles
+   1409  f3be				  -	      lda	mincycles
+   1410  f3be				  -	      cmp	INTIM
+   1411  f3be				  -	      lda	mincycles
+   1412  f3be				  -	      bcc	nochange
+   1413  f3be				  -	      lda	INTIM
+   1414  f3be				  -	      sta	mincycles
+   1415  f3be				  -nochange
+   1416  f3be				  -	      endif
+   1417  f3be				  -
+   1418  f3be				  -			; cmp #$2B
+   1419  f3be				  -			; bcs no_cycles_left
+   1420  f3be				  -	      bmi	cycles_left
+   1421  f3be				  -	      ldx	#64
+   1422  f3be				  -	      eor	#$ff	;make negative
+   1423  f3be				  -cycles_left
+   1424  f3be				  -	      stx	scorecolor
+   1425  f3be				  -	      and	#$7f	; clear sign bit
+   1426  f3be				  -	      tax
+   1427  f3be				  -	      lda	scorebcd,x
+   1428  f3be				  -	      sta	score+2
+   1429  f3be				  -	      lda	scorebcd1,x
+   1430  f3be				  -	      sta	score+1
+   1431  f3be				  -	      jmp	done_debugscore
+   1432  f3be				  -scorebcd
+   1433  f3be				  -	      .byte	$00, $64, $28, $92, $56, $20, $84, $48, $12, $76, $40
+   1434  f3be				  -	      .byte	$04, $68, $32, $96, $60, $24, $88, $52, $16, $80, $44
+   1435  f3be				  -	      .byte	$08, $72, $36, $00, $64, $28, $92, $56, $20, $84, $48
+   1436  f3be				  -	      .byte	$12, $76, $40, $04, $68, $32, $96, $60, $24, $88
+   1437  f3be				  -scorebcd1
+   1438  f3be				  -	      .byte	0, 0, 1, 1, 2, 3, 3, 4, 5, 5, 6
+   1439  f3be				  -	      .byte	7, 7, 8, 8, 9, $10, $10, $11, $12, $12, $13
+   1440  f3be				  -	      .byte	$14, $14, $15, $16, $16, $17, $17, $18, $19, $19, $20
+   1441  f3be				  -	      .byte	$21, $21, $22, $23, $23, $24, $24, $25, $26, $26
+   1442  f3be				  -done_debugscore
+   1443  f3be					      endif
+   1444  f3be
+   1445  f3be				  -	      ifconst	debugcycles
+   1446  f3be				  -	      lda	INTIM	; if we go over, it mucks up the background color
+   1447  f3be				  -			; cmp #$2B
+   1448  f3be				  -			; BCC overscan
+   1449  f3be				  -	      bmi	overscan
+   1450  f3be				  -	      sta	COLUBK
+   1451  f3be				  -	      bcs	doneoverscan
+   1452  f3be					      endif
+   1453  f3be
+   1454  f3be				   overscan
+   1455  f3be				  -	      ifconst	interlaced
+   1456  f3be				  -	      PHP
+   1457  f3be				  -	      PLA
+   1458  f3be				  -	      EOR	#4	; flip interrupt bit
+   1459  f3be				  -	      PHA
+   1460  f3be				  -	      PLP
+   1461  f3be				  -	      AND	#4	; isolate the interrupt bit
+   1462  f3be				  -	      TAX		; save it for later
+   1463  f3be					      endif
+   1464  f3be
+   1465  f3be				   overscanloop
+   1466  f3be		       ad 84 02 	      lda	INTIM	;wait for sync
+   1467  f3c1		       30 fb		      bmi	overscanloop
+   1468  f3c3				   doneoverscan
+   1469  f3c3
+   1470  f3c3							;do VSYNC
+   1471  f3c3
+   1472  f3c3				  -	      ifconst	interlaced
+   1473  f3c3				  -	      CPX	#4
+   1474  f3c3				  -	      BNE	oddframevsync
+   1475  f3c3					      endif
+   1476  f3c3
+   1477  f3c3		       a9 02		      lda	#2
+   1478  f3c5		       85 02		      sta	WSYNC
+   1479  f3c7		       85 00		      sta	VSYNC
+   1480  f3c9		       85 02		      STA	WSYNC
+   1481  f3cb		       85 02		      STA	WSYNC
+   1482  f3cd		       4a		      lsr
+   1483  f3ce		       85 02		      STA	WSYNC
+   1484  f3d0		       85 00		      STA	VSYNC
+   1485  f3d2		       85 01		      sta	VBLANK
+   1486  f3d4				  -	      ifnconst	overscan_time
+   1487  f3d4				  -	      lda	#37+128
+   1488  f3d4					      else
+   1489  f3d4		       a9 a5		      lda	#overscan_time+128
+   1490  f3d6					      endif
+   1491  f3d6		       8d 96 02 	      sta	TIM64T
+   1492  f3d9
+   1493  f3d9				  -	      ifconst	interlaced
+   1494  f3d9				  -	      jmp	postsync
+   1495  f3d9				  -
+   1496  f3d9				  -oddframevsync
+   1497  f3d9				  -	      sta	WSYNC
+   1498  f3d9				  -
+   1499  f3d9				  -	      LDA	($80,X)	; 11 waste
+   1500  f3d9				  -	      LDA	($80,X)	; 11 waste
+   1501  f3d9				  -	      LDA	($80,X)	; 11 waste
+   1502  f3d9				  -
+   1503  f3d9				  -	      lda	#2
+   1504  f3d9				  -	      sta	VSYNC
+   1505  f3d9				  -	      sta	WSYNC
+   1506  f3d9				  -	      sta	WSYNC
+   1507  f3d9				  -	      sta	WSYNC
+   1508  f3d9				  -
+   1509  f3d9				  -	      LDA	($80,X)	; 11 waste
+   1510  f3d9				  -	      LDA	($80,X)	; 11 waste
+   1511  f3d9				  -	      LDA	($80,X)	; 11 waste
+   1512  f3d9				  -
+   1513  f3d9				  -	      lda	#0
+   1514  f3d9				  -	      sta	VSYNC
+   1515  f3d9				  -	      sta	VBLANK
+   1516  f3d9				  -	      ifnconst	overscan_time
+   1517  f3d9				  -	      lda	#37+128
+   1518  f3d9				  -	      else
+   1519  f3d9				  -	      lda	#overscan_time+128
+   1520  f3d9				  -	      endif
+   1521  f3d9				  -	      sta	TIM64T
+   1522  f3d9				  -
+   1523  f3d9				  -postsync
+   1524  f3d9					      endif
+   1525  f3d9
+   1526  f3d9				  -	      ifconst	legacy
+   1527  f3d9				  -	      if	legacy < 100
+   1528  f3d9				  -	      ldx	#4
+   1529  f3d9				  -adjustloop
+   1530  f3d9				  -	      lda	player0x,x
+   1531  f3d9				  -	      sec
+   1532  f3d9				  -	      sbc	#14	;?
+   1533  f3d9				  -	      sta	player0x,x
+   1534  f3d9				  -	      dex
+   1535  f3d9				  -	      bpl	adjustloop
+   1536  f3d9				  -	      endif
+   1537  f3d9					      endif
+   1538  f3d9				  -	      if	((<*)>$e9)&&((<*)<$fa)
+   1539  f3d9				  -	      repeat	($fa-(<*))
+   1540  f3d9				  -	      nop
+   1541  f3d9				  -	      repend
+   1542  f3d9					      endif
+   1543  f3d9		       85 02		      sta	WSYNC
+   1544  f3db		       a2 04		      ldx	#4
+      0  f3dd					      SLEEP	3
+      1  f3dd				   .CYCLES    SET	3
+      2  f3dd
+      3  f3dd				  -	      IF	.CYCLES < 2
+      4  f3dd				  -	      ECHO	"MACRO ERROR: 'SLEEP': Duration must be > 1"
+      5  f3dd				  -	      ERR
+      6  f3dd					      ENDIF
+      7  f3dd
+      8  f3dd					      IF	.CYCLES & 1
+      9  f3dd					      IFNCONST	NO_ILLEGAL_OPCODES
+     10  f3dd		       04 00		      nop	0
+     11  f3df				  -	      ELSE
+     12  f3df				  -	      bit	VSYNC
+     13  f3df					      ENDIF
+     14  f3df				   .CYCLES    SET	.CYCLES - 3
+     15  f3df					      ENDIF
+     16  f3df
+     17  f3df				  -	      REPEAT	.CYCLES / 2
+     18  f3df				  -	      nop
+     19  f3df					      REPEND
+   1546  f3df				   HorPosLoop		; 5
+   1547  f3df		       b5 80		      lda	player0x,X	;+4 9
+   1548  f3e1		       38		      sec		;+2 11
+   1549  f3e2				   DivideLoop
+   1550  f3e2		       e9 0f		      sbc	#15
+   1551  f3e4		       b0 fc		      bcs	DivideLoop	;+4 15
+   1552  f3e6		       95 9c		      sta	temp1,X	;+4 19
+   1553  f3e8		       95 10		      sta	RESP0,X	;+4 23
+   1554  f3ea		       85 02		      sta	WSYNC
+   1555  f3ec		       ca		      dex
+   1556  f3ed		       10 f0		      bpl	HorPosLoop	;+5 5
+   1557  f3ef							; 4
+   1558  f3ef
+   1559  f3ef		       a2 04		      ldx	#4
+   1560  f3f1		       b4 9c		      ldy	temp1,X
+   1561  f3f3		       b9 4f f3 	      lda	repostable-256,Y
+   1562  f3f6		       95 20		      sta	HMP0,X	;+14 18
+   1563  f3f8
+   1564  f3f8		       ca		      dex
+   1565  f3f9		       b4 9c		      ldy	temp1,X
+   1566  f3fb		       b9 4f f3 	      lda	repostable-256,Y
+   1567  f3fe		       95 20		      sta	HMP0,X	;+14 32
+   1568  f400
+   1569  f400		       ca		      dex
+   1570  f401		       b4 9c		      ldy	temp1,X
+   1571  f403		       b9 4f f3 	      lda	repostable-256,Y
+   1572  f406		       95 20		      sta	HMP0,X	;+14 46
+   1573  f408
+   1574  f408		       ca		      dex
+   1575  f409		       b4 9c		      ldy	temp1,X
+   1576  f40b		       b9 4f f3 	      lda	repostable-256,Y
+   1577  f40e		       95 20		      sta	HMP0,X	;+14 60
+   1578  f410
+   1579  f410		       ca		      dex
+   1580  f411		       b4 9c		      ldy	temp1,X
+   1581  f413		       b9 4f f3 	      lda	repostable-256,Y
+   1582  f416		       95 20		      sta	HMP0,X	;+14 74
+   1583  f418
+   1584  f418		       85 02		      sta	WSYNC
+   1585  f41a
+   1586  f41a		       85 2a		      sta	HMOVE	;+3 3
+   1587  f41c
+   1588  f41c
+   1589  f41c				  -	      ifconst	legacy
+   1590  f41c				  -	      if	legacy < 100
+   1591  f41c				  -	      ldx	#4
+   1592  f41c				  -adjustloop2
+   1593  f41c				  -	      lda	player0x,x
+   1594  f41c				  -	      clc
+   1595  f41c				  -	      adc	#14	;?
+   1596  f41c				  -	      sta	player0x,x
+   1597  f41c				  -	      dex
+   1598  f41c				  -	      bpl	adjustloop2
+   1599  f41c				  -	      endif
+   1600  f41c					      endif
+   1601  f41c
+   1602  f41c
+   1603  f41c
+   1604  f41c
+   1605  f41c							;set score pointers
+   1606  f41c		       a7 95		      lax	score+2
+   1607  f41e		       20 4f f4 	      jsr	scorepointerset
+   1608  f421		       84 9b		      sty	scorepointers+5
+   1609  f423		       86 98		      stx	scorepointers+2
+   1610  f425		       a7 94		      lax	score+1
+   1611  f427		       20 4f f4 	      jsr	scorepointerset
+   1612  f42a		       84 9a		      sty	scorepointers+4
+   1613  f42c		       86 97		      stx	scorepointers+1
+   1614  f42e		       a7 93		      lax	score
+   1615  f430		       20 4f f4 	      jsr	scorepointerset
+   1616  f433		       84 99		      sty	scorepointers+3
+   1617  f435		       86 96		      stx	scorepointers
+   1618  f437
+   1619  f437				   vblk
+   1620  f437							; run possible vblank bB code
+   1621  f437				  -	      ifconst	vblank_bB_code
+   1622  f437				  -	      jsr	vblank_bB_code
+   1623  f437					      endif
+   1624  f437				   vblk2
+   1625  f437		       ad 84 02 	      LDA	INTIM
+   1626  f43a		       30 fb		      bmi	vblk2
+   1627  f43c		       4c 34 f0 	      jmp	kernel
+   1628  f43f
+   1629  f43f
+   1630  f43f		       80 70 60 50*	      .byte.b	$80,$70,$60,$50,$40,$30,$20,$10,$00
+   1631  f448		       f0 e0 d0 c0*	      .byte.b	$F0,$E0,$D0,$C0,$B0,$A0,$90
+   1632  f44f				   repostable
+   1633  f44f
+   1634  f44f				   scorepointerset
+   1635  f44f		       29 0f		      and	#$0F
+   1636  f451		       0a		      asl
+   1637  f452		       0a		      asl
+   1638  f453		       0a		      asl
+   1639  f454		       69 9c		      adc	#<scoretable
+   1640  f456		       a8		      tay
+   1641  f457		       8a		      txa
+   1642  f458							; and #$F0
+   1643  f458							; lsr
+   1644  f458		       4b f0		      asr	#$F0
+   1645  f45a		       69 9c		      adc	#<scoretable
+   1646  f45c		       aa		      tax
+   1647  f45d		       60		      rts
+   1648  f45e				   game
+   1649  f45e				   .
+   1650  f45e							; 
+   1651  f45e
+   1652  f45e				   .
+   1653  f45e							; 
+   1654  f45e
+   1655  f45e				   .
+   1656  f45e							; 
+   1657  f45e
+   1658  f45e				   .
+   1659  f45e							; 
+   1660  f45e
+   1661  f45e				   .
+   1662  f45e							; 
+   1663  f45e
+   1664  f45e				   .
+   1665  f45e							; 
+   1666  f45e
+   1667  f45e				   .L00 		;  set kernel_options pfcolors
+   1668  f45e
+   1669  f45e				   .
+   1670  f45e							; 
+   1671  f45e
+   1672  f45e				   .
+   1673  f45e							; 
+   1674  f45e
+   1675  f45e				   .
+   1676  f45e							; 
+   1677  f45e
+   1678  f45e				   .
+   1679  f45e							; 
+   1680  f45e
+   1681  f45e				   .
+   1682  f45e							; 
+   1683  f45e
+   1684  f45e				   .
+   1685  f45e							; 
+   1686  f45e
+   1687  f45e				   .L01 		;  set tv ntsc
+   1688  f45e
+   1689  f45e				   .
+   1690  f45e							; 
+   1691  f45e
+   1692  f45e				   .
+   1693  f45e							; 
+   1694  f45e
+   1695  f45e				   .
+   1696  f45e							; 
+   1697  f45e
+   1698  f45e				   .
+   1699  f45e							; 
+   1700  f45e
+   1701  f45e				   .
+   1702  f45e							; 
+   1703  f45e
+   1704  f45e				   .
+   1705  f45e							; 
+   1706  f45e
+   1707  f45e				   .
+   1708  f45e							; 
+   1709  f45e
+   1710  f45e				   .
+   1711  f45e							; 
+   1712  f45e
+   1713  f45e				   .
+   1714  f45e							; 
+   1715  f45e
+   1716  f45e				   .
+   1717  f45e							; 
+   1718  f45e
+   1719  f45e				   .
+   1720  f45e							; 
+   1721  f45e
+   1722  f45e				   .L02 		;  const _00  =  $00
+   1723  f45e
+   1724  f45e				   .L03 		;  const _02  =  $02
+   1725  f45e
+   1726  f45e				   .L04 		;  const _04  =  $04
+   1727  f45e
+   1728  f45e				   .L05 		;  const _06  =  $06
+   1729  f45e
+   1730  f45e				   .L06 		;  const _08  =  $08
+   1731  f45e
+   1732  f45e				   .L07 		;  const _0A  =  $0A
+   1733  f45e
+   1734  f45e				   .L08 		;  const _0C  =  $0C
+   1735  f45e
+   1736  f45e				   .L09 		;  const _0E  =  $0E
+   1737  f45e
+   1738  f45e				   .L010		;  const _10  =  $10
+   1739  f45e
+   1740  f45e				   .L011		;  const _12  =  $12
+   1741  f45e
+   1742  f45e				   .L012		;  const _14  =  $14
+   1743  f45e
+   1744  f45e				   .L013		;  const _16  =  $16
+   1745  f45e
+   1746  f45e				   .L014		;  const _18  =  $18
+   1747  f45e
+   1748  f45e				   .L015		;  const _1A  =  $1A
+   1749  f45e
+   1750  f45e				   .L016		;  const _1C  =  $1C
+   1751  f45e
+   1752  f45e				   .L017		;  const _1E  =  $1E
+   1753  f45e
+   1754  f45e				   .L018		;  const _20  =  $20
+   1755  f45e
+   1756  f45e				   .L019		;  const _22  =  $22
+   1757  f45e
+   1758  f45e				   .L020		;  const _24  =  $24
+   1759  f45e
+   1760  f45e				   .L021		;  const _26  =  $26
+   1761  f45e
+   1762  f45e				   .L022		;  const _28  =  $28
+   1763  f45e
+   1764  f45e				   .L023		;  const _2A  =  $2A
+   1765  f45e
+   1766  f45e				   .L024		;  const _2C  =  $2C
+   1767  f45e
+   1768  f45e				   .L025		;  const _2E  =  $2E
+   1769  f45e
+   1770  f45e				   .L026		;  const _30  =  $30
+   1771  f45e
+   1772  f45e				   .L027		;  const _32  =  $32
+   1773  f45e
+   1774  f45e				   .L028		;  const _34  =  $34
+   1775  f45e
+   1776  f45e				   .L029		;  const _36  =  $36
+   1777  f45e
+   1778  f45e				   .L030		;  const _38  =  $38
+   1779  f45e
+   1780  f45e				   .L031		;  const _3A  =  $3A
+   1781  f45e
+   1782  f45e				   .L032		;  const _3C  =  $3C
+   1783  f45e
+   1784  f45e				   .L033		;  const _3E  =  $3E
+   1785  f45e
+   1786  f45e				   .L034		;  const _40  =  $40
+   1787  f45e
+   1788  f45e				   .L035		;  const _42  =  $42
+   1789  f45e
+   1790  f45e				   .L036		;  const _44  =  $44
+   1791  f45e
+   1792  f45e				   .L037		;  const _46  =  $46
+   1793  f45e
+   1794  f45e				   .L038		;  const _48  =  $48
+   1795  f45e
+   1796  f45e				   .L039		;  const _4A  =  $4A
+   1797  f45e
+   1798  f45e				   .L040		;  const _4C  =  $4C
+   1799  f45e
+   1800  f45e				   .L041		;  const _4E  =  $4E
+   1801  f45e
+   1802  f45e				   .L042		;  const _50  =  $50
+   1803  f45e
+   1804  f45e				   .L043		;  const _52  =  $52
+   1805  f45e
+   1806  f45e				   .L044		;  const _54  =  $54
+   1807  f45e
+   1808  f45e				   .L045		;  const _56  =  $56
+   1809  f45e
+   1810  f45e				   .L046		;  const _58  =  $58
+   1811  f45e
+   1812  f45e				   .L047		;  const _5A  =  $5A
+   1813  f45e
+   1814  f45e				   .L048		;  const _5C  =  $5C
+   1815  f45e
+   1816  f45e				   .L049		;  const _5E  =  $5E
+   1817  f45e
+   1818  f45e				   .L050		;  const _60  =  $60
+   1819  f45e
+   1820  f45e				   .L051		;  const _62  =  $62
+   1821  f45e
+   1822  f45e				   .L052		;  const _64  =  $64
+   1823  f45e
+   1824  f45e				   .L053		;  const _66  =  $66
+   1825  f45e
+   1826  f45e				   .L054		;  const _68  =  $68
+   1827  f45e
+   1828  f45e				   .L055		;  const _6A  =  $6A
+   1829  f45e
+   1830  f45e				   .L056		;  const _6C  =  $6C
+   1831  f45e
+   1832  f45e				   .L057		;  const _6E  =  $6E
+   1833  f45e
+   1834  f45e				   .L058		;  const _70  =  $70
+   1835  f45e
+   1836  f45e				   .L059		;  const _72  =  $72
+   1837  f45e
+   1838  f45e				   .L060		;  const _74  =  $74
+   1839  f45e
+   1840  f45e				   .L061		;  const _76  =  $76
+   1841  f45e
+   1842  f45e				   .L062		;  const _78  =  $78
+   1843  f45e
+   1844  f45e				   .L063		;  const _7A  =  $7A
+   1845  f45e
+   1846  f45e				   .L064		;  const _7C  =  $7C
+   1847  f45e
+   1848  f45e				   .L065		;  const _7E  =  $7E
+   1849  f45e
+   1850  f45e				   .L066		;  const _80  =  $80
+   1851  f45e
+   1852  f45e				   .L067		;  const _82  =  $82
+   1853  f45e
+   1854  f45e				   .L068		;  const _84  =  $84
+   1855  f45e
+   1856  f45e				   .L069		;  const _86  =  $86
+   1857  f45e
+   1858  f45e				   .L070		;  const _88  =  $88
+   1859  f45e
+   1860  f45e				   .L071		;  const _8A  =  $8A
+   1861  f45e
+   1862  f45e				   .L072		;  const _8C  =  $8C
+   1863  f45e
+   1864  f45e				   .L073		;  const _8E  =  $8E
+   1865  f45e
+   1866  f45e				   .L074		;  const _90  =  $90
+   1867  f45e
+   1868  f45e				   .L075		;  const _92  =  $92
+   1869  f45e
+   1870  f45e				   .L076		;  const _94  =  $94
+   1871  f45e
+   1872  f45e				   .L077		;  const _96  =  $96
+   1873  f45e
+   1874  f45e				   .L078		;  const _98  =  $98
+   1875  f45e
+   1876  f45e				   .L079		;  const _9A  =  $9A
+   1877  f45e
+   1878  f45e				   .L080		;  const _9C  =  $9C
+   1879  f45e
+   1880  f45e				   .L081		;  const _9E  =  $9E
+   1881  f45e
+   1882  f45e				   .L082		;  const _A0  =  $A0
+   1883  f45e
+   1884  f45e				   .L083		;  const _A2  =  $A2
+   1885  f45e
+   1886  f45e				   .L084		;  const _A4  =  $A4
+   1887  f45e
+   1888  f45e				   .L085		;  const _A6  =  $A6
+   1889  f45e
+   1890  f45e				   .L086		;  const _A8  =  $A8
+   1891  f45e
+   1892  f45e				   .L087		;  const _AA  =  $AA
+   1893  f45e
+   1894  f45e				   .L088		;  const _AC  =  $AC
+   1895  f45e
+   1896  f45e				   .L089		;  const _AE  =  $AE
+   1897  f45e
+   1898  f45e				   .L090		;  const _B0  =  $B0
+   1899  f45e
+   1900  f45e				   .L091		;  const _B2  =  $B2
+   1901  f45e
+   1902  f45e				   .L092		;  const _B4  =  $B4
+   1903  f45e
+   1904  f45e				   .L093		;  const _B6  =  $B6
+   1905  f45e
+   1906  f45e				   .L094		;  const _B8  =  $B8
+   1907  f45e
+   1908  f45e				   .L095		;  const _BA  =  $BA
+   1909  f45e
+   1910  f45e				   .L096		;  const _BC  =  $BC
+   1911  f45e
+   1912  f45e				   .L097		;  const _BE  =  $BE
+   1913  f45e
+   1914  f45e				   .L098		;  const _C0  =  $C0
+   1915  f45e
+   1916  f45e				   .L099		;  const _C2  =  $C2
+   1917  f45e
+   1918  f45e				   .L0100		;  const _C4  =  $C4
+   1919  f45e
+   1920  f45e				   .L0101		;  const _C6  =  $C6
+   1921  f45e
+   1922  f45e				   .L0102		;  const _C8  =  $C8
+   1923  f45e
+   1924  f45e				   .L0103		;  const _CA  =  $CA
+   1925  f45e
+   1926  f45e				   .L0104		;  const _CC  =  $CC
+   1927  f45e
+   1928  f45e				   .L0105		;  const _CE  =  $CE
+   1929  f45e
+   1930  f45e				   .L0106		;  const _D0  =  $D0
+   1931  f45e
+   1932  f45e				   .L0107		;  const _D2  =  $D2
+   1933  f45e
+   1934  f45e				   .L0108		;  const _D4  =  $D4
+   1935  f45e
+   1936  f45e				   .L0109		;  const _D6  =  $D6
+   1937  f45e
+   1938  f45e				   .L0110		;  const _D8  =  $D8
+   1939  f45e
+   1940  f45e				   .L0111		;  const _DA  =  $DA
+   1941  f45e
+   1942  f45e				   .L0112		;  const _DC  =  $DC
+   1943  f45e
+   1944  f45e				   .L0113		;  const _DE  =  $DE
+   1945  f45e
+   1946  f45e				   .L0114		;  const _E0  =  $E0
+   1947  f45e
+   1948  f45e				   .L0115		;  const _E2  =  $E2
+   1949  f45e
+   1950  f45e				   .L0116		;  const _E4  =  $E4
+   1951  f45e
+   1952  f45e				   .L0117		;  const _E6  =  $E6
+   1953  f45e
+   1954  f45e				   .L0118		;  const _E8  =  $E8
+   1955  f45e
+   1956  f45e				   .L0119		;  const _EA  =  $EA
+   1957  f45e
+   1958  f45e				   .L0120		;  const _EC  =  $EC
+   1959  f45e
+   1960  f45e				   .L0121		;  const _EE  =  $EE
+   1961  f45e
+   1962  f45e				   .L0122		;  const _F0  =  $F0
+   1963  f45e
+   1964  f45e				   .L0123		;  const _F2  =  $F2
+   1965  f45e
+   1966  f45e				   .L0124		;  const _F4  =  $F4
+   1967  f45e
+   1968  f45e				   .L0125		;  const _F6  =  $F6
+   1969  f45e
+   1970  f45e				   .L0126		;  const _F8  =  $F8
+   1971  f45e
+   1972  f45e				   .L0127		;  const _FA  =  $FA
+   1973  f45e
+   1974  f45e				   .L0128		;  const _FC  =  $FC
+   1975  f45e
+   1976  f45e				   .L0129		;  const _FE  =  $FE
+   1977  f45e
+   1978  f45e				   .
+   1979  f45e							; 
+   1980  f45e
+   1981  f45e				   .
+   1982  f45e							; 
+   1983  f45e
+   1984  f45e				   .L0130		;  playfield:
+   1985  f45e
+   1986  f45e				  -	      ifconst	pfres
+   1987  f45e				  -	      ldx	#(11>pfres)*(pfres*pfwidth-1)+(11<=pfres)*43
+   1988  f45e					      else
+   1989  f45e		       a2 2b		      ldx	#((11*pfwidth-1)*((11*pfwidth-1)<47))+(47*((11*pfwidth-1)>=47))
+   1990  f460					      endif
+   1991  f460		       4c 8f f4 	      jmp	pflabel0
+   1992  f463				   PF_data0
+   1993  f463		       f8 00		      .byte.b	%11111000, %00000000
+   1994  f465					      if	(pfwidth>2)
+   1995  f465		       00 f8		      .byte.b	%00000000, %11111000
+   1996  f467					      endif
+   1997  f467		       fb 01		      .byte.b	%11111011, %00000001
+   1998  f469					      if	(pfwidth>2)
+   1999  f469		       00 f8		      .byte.b	%00000000, %11111000
+   2000  f46b					      endif
+   2001  f46b		       fb 01		      .byte.b	%11111011, %00000001
+   2002  f46d					      if	(pfwidth>2)
+   2003  f46d		       00 f8		      .byte.b	%00000000, %11111000
+   2004  f46f					      endif
+   2005  f46f		       fb 39		      .byte.b	%11111011, %00111001
+   2006  f471					      if	(pfwidth>2)
+   2007  f471		       00 f8		      .byte.b	%00000000, %11111000
+   2008  f473					      endif
+   2009  f473		       fb 39		      .byte.b	%11111011, %00111001
+   2010  f475					      if	(pfwidth>2)
+   2011  f475		       00 f8		      .byte.b	%00000000, %11111000
+   2012  f477					      endif
+   2013  f477		       fb 39		      .byte.b	%11111011, %00111001
+   2014  f479					      if	(pfwidth>2)
+   2015  f479		       00 f8		      .byte.b	%00000000, %11111000
+   2016  f47b					      endif
+   2017  f47b		       fb 39		      .byte.b	%11111011, %00111001
+   2018  f47d					      if	(pfwidth>2)
+   2019  f47d		       00 f8		      .byte.b	%00000000, %11111000
+   2020  f47f					      endif
+   2021  f47f		       fb 39		      .byte.b	%11111011, %00111001
+   2022  f481					      if	(pfwidth>2)
+   2023  f481		       00 f8		      .byte.b	%00000000, %11111000
+   2024  f483					      endif
+   2025  f483		       fb 01		      .byte.b	%11111011, %00000001
+   2026  f485					      if	(pfwidth>2)
+   2027  f485		       00 f8		      .byte.b	%00000000, %11111000
+   2028  f487					      endif
+   2029  f487		       fb 01		      .byte.b	%11111011, %00000001
+   2030  f489					      if	(pfwidth>2)
+   2031  f489		       00 f8		      .byte.b	%00000000, %11111000
+   2032  f48b					      endif
+   2033  f48b		       f8 00		      .byte.b	%11111000, %00000000
+   2034  f48d					      if	(pfwidth>2)
+   2035  f48d		       00 f8		      .byte.b	%00000000, %11111000
+   2036  f48f					      endif
+   2037  f48f				   pflabel0
+   2038  f48f		       bd 63 f4 	      lda	PF_data0,x
+   2039  f492		       95 a4		      sta	playfield,x
+   2040  f494		       ca		      dex
+   2041  f495		       10 f8		      bpl	pflabel0
+   2042  f497				   .
+   2043  f497							; 
+   2044  f497
+   2045  f497				   .
+   2046  f497							; 
+   2047  f497
+   2048  f497				   .L0131		;  COLUBK  =  _0E
+   2049  f497
+   2050  f497		       a9 0e		      LDA	#_0E
+   2051  f499		       85 09		      STA	COLUBK
+   2052  f49b				   .
+   2053  f49b							; 
+   2054  f49b
+   2055  f49b				   .
+   2056  f49b							; 
+   2057  f49b
+   2058  f49b				   .
+   2059  f49b							; 
+   2060  f49b
+   2061  f49b				   .__Main_Loop
+   2062  f49b							; __Main_Loop
+   2063  f49b
+   2064  f49b				   .
+   2065  f49b							; 
+   2066  f49b
+   2067  f49b				   .
+   2068  f49b							; 
+   2069  f49b
+   2070  f49b				   .L0132		;  pfcolors:
+   2071  f49b
+   2072  f49b		       a9 00		      lda	# _00
+   2073  f49d		       85 08		      sta	COLUPF
+   2074  f49f				  -	      ifconst	pfres
+   2075  f49f				  -	      lda	#>(pfcolorlabel13-132+pfres*pfwidth)
+   2076  f49f					      else
+   2077  f49f		       a9 f4		      lda	#>(pfcolorlabel13-84)
+   2078  f4a1					      endif
+   2079  f4a1		       85 f1		      sta	pfcolortable+1
+   2080  f4a3				  -	      ifconst	pfres
+   2081  f4a3				  -	      lda	#<(pfcolorlabel13-132+pfres*pfwidth)
+   2082  f4a3					      else
+   2083  f4a3		       a9 59		      lda	#<(pfcolorlabel13-84)
+   2084  f4a5					      endif
+   2085  f4a5		       85 f0		      sta	pfcolortable
+   2086  f4a7				   .
+   2087  f4a7							; 
+   2088  f4a7
+   2089  f4a7				   .
+   2090  f4a7							; 
+   2091  f4a7
+   2092  f4a7				   .
+   2093  f4a7							; 
+   2094  f4a7
+   2095  f4a7				   .
+   2096  f4a7							; 
+   2097  f4a7
+   2098  f4a7				   .
+   2099  f4a7							; 
+   2100  f4a7
+   2101  f4a7				   .
+   2102  f4a7							; 
+   2103  f4a7
+   2104  f4a7				   .
+   2105  f4a7							; 
+   2106  f4a7
+   2107  f4a7				   .L0133		;  drawscreen
+   2108  f4a7
+   2109  f4a7		       20 be f3 	      jsr	drawscreen
+   2110  f4aa				   .
+   2111  f4aa							; 
+   2112  f4aa
+   2113  f4aa				   .
+   2114  f4aa							; 
+   2115  f4aa
+   2116  f4aa				   .
+   2117  f4aa							; 
+   2118  f4aa
+   2119  f4aa				   .L0134		;  goto __Main_Loop
+   2120  f4aa
+   2121  f4aa		       4c 9b f4 	      jmp	.__Main_Loop
+   2122  f4ad
+   2123  f4ad				   .
+   2124  f4ad							; 
+   2125  f4ad
+   2126  f4ad				   .
+   2127  f4ad							; 
+   2128  f4ad
+   2129  f4ad				  -	      ifconst	pfres
+   2130  f4ad				  -	      if	(<*) > (254-pfres*pfwidth)
+   2131  f4ad				  -	      align	256
+   2132  f4ad				  -	      endif
+   2133  f4ad				  -	      if	(<*) < (136-pfres*pfwidth)
+   2134  f4ad				  -	      repeat	((136-pfres*pfwidth)-(<*))
+   2135  f4ad				  -	      .byte	0
+   2136  f4ad				  -	      repend
+   2137  f4ad				  -	      endif
+   2138  f4ad					      else
+   2139  f4ad				  -	      if	(<*) > 206
+   2140  f4ad				  -	      align	256
+   2141  f4ad					      endif
+   2142  f4ad				  -	      if	(<*) < 88
+   2143  f4ad				  -	      repeat	(88-(<*))
+   2144  f4ad				  -	      .byte	0
+   2145  f4ad				  -	      repend
+   2146  f4ad					      endif
+   2147  f4ad					      endif
+   2148  f4ad				   pfcolorlabel13
+   2149  f4ad		       00 00 00 00	      .byte.b	_00,0,0,0
+   2150  f4b1		       00 00 00 00	      .byte.b	_00,0,0,0
+   2151  f4b5		       00 00 00 00	      .byte.b	_00,0,0,0
+   2152  f4b9		       00 00 00 00	      .byte.b	_00,0,0,0
+   2153  f4bd		       00 00 00 00	      .byte.b	_00,0,0,0
+   2154  f4c1		       00 00 00 00	      .byte.b	_00,0,0,0
+   2155  f4c5		       00 00 00 00	      .byte.b	_00,0,0,0
+   2156  f4c9		       00 00 00 00	      .byte.b	_00,0,0,0
+   2157  f4cd		       00 00 00 00	      .byte.b	_00,0,0,0
+   2158  f4d1		       00 00 00 00	      .byte.b	_00,0,0,0
+   2159  f4d5		       00 00 00 00	      .byte.b	_00,0,0,0
+   2160  f4d9					      if	ECHOFIRST
+      2755 bytes of ROM space left
+   2161  f4d9					      echo	"    ",[(scoretable - *)]d , "bytes of ROM space left")
+   2162  f4d9					      endif
+   2163  f4d9		       00 01	   ECHOFIRST  =	1
+   2164  f4d9
+   2165  f4d9
+   2166  f4d9
+   2167  f4d9							; Provided under the CC0 license. See the included LICENSE.txt for details.
+   2168  f4d9
+   2169  f4d9							; feel free to modify the score graphics - just keep each digit 8 high
+   2170  f4d9							; and keep the conditional compilation stuff intact
+   2171  f4d9				  -	      ifconst	ROM2k
+   2172  f4d9				  -	      ORG	$F7AC-8
+   2173  f4d9					      else
+   2174  f4d9				  -	      ifconst	bankswitch
+   2175  f4d9				  -	      if	bankswitch == 8
+   2176  f4d9				  -	      ORG	$2F94-bscode_length
+   2177  f4d9				  -	      RORG	$FF94-bscode_length
+   2178  f4d9				  -	      endif
+   2179  f4d9				  -	      if	bankswitch == 16
+   2180  f4d9				  -	      ORG	$4F94-bscode_length
+   2181  f4d9				  -	      RORG	$FF94-bscode_length
+   2182  f4d9				  -	      endif
+   2183  f4d9				  -	      if	bankswitch == 32
+   2184  f4d9				  -	      ORG	$8F94-bscode_length
+   2185  f4d9				  -	      RORG	$FF94-bscode_length
+   2186  f4d9				  -	      endif
+   2187  f4d9				  -	      if	bankswitch == 64
+   2188  f4d9				  -	      ORG	$10F80-bscode_length
+   2189  f4d9				  -	      RORG	$1FF80-bscode_length
+   2190  f4d9				  -	      endif
+   2191  f4d9					      else
+   2192  ff9c					      ORG	$FF9C
+   2193  ff9c					      endif
+   2194  ff9c					      endif
+   2195  ff9c
+   2196  ff9c							; font equates
+   2197  ff9c		       00 01	   .21stcentury =	1
+   2198  ff9c		       00 02	   alarmclock =	2
+   2199  ff9c		       00 03	   handwritten =	3
+   2200  ff9c		       00 04	   interrupted =	4
+   2201  ff9c		       00 05	   retroputer =	5
+   2202  ff9c		       00 06	   whimsey    =	6
+   2203  ff9c		       00 07	   tiny       =	7
+   2204  ff9c		       00 08	   hex	      =	8
+   2205  ff9c
+   2206  ff9c				  -	      ifconst	font
+   2207  ff9c				  -	      if	font == hex
+   2208  ff9c				  -	      ORG	. - 48
+   2209  ff9c				  -	      endif
+   2210  ff9c					      endif
+   2211  ff9c
+   2212  ff9c				   scoretable
+   2213  ff9c
+   2214  ff9c				  -	      ifconst	font
+   2215  ff9c				  -	      if	font == .21stcentury
+   2216  ff9c				  -	      include	"score_graphics.asm.21stcentury"
+   2217  ff9c				  -	      endif
+   2218  ff9c				  -	      if	font == alarmclock
+   2219  ff9c				  -	      include	"score_graphics.asm.alarmclock"
+   2220  ff9c				  -	      endif
+   2221  ff9c				  -	      if	font == handwritten
+   2222  ff9c				  -	      include	"score_graphics.asm.handwritten"
+   2223  ff9c				  -	      endif
+   2224  ff9c				  -	      if	font == interrupted
+   2225  ff9c				  -	      include	"score_graphics.asm.interrupted"
+   2226  ff9c				  -	      endif
+   2227  ff9c				  -	      if	font == retroputer
+   2228  ff9c				  -	      include	"score_graphics.asm.retroputer"
+   2229  ff9c				  -	      endif
+   2230  ff9c				  -	      if	font == whimsey
+   2231  ff9c				  -	      include	"score_graphics.asm.whimsey"
+   2232  ff9c				  -	      endif
+   2233  ff9c				  -	      if	font == tiny
+   2234  ff9c				  -	      include	"score_graphics.asm.tiny"
+   2235  ff9c				  -	      endif
+   2236  ff9c				  -	      if	font == hex
+   2237  ff9c				  -	      include	"score_graphics.asm.hex"
+   2238  ff9c				  -	      endif
+   2239  ff9c					      else		; default font
+   2240  ff9c
+   2241  ff9c		       3c		      .byte.b	%00111100
+   2242  ff9d		       66		      .byte.b	%01100110
+   2243  ff9e		       66		      .byte.b	%01100110
+   2244  ff9f		       66		      .byte.b	%01100110
+   2245  ffa0		       66		      .byte.b	%01100110
+   2246  ffa1		       66		      .byte.b	%01100110
+   2247  ffa2		       66		      .byte.b	%01100110
+   2248  ffa3		       3c		      .byte.b	%00111100
+   2249  ffa4
+   2250  ffa4		       7e		      .byte.b	%01111110
+   2251  ffa5		       18		      .byte.b	%00011000
+   2252  ffa6		       18		      .byte.b	%00011000
+   2253  ffa7		       18		      .byte.b	%00011000
+   2254  ffa8		       18		      .byte.b	%00011000
+   2255  ffa9		       38		      .byte.b	%00111000
+   2256  ffaa		       18		      .byte.b	%00011000
+   2257  ffab		       08		      .byte.b	%00001000
+   2258  ffac
+   2259  ffac		       7e		      .byte.b	%01111110
+   2260  ffad		       60		      .byte.b	%01100000
+   2261  ffae		       60		      .byte.b	%01100000
+   2262  ffaf		       3c		      .byte.b	%00111100
+   2263  ffb0		       06		      .byte.b	%00000110
+   2264  ffb1		       06		      .byte.b	%00000110
+   2265  ffb2		       46		      .byte.b	%01000110
+   2266  ffb3		       3c		      .byte.b	%00111100
+   2267  ffb4
+   2268  ffb4		       3c		      .byte.b	%00111100
+   2269  ffb5		       46		      .byte.b	%01000110
+   2270  ffb6		       06		      .byte.b	%00000110
+   2271  ffb7		       06		      .byte.b	%00000110
+   2272  ffb8		       1c		      .byte.b	%00011100
+   2273  ffb9		       06		      .byte.b	%00000110
+   2274  ffba		       46		      .byte.b	%01000110
+   2275  ffbb		       3c		      .byte.b	%00111100
+   2276  ffbc
+   2277  ffbc		       0c		      .byte.b	%00001100
+   2278  ffbd		       0c		      .byte.b	%00001100
+   2279  ffbe		       7e		      .byte.b	%01111110
+   2280  ffbf		       4c		      .byte.b	%01001100
+   2281  ffc0		       4c		      .byte.b	%01001100
+   2282  ffc1		       2c		      .byte.b	%00101100
+   2283  ffc2		       1c		      .byte.b	%00011100
+   2284  ffc3		       0c		      .byte.b	%00001100
+   2285  ffc4
+   2286  ffc4		       3c		      .byte.b	%00111100
+   2287  ffc5		       46		      .byte.b	%01000110
+   2288  ffc6		       06		      .byte.b	%00000110
+   2289  ffc7		       06		      .byte.b	%00000110
+   2290  ffc8		       3c		      .byte.b	%00111100
+   2291  ffc9		       60		      .byte.b	%01100000
+   2292  ffca		       60		      .byte.b	%01100000
+   2293  ffcb		       7e		      .byte.b	%01111110
+   2294  ffcc
+   2295  ffcc		       3c		      .byte.b	%00111100
+   2296  ffcd		       66		      .byte.b	%01100110
+   2297  ffce		       66		      .byte.b	%01100110
+   2298  ffcf		       66		      .byte.b	%01100110
+   2299  ffd0		       7c		      .byte.b	%01111100
+   2300  ffd1		       60		      .byte.b	%01100000
+   2301  ffd2		       62		      .byte.b	%01100010
+   2302  ffd3		       3c		      .byte.b	%00111100
+   2303  ffd4
+   2304  ffd4		       30		      .byte.b	%00110000
+   2305  ffd5		       30		      .byte.b	%00110000
+   2306  ffd6		       30		      .byte.b	%00110000
+   2307  ffd7		       18		      .byte.b	%00011000
+   2308  ffd8		       0c		      .byte.b	%00001100
+   2309  ffd9		       06		      .byte.b	%00000110
+   2310  ffda		       42		      .byte.b	%01000010
+   2311  ffdb		       3e		      .byte.b	%00111110
+   2312  ffdc
+   2313  ffdc		       3c		      .byte.b	%00111100
+   2314  ffdd		       66		      .byte.b	%01100110
+   2315  ffde		       66		      .byte.b	%01100110
+   2316  ffdf		       66		      .byte.b	%01100110
+   2317  ffe0		       3c		      .byte.b	%00111100
+   2318  ffe1		       66		      .byte.b	%01100110
+   2319  ffe2		       66		      .byte.b	%01100110
+   2320  ffe3		       3c		      .byte.b	%00111100
+   2321  ffe4
+   2322  ffe4		       3c		      .byte.b	%00111100
+   2323  ffe5		       46		      .byte.b	%01000110
+   2324  ffe6		       06		      .byte.b	%00000110
+   2325  ffe7		       3e		      .byte.b	%00111110
+   2326  ffe8		       66		      .byte.b	%01100110
+   2327  ffe9		       66		      .byte.b	%01100110
+   2328  ffea		       66		      .byte.b	%01100110
+   2329  ffeb		       3c		      .byte.b	%00111100
+   2330  ffec
+   2331  ffec					      ifnconst	DPC_kernel_options
+   2332  ffec
+   2333  ffec		       00		      .byte.b	%00000000
+   2334  ffed		       00		      .byte.b	%00000000
+   2335  ffee		       00		      .byte.b	%00000000
+   2336  ffef		       00		      .byte.b	%00000000
+   2337  fff0		       00		      .byte.b	%00000000
+   2338  fff1		       00		      .byte.b	%00000000
+   2339  fff2		       00		      .byte.b	%00000000
+   2340  fff3		       00		      .byte.b	%00000000
+   2341  fff4
+   2342  fff4					      endif
+   2343  fff4
+   2344  fff4					      endif
+   2345  fff4
+   2346  fff4				  -	      ifconst	ROM2k
+   2347  fff4				  -	      ORG	$F7FC
+   2348  fff4					      else
+   2349  fff4				  -	      ifconst	bankswitch
+   2350  fff4				  -	      if	bankswitch == 8
+   2351  fff4				  -	      ORG	$2FF4-bscode_length
+   2352  fff4				  -	      RORG	$FFF4-bscode_length
+   2353  fff4				  -	      endif
+   2354  fff4				  -	      if	bankswitch == 16
+   2355  fff4				  -	      ORG	$4FF4-bscode_length
+   2356  fff4				  -	      RORG	$FFF4-bscode_length
+   2357  fff4				  -	      endif
+   2358  fff4				  -	      if	bankswitch == 32
+   2359  fff4				  -	      ORG	$8FF4-bscode_length
+   2360  fff4				  -	      RORG	$FFF4-bscode_length
+   2361  fff4				  -	      endif
+   2362  fff4				  -	      if	bankswitch == 64
+   2363  fff4				  -	      ORG	$10FE0-bscode_length
+   2364  fff4				  -	      RORG	$1FFE0-bscode_length
+   2365  fff4				  -	      endif
+   2366  fff4					      else
+   2367  fffc					      ORG	$FFFC
+   2368  fffc					      endif
+   2369  fffc					      endif
+   2370  fffc							; Provided under the CC0 license. See the included LICENSE.txt for details.
+   2371  fffc
+   2372  fffc				  -	      ifconst	bankswitch
+   2373  fffc				  -	      if	bankswitch == 8
+   2374  fffc				  -	      ORG	$2FFC
+   2375  fffc				  -	      RORG	$FFFC
+   2376  fffc				  -	      endif
+   2377  fffc				  -	      if	bankswitch == 16
+   2378  fffc				  -	      ORG	$4FFC
+   2379  fffc				  -	      RORG	$FFFC
+   2380  fffc				  -	      endif
+   2381  fffc				  -	      if	bankswitch == 32
+   2382  fffc				  -	      ORG	$8FFC
+   2383  fffc				  -	      RORG	$FFFC
+   2384  fffc				  -	      endif
+   2385  fffc				  -	      if	bankswitch == 64
+   2386  fffc				  -	      ORG	$10FF0
+   2387  fffc				  -	      RORG	$1FFF0
+   2388  fffc				  -	      lda	$ffe0	; we use wasted space to assist stella with EF format auto-detection
+   2389  fffc				  -	      ORG	$10FF8
+   2390  fffc				  -	      RORG	$1FFF8
+   2391  fffc				  -	      ifconst	superchip
+   2392  fffc				  -	      .byte	"E","F","S","C"
+   2393  fffc				  -	      else
+   2394  fffc				  -	      .byte	"E","F","E","F"
+   2395  fffc				  -	      endif
+   2396  fffc				  -	      ORG	$10FFC
+   2397  fffc				  -	      RORG	$1FFFC
+   2398  fffc				  -	      endif
+   2399  fffc					      else
+   2400  fffc				  -	      ifconst	ROM2k
+   2401  fffc				  -	      ORG	$F7FC
+   2402  fffc					      else
+   2403  fffc					      ORG	$FFFC
+   2404  fffc					      endif
+   2405  fffc					      endif
+   2406  fffc		       00 f0		      .word.w	(start & $ffff)
+   2407  fffe		       00 f0		      .word.w	(start & $ffff)
