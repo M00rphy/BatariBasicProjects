@@ -1,26 +1,27 @@
 --- Symbol List (sorted by symbol)
 0.21stcentury            0001                  
-0.__AP_Fire              3750              (R )
-0.__AP_Inactivity        3716              (R )
-0.__AP_Move_Down         3497              (R )
-0.__AP_Move_Left         3580              (R )
-0.__AP_Move_Right        3639              (R )
-0.__AP_Move_Up           33ac              (R )
-0.__AP_Skip_AP_Setup     3149              (R )
-0.__AP_Skip_Enemy_Points 3962              (R )
-0.__AP_Skip_Fire_Missile 373a              (R )
-0.__AP_Skip_Flip         3a53              (R )
-0.__AP_Skip_HiScore_Swap 3a43              (R )
-0.__AP_Skip_New_Dir      338e              (R )
-0.__AP_Skip_Pause        3ad4              (R )
-0.__AP_Skip_Reset        3b7a              (R )
-0.__Delete_Missile       3854              (R )
+0.__AP_Fire              370a              (R )
+0.__AP_Inactivity        36d0              (R )
+0.__AP_Move_Down         3451              (R )
+0.__AP_Move_Left         353a              (R )
+0.__AP_Move_Right        35f3              (R )
+0.__AP_Move_Up           3366              (R )
+0.__AP_Skip_AP_Setup     3103              (R )
+0.__AP_Skip_Enemy_Points 3914                  
+0.__AP_Skip_Enemy_Points_And_Difficulty 3b03              (R )
+0.__AP_Skip_Fire_Missile 36f4              (R )
+0.__AP_Skip_Flip         39ac              (R )
+0.__AP_Skip_HiScore_Swap 399c              (R )
+0.__AP_Skip_New_Dir      3348              (R )
+0.__AP_Skip_Pause        3a2d              (R )
+0.__AP_Skip_Reset        3ad3              (R )
+0.__Delete_Missile       380e              (R )
 0.__Game_Over_Loop       50ba              (R )
 0.__Game_Over_Setup      5000              (R )
-0.__Get_New_AP_Direction 3215              (R )
+0.__Get_New_AP_Direction 31cf              (R )
 0.__GO_Current_Score     511f              (R )
 0.__Got_Pause_Colors     5261              (R )
-0.__Main_Loop            3149              (R )
+0.__Main_Loop            3103              (R )
 0.__Main_Loop_Setup      3000              (R )
 0.__New_High_Score       5039              (R )
 0.__Pause_Game           51cd              (R )
@@ -61,24 +62,24 @@
 0.__Pu02                 9046              (R )
 0.__Pu03                 9055              (R )
 0.__Pu_Frame_Done        901b              (R )
-0.__Puppet               316a                  
+0.__Puppet               3124                  
 0.__Restore_Game_from_Pause 52a2                  
 0.__Skip_20_Second_Counter 512f              (R )
-0.__Skip_Check_G_Over    3b45              (R )
-0.__Skip_Counters        3164              (R )
-0.__Skip_Enemy_Setup     310f              (R )
-0.__Skip_Fire            37e9              (R )
+0.__Skip_Check_G_Over    3a9e              (R )
+0.__Skip_Counters        311e              (R )
+0.__Skip_Enemy_Setup     30c9                  
+0.__Skip_Fire            37a3              (R )
 0.__Skip_First_Colors    5149              (R )
 0.__Skip_High_Score      5045              (R )
-0.__Skip_Joy0_Down       3563              (R )
-0.__Skip_Joy0_Left       361c              (R )
-0.__Skip_Joy0_Right      36d5              (R )
-0.__Skip_Joy0_Up         3478              (R )
-0.__Skip_Joystick_Precheck 31cc              (R )
-0.__Skip_Missile         3860              (R )
+0.__Skip_Joy0_Down       351d              (R )
+0.__Skip_Joy0_Left       35d6              (R )
+0.__Skip_Joy0_Right      368f              (R )
+0.__Skip_Joy0_Up         3432              (R )
+0.__Skip_Joystick_Precheck 3186              (R )
+0.__Skip_Missile         381a              (R )
 0.__Skip_Pause_Counter   5246              (R )
 0.__Skip_Second_Colors   5159              (R )
-0.__Skip_Shot_Enemy      3a01              (R )
+0.__Skip_Shot_Enemy      395a              (R )
 0.__Start_Restart        1000              (R )
 0.__Title_Screen_Loop    1094              (R )
 0.__Title_Screen_Setup   107e                  
@@ -87,172 +88,169 @@
 0._P_L                   9153              (R )
 0._P_R                   90e2              (R )
 0._P_U                   9000              (R )
-0._Skip_touch            3905              (R )
+0._Skip_touch            38bf              (R )
 0.condpart0              104e                  
 0.condpart1              1059                  
-0.condpart10             311c                  
-0.condpart100            3851                  
-0.condpart101            3864                  
-0.condpart102            386d                  
-0.condpart103            3886                  
-0.condpart104            3892                  
-0.condpart105            389a                  
-0.condpart106            3909                  
-0.condpart107            391e                  
-0.condpart108            393c                  
-0.condpart109            3949                  
-0.condpart11             3128                  
-0.condpart110            394f                  
-0.condpart111            395e                  
-0.condpart112            3968                  
-0.condpart113            3972                  
-0.condpart114            39a6                  
-0.condpart115            3a07                  
-0.condpart116            3a12                  
-0.condpart117            3a2d                  
-0.condpart118            3a59                  
-0.condpart119            3a69                  
-0.condpart12             3151                  
-0.condpart120            3a74                  
-0.condpart121            3a78                  
-0.condpart122            3a83                  
-0.condpart123            3a89                  
-0.condpart124            3aa0                  
-0.condpart125            3aa6                  
-0.condpart126            3abc                  
-0.condpart127            3ac2                  
-0.condpart128            3b06                  
-0.condpart129            3b0f                  
-0.condpart13             3160                  
-0.condpart130            3b4b                  
-0.condpart131            3b55                  
-0.condpart132            3b5c              (R )
-0.condpart133            3b81                  
-0.condpart134            3b8f                  
-0.condpart135            5006                  
-0.condpart136            500f                  
-0.condpart137            5018                  
-0.condpart138            5021                  
-0.condpart139            502a                  
-0.condpart14             31a8                  
-0.condpart140            5033                  
-0.condpart141            504b                  
-0.condpart142            50c2                  
-0.condpart143            50d1                  
-0.condpart144            5109                  
-0.condpart145            5133                  
-0.condpart146            5177                  
-0.condpart147            5181                  
-0.condpart148            5185                  
-0.condpart149            5193                  
-0.condpart15             31b2                  
-0.condpart150            51d9                  
-0.condpart151            51f7                  
-0.condpart152            521a                  
-0.condpart153            5240                  
-0.condpart154            527d                  
-0.condpart155            528c                  
-0.condpart156            529c                  
-0.condpart157            52c4                  
-0.condpart158            5307                  
-0.condpart159            534a                  
-0.condpart16             31b9                  
-0.condpart160            538d                  
-0.condpart161            53d0                  
-0.condpart162            5413                  
-0.condpart163            5456                  
-0.condpart164            5499                  
-0.condpart17             31be                  
-0.condpart18             31c3                  
-0.condpart19             31d2                  
+0.condpart10             30e2                  
+0.condpart100            381e                  
+0.condpart101            3827                  
+0.condpart102            3840                  
+0.condpart103            384c                  
+0.condpart104            3854                  
+0.condpart105            38c3                  
+0.condpart106            38d8                  
+0.condpart107            38f6                  
+0.condpart108            3910                  
+0.condpart109            391a                  
+0.condpart11             310b                  
+0.condpart110            3924                  
+0.condpart111            392e                  
+0.condpart112            3960                  
+0.condpart113            396b                  
+0.condpart114            3986                  
+0.condpart115            39b2                  
+0.condpart116            39c2                  
+0.condpart117            39cd                  
+0.condpart118            39d1                  
+0.condpart119            39dc                  
+0.condpart12             311a                  
+0.condpart120            39e2                  
+0.condpart121            39f9                  
+0.condpart122            39ff                  
+0.condpart123            3a15                  
+0.condpart124            3a1b                  
+0.condpart125            3a5f                  
+0.condpart126            3a68                  
+0.condpart127            3aa4                  
+0.condpart128            3aae                  
+0.condpart129            3ab5              (R )
+0.condpart13             3162                  
+0.condpart130            3ada                  
+0.condpart131            3ae8                  
+0.condpart132            5006                  
+0.condpart133            500f                  
+0.condpart134            5018                  
+0.condpart135            5021                  
+0.condpart136            502a                  
+0.condpart137            5033                  
+0.condpart138            504b                  
+0.condpart139            50c2                  
+0.condpart14             316c                  
+0.condpart140            50d1                  
+0.condpart141            5109                  
+0.condpart142            5133                  
+0.condpart143            5177                  
+0.condpart144            5181                  
+0.condpart145            5185                  
+0.condpart146            5193                  
+0.condpart147            51d9                  
+0.condpart148            51f7                  
+0.condpart149            521a                  
+0.condpart15             3173                  
+0.condpart150            5240                  
+0.condpart151            527d                  
+0.condpart152            528c                  
+0.condpart153            529c                  
+0.condpart154            52c4                  
+0.condpart155            5307                  
+0.condpart156            534a                  
+0.condpart157            538d                  
+0.condpart158            53d0                  
+0.condpart159            5413                  
+0.condpart16             3178                  
+0.condpart160            5456                  
+0.condpart161            5499                  
+0.condpart17             317d                  
+0.condpart18             318c                  
+0.condpart19             3197                  
 0.condpart2              1062                  
-0.condpart20             31dd                  
-0.condpart21             31fa                  
-0.condpart22             3212                  
-0.condpart23             322c                  
-0.condpart24             3265                  
-0.condpart25             3272                  
-0.condpart26             328b                  
-0.condpart27             3295                  
-0.condpart28             32ae                  
-0.condpart29             32b8                  
+0.condpart20             31b4                  
+0.condpart21             31cc                  
+0.condpart22             31e6                  
+0.condpart23             321f                  
+0.condpart24             322c                  
+0.condpart25             3245                  
+0.condpart26             324f                  
+0.condpart27             3268                  
+0.condpart28             3272                  
+0.condpart29             328b                  
 0.condpart3              106c                  
-0.condpart30             32d1                  
-0.condpart31             32db                  
-0.condpart32             32f4                  
-0.condpart33             3305                  
-0.condpart34             331c                  
-0.condpart35             3328                  
-0.condpart36             333a                  
-0.condpart37             3346                  
-0.condpart38             3358                  
-0.condpart39             3364                  
+0.condpart30             3295                  
+0.condpart31             32ae                  
+0.condpart32             32bf                  
+0.condpart33             32d6                  
+0.condpart34             32e2                  
+0.condpart35             32f4                  
+0.condpart36             3300                  
+0.condpart37             3312                  
+0.condpart38             331e                  
+0.condpart39             3330                  
 0.condpart4              10b4                  
-0.condpart40             3376                  
-0.condpart41             3382                  
-0.condpart42             3394                  
-0.condpart43             3399                  
-0.condpart44             33a3                  
-0.condpart45             33d5                  
-0.condpart46             33f3                  
-0.condpart47             33fc                  
-0.condpart48             341a                  
-0.condpart49             3423                  
+0.condpart40             333c                  
+0.condpart41             334e                  
+0.condpart42             3353                  
+0.condpart43             335d                  
+0.condpart44             338f                  
+0.condpart45             33ad                  
+0.condpart46             33b6                  
+0.condpart47             33d4                  
+0.condpart48             33dd                  
+0.condpart49             33fb                  
 0.condpart5              10c3                  
-0.condpart50             3441                  
-0.condpart51             347e                  
-0.condpart52             3484                  
-0.condpart53             348e                  
-0.condpart54             34c0                  
-0.condpart55             34de                  
-0.condpart56             34e7                  
-0.condpart57             3505                  
-0.condpart58             350e                  
-0.condpart59             352c                  
+0.condpart50             3438                  
+0.condpart51             343e                  
+0.condpart52             3448                  
+0.condpart53             347a                  
+0.condpart54             3498                  
+0.condpart55             34a1                  
+0.condpart56             34bf                  
+0.condpart57             34c8                  
+0.condpart58             34e6                  
+0.condpart59             3523                  
 0.condpart6              10fa                  
-0.condpart60             3569                  
-0.condpart61             356f                  
-0.condpart62             3577                  
-0.condpart63             35a0                  
-0.condpart64             35be                  
-0.condpart65             35c7                  
-0.condpart66             35e5                  
-0.condpart67             3622                  
-0.condpart68             3628                  
-0.condpart69             3630                  
+0.condpart60             3529                  
+0.condpart61             3531                  
+0.condpart62             355a                  
+0.condpart63             3578                  
+0.condpart64             3581                  
+0.condpart65             359f                  
+0.condpart66             35dc                  
+0.condpart67             35e2                  
+0.condpart68             35ea                  
+0.condpart69             3613                  
 0.condpart7              10fe                  
-0.condpart70             3659                  
-0.condpart71             3677                  
-0.condpart72             3680                  
-0.condpart73             369e                  
-0.condpart74             36db                  
-0.condpart75             36e3                  
-0.condpart76             36eb                  
-0.condpart77             36f3                  
-0.condpart78             36fb                  
-0.condpart79             3704                  
+0.condpart70             3631                  
+0.condpart71             363a                  
+0.condpart72             3658                  
+0.condpart73             3695                  
+0.condpart74             369d                  
+0.condpart75             36a5                  
+0.condpart76             36ad                  
+0.condpart77             36b5                  
+0.condpart78             36be                  
+0.condpart79             36c4                  
 0.condpart8              110c                  
-0.condpart80             370a                  
-0.condpart81             371c                  
-0.condpart82             3734                  
-0.condpart83             373e                  
-0.condpart84             374d                  
-0.condpart85             3754                  
-0.condpart86             37a3                  
-0.condpart87             37b7                  
-0.condpart88             37c9                  
-0.condpart89             37db                  
-0.condpart9              30ba                  
-0.condpart90             37ed                  
-0.condpart91             37f6                  
-0.condpart92             3803                  
-0.condpart93             380e                  
-0.condpart94             3819                  
-0.condpart95             3826                  
-0.condpart96             382f                  
-0.condpart97             3838                  
-0.condpart98             3841                  
-0.condpart99             3848                  
+0.condpart80             36d6                  
+0.condpart81             36ee                  
+0.condpart82             36f8                  
+0.condpart83             3707                  
+0.condpart84             370e                  
+0.condpart85             375d                  
+0.condpart86             3771                  
+0.condpart87             3783                  
+0.condpart88             3795                  
+0.condpart89             37a7                  
+0.condpart9              30d6                  
+0.condpart90             37b0                  
+0.condpart91             37bd                  
+0.condpart92             37c8                  
+0.condpart93             37d3                  
+0.condpart94             37e0                  
+0.condpart95             37e9                  
+0.condpart96             37f2                  
+0.condpart97             37fb                  
+0.condpart98             3802                  
+0.condpart99             380b                  
 0.continuelastP0         f15a              (R )
 0.continuelastP1         f12d              (R )
 0.continueP0             f0a3              (R )
@@ -264,435 +262,443 @@
 0.L00                    1000                  
 0.L01                    1000                  
 0.L010                   1000                  
-0.L0100                  3034                  
-0.L0101                  3040                  
-0.L0102                  307d                  
-0.L0103                  3085                  
-0.L0104                  3091                  
-0.L0105                  30b4                  
-0.L0106                  30e6                  
-0.L0107                  310f                  
-0.L0108                  3122                  
-0.L0109                  3137                  
+0.L0100                  301e                  
+0.L0101                  302a                  
+0.L0102                  302e                  
+0.L0103                  3032                  
+0.L0104                  3036                  
+0.L0105                  303a                  
+0.L0106                  303e                  
+0.L0107                  3044                  
+0.L0108                  3050                  
+0.L0109                  308d                  
 0.L011                   1000                  
-0.L0110                  3143                  
-0.L0111                  3149                  
-0.L0112                  314b                  
-0.L0113                  3154                  
-0.L0114                  315a                  
-0.L0115                  3164                  
-0.L0116                  316a                  
-0.L0117                  3172                  
-0.L0118                  317e                  
-0.L0119                  3182                  
+0.L0110                  3095                  
+0.L0111                  30a1                  
+0.L0112                  30b5                  
+0.L0113                  30c9                  
+0.L0114                  30dc                  
+0.L0115                  30f1                  
+0.L0116                  30fd                  
+0.L0117                  3103                  
+0.L0118                  3105                  
+0.L0119                  310e                  
 0.L012                   1000                  
-0.L0120                  3186                  
-0.L0121                  318a                  
-0.L0122                  3196                  
-0.L0123                  319e                  
-0.L0124                  31a2                  
-0.L0125                  31ab                  
-0.L0126                  31c6                  
-0.L0127                  31cc                  
-0.L0128                  31d5                  
-0.L0129                  31d7                  
+0.L0120                  3114                  
+0.L0121                  311e                  
+0.L0122                  3124                  
+0.L0123                  312c                  
+0.L0124                  3138                  
+0.L0125                  313c                  
+0.L0126                  3140                  
+0.L0127                  3144                  
+0.L0128                  3150                  
+0.L0129                  3158                  
 0.L013                   1000                  
-0.L0130                  31e0                  
-0.L0131                  31f4                  
-0.L0132                  31fd                  
-0.L0133                  320c                  
-0.L0134                  3215                  
-0.L0135                  3226                  
-0.L0136                  326c                  
-0.L0137                  328f                  
-0.L0138                  32b2                  
-0.L0139                  32d5                  
+0.L0130                  315c                  
+0.L0131                  3165                  
+0.L0132                  3180                  
+0.L0133                  3186                  
+0.L0134                  318f                  
+0.L0135                  3191                  
+0.L0136                  319a                  
+0.L0137                  31ae                  
+0.L0138                  31b7                  
+0.L0139                  31c6                  
 0.L014                   1000                  
-0.L0140                  32f8                  
-0.L0141                  330c                  
-0.L0142                  3316                  
-0.L0143                  3322                  
-0.L0144                  3334                  
-0.L0145                  3340                  
-0.L0146                  3352                  
-0.L0147                  335e                  
-0.L0148                  3370                  
-0.L0149                  337c                  
+0.L0140                  31cf                  
+0.L0141                  31e0                  
+0.L0142                  3226                  
+0.L0143                  3249                  
+0.L0144                  326c                  
+0.L0145                  328f                  
+0.L0146                  32b2                  
+0.L0147                  32c6                  
+0.L0148                  32d0                  
+0.L0149                  32dc                  
 0.L015                   1000                  
-0.L0150                  338e                  
-0.L0151                  339c                  
-0.L0152                  33a6                  
-0.L0153                  33ac                  
-0.L0154                  33b5                  
-0.L0155                  33be                  
-0.L0156                  33c5                  
-0.L0157                  33cf                  
-0.L0158                  33f6                  
-0.L0159                  341d                  
+0.L0150                  32ee                  
+0.L0151                  32fa                  
+0.L0152                  330c                  
+0.L0153                  3318                  
+0.L0154                  332a                  
+0.L0155                  3336                  
+0.L0156                  3348                  
+0.L0157                  3356                  
+0.L0158                  3360                  
+0.L0159                  3366                  
 0.L016                   1000                  
-0.L0160                  3444                  
-0.L0161                  3460                  
-0.L0162                  3478                  
-0.L0163                  3487                  
-0.L0164                  3491                  
-0.L0165                  3497                  
-0.L0166                  34a0                  
-0.L0167                  34a9                  
-0.L0168                  34b0                  
-0.L0169                  34ba                  
+0.L0160                  336f                  
+0.L0161                  3378                  
+0.L0162                  337f                  
+0.L0163                  3389                  
+0.L0164                  33b0                  
+0.L0165                  33d7                  
+0.L0166                  33fe                  
+0.L0167                  341a                  
+0.L0168                  3432                  
+0.L0169                  3441                  
 0.L017                   1000                  
-0.L0170                  34e1                  
-0.L0171                  3508                  
-0.L0172                  352f                  
-0.L0173                  354b                  
-0.L0174                  3563                  
-0.L0175                  3572                  
-0.L0176                  357a                  
-0.L0177                  3580                  
-0.L0178                  3587                  
-0.L0179                  3591                  
+0.L0170                  344b                  
+0.L0171                  3451                  
+0.L0172                  345a                  
+0.L0173                  3463                  
+0.L0174                  346a                  
+0.L0175                  3474                  
+0.L0176                  349b                  
+0.L0177                  34c2                  
+0.L0178                  34e9                  
+0.L0179                  3505                  
 0.L018                   1000                  
-0.L0180                  359a                  
-0.L0181                  35c1                  
-0.L0182                  35e8                  
-0.L0183                  3604                  
-0.L0184                  361c                  
-0.L0185                  362b                  
-0.L0186                  3633                  
-0.L0187                  3639                  
-0.L0188                  3640                  
-0.L0189                  364a                  
+0.L0180                  351d                  
+0.L0181                  352c                  
+0.L0182                  3534                  
+0.L0183                  353a                  
+0.L0184                  3541                  
+0.L0185                  354b                  
+0.L0186                  3554                  
+0.L0187                  357b                  
+0.L0188                  35a2                  
+0.L0189                  35be                  
 0.L019                   1000                  
-0.L0190                  3653                  
-0.L0191                  367a                  
-0.L0192                  36a1                  
-0.L0193                  36bd                  
-0.L0194                  36d5                  
-0.L0195                  36dd                  
-0.L0196                  36e5                  
-0.L0197                  36ed                  
-0.L0198                  36f5                  
-0.L0199                  36fe                  
+0.L0190                  35d6                  
+0.L0191                  35e5                  
+0.L0192                  35ed                  
+0.L0193                  35f3                  
+0.L0194                  35fa                  
+0.L0195                  3604                  
+0.L0196                  360d                  
+0.L0197                  3634                  
+0.L0198                  365b                  
+0.L0199                  3677                  
 0.L02                    1000                  
 0.L020                   1000                  
-0.L0200                  370e                  
-0.L0201                  3716                  
-0.L0202                  371f                  
-0.L0203                  3737                  
-0.L0204                  373a                  
-0.L0205                  3747                  
-0.L0206                  3750                  
-0.L0207                  3757                  
-0.L0208                  375d                  
-0.L0209                  376d                  
+0.L0200                  368f                  
+0.L0201                  3697                  
+0.L0202                  369f                  
+0.L0203                  36a7                  
+0.L0204                  36af                  
+0.L0205                  36b8                  
+0.L0206                  36c8                  
+0.L0207                  36d0                  
+0.L0208                  36d9                  
+0.L0209                  36f1                  
 0.L021                   1000                  
-0.L0210                  377d                  
-0.L0211                  378d                  
-0.L0212                  379d                  
-0.L0213                  37b1                  
-0.L0214                  37c5                  
-0.L0215                  37d7                  
-0.L0216                  37e9                  
-0.L0217                  37f0                  
-0.L0218                  37fd                  
-0.L0219                  380a                  
+0.L0210                  36f4                  
+0.L0211                  3701                  
+0.L0212                  370a                  
+0.L0213                  3711                  
+0.L0214                  3717                  
+0.L0215                  3727                  
+0.L0216                  3737                  
+0.L0217                  3747                  
+0.L0218                  3757                  
+0.L0219                  376b                  
 0.L022                   1000                  
-0.L0220                  3815                  
-0.L0221                  3820                  
-0.L0222                  3829                  
-0.L0223                  3832                  
-0.L0224                  383b                  
-0.L0225                  3844                  
-0.L0226                  384b                  
-0.L0227                  3854                  
-0.L0228                  3860                  
-0.L0229                  3867                  
+0.L0220                  377f                  
+0.L0221                  3791                  
+0.L0222                  37a3                  
+0.L0223                  37aa                  
+0.L0224                  37b7                  
+0.L0225                  37c4                  
+0.L0226                  37cf                  
+0.L0227                  37da                  
+0.L0228                  37e3                  
+0.L0229                  37ec                  
 0.L023                   1000                  
-0.L0230                  3882                  
-0.L0231                  388c                  
-0.L0232                  3896                  
-0.L0233                  38a0                  
-0.L0234                  3905                  
-0.L0235                  390c                  
-0.L0236                  3918                  
-0.L0237                  3921                  
-0.L0238                  3936                  
-0.L0239                  3943                  
+0.L0230                  37f5                  
+0.L0231                  37fe                  
+0.L0232                  3805                  
+0.L0233                  380e                  
+0.L0234                  381a                  
+0.L0235                  3821                  
+0.L0236                  383c                  
+0.L0237                  3846                  
+0.L0238                  3850                  
+0.L0239                  385a                  
 0.L024                   1000                  
-0.L0240                  3956                  
-0.L0241                  3958                  
-0.L0242                  3962                  
-0.L0243                  396c                  
-0.L0244                  3976                  
-0.L0245                  39a0                  
-0.L0246                  39d5                  
-0.L0247                  3a01                  
-0.L0248                  3a0a                  
-0.L0249                  3a0c                  
+0.L0240                  38bf                  
+0.L0241                  38c6                  
+0.L0242                  38d2                  
+0.L0243                  38db                  
+0.L0244                  38f0                  
+0.L0245                  38fc                  
+0.L0246                  3900                  
+0.L0247                  3904                  
+0.L0248                  3908                  
+0.L0249                  390a                  
 0.L025                   1000                  
-0.L0250                  3a15                  
-0.L0251                  3a29                  
-0.L0252                  3a30                  
-0.L0253                  3a34                  
-0.L0254                  3a40                  
-0.L0255                  3a43                  
-0.L0256                  3a47                  
-0.L0257                  3a53                  
-0.L0258                  3a5c                  
-0.L0259                  3a62                  
+0.L0250                  3914                  
+0.L0251                  391e                  
+0.L0252                  3928                  
+0.L0253                  3932                  
+0.L0254                  3946                  
+0.L0255                  395a                  
+0.L0256                  3963                  
+0.L0257                  3965                  
+0.L0258                  396e                  
+0.L0259                  3982                  
 0.L026                   1000                  
-0.L0260                  3a6f                  
-0.L0261                  3a7e                  
-0.L0262                  3a9b                  
-0.L0263                  3ab8                  
-0.L0264                  3ad4                  
-0.L0265                  3adc                  
-0.L0266                  3ae8                  
-0.L0267                  3b00                  
-0.L0268                  3b09                  
-0.L0269                  3b33                  
+0.L0260                  3989                  
+0.L0261                  398d                  
+0.L0262                  3999                  
+0.L0263                  399c                  
+0.L0264                  39a0                  
+0.L0265                  39ac                  
+0.L0266                  39b5                  
+0.L0267                  39bb                  
+0.L0268                  39c8                  
+0.L0269                  39d7                  
 0.L027                   1000                  
-0.L0270                  3b45                  
-0.L0271                  3b4e                  
-0.L0272                  3b7a                  
-0.L0273                  3b8a                  
-0.L0274                  3b92                  
-0.L0275                  3b98                  
-0.L0276                  3baa                  
-0.L0277                  5000                  
-0.L0278                  5009                  
-0.L0279                  5012                  
+0.L0270                  39f4                  
+0.L0271                  3a11                  
+0.L0272                  3a2d                  
+0.L0273                  3a35                  
+0.L0274                  3a41                  
+0.L0275                  3a59                  
+0.L0276                  3a62                  
+0.L0277                  3a8c                  
+0.L0278                  3a9e                  
+0.L0279                  3aa7                  
 0.L028                   1000                  
-0.L0280                  501b                  
-0.L0281                  5024                  
-0.L0282                  502d                  
-0.L0283                  5036                  
-0.L0284                  5039                  
-0.L0285                  5045                  
-0.L0286                  505d                  
-0.L0287                  5069                  
-0.L0288                  506f                  
-0.L0289                  5077                  
+0.L0280                  3ad3                  
+0.L0281                  3ae3                  
+0.L0282                  3aeb                  
+0.L0283                  3af1                  
+0.L0284                  3b03                  
+0.L0285                  5000                  
+0.L0286                  5009                  
+0.L0287                  5012                  
+0.L0288                  501b                  
+0.L0289                  5024                  
 0.L029                   1000                  
-0.L0290                  507d                  
-0.L0291                  5081                  
-0.L0292                  50ba                  
-0.L0293                  50bc                  
-0.L0294                  50c5                  
-0.L0295                  50cb                  
-0.L0296                  50f5                  
-0.L0297                  5105                  
-0.L0298                  510c                  
-0.L0299                  5110                  
+0.L0290                  502d                  
+0.L0291                  5036                  
+0.L0292                  5039                  
+0.L0293                  5045                  
+0.L0294                  505d                  
+0.L0295                  5069                  
+0.L0296                  506f                  
+0.L0297                  5077                  
+0.L0298                  507d                  
+0.L0299                  5081                  
 0.L03                    1000                  
 0.L030                   1000                  
-0.L0300                  511c                  
-0.L0301                  511f                  
-0.L0302                  5123                  
-0.L0303                  512f                  
-0.L0304                  5136                  
-0.L0305                  513a                  
-0.L0306                  5146                  
-0.L0307                  5149                  
-0.L0308                  514d                  
-0.L0309                  5159                  
+0.L0300                  50ba                  
+0.L0301                  50bc                  
+0.L0302                  50c5                  
+0.L0303                  50cb                  
+0.L0304                  50f5                  
+0.L0305                  5105                  
+0.L0306                  510c                  
+0.L0307                  5110                  
+0.L0308                  511c                  
+0.L0309                  511f                  
 0.L031                   1000                  
-0.L0310                  5171                  
-0.L0311                  517a                  
-0.L0312                  518e                  
-0.L0313                  5196                  
-0.L0314                  51a8                  
-0.L0315                  51ae                  
-0.L0316                  51b4                  
-0.L0317                  51b8                  
-0.L0318                  51c9                  
-0.L0319                  51cd                  
+0.L0310                  5123                  
+0.L0311                  512f                  
+0.L0312                  5136                  
+0.L0313                  513a                  
+0.L0314                  5146                  
+0.L0315                  5149                  
+0.L0316                  514d                  
+0.L0317                  5159                  
+0.L0318                  5171                  
+0.L0319                  517a                  
 0.L032                   1000                  
-0.L0320                  51d1                  
-0.L0321                  51d3                  
-0.L0322                  51dc                  
-0.L0323                  51e0                  
-0.L0324                  51f1                  
-0.L0325                  5221                  
-0.L0326                  5225                  
-0.L0327                  522b                  
-0.L0328                  5246                  
-0.L0328jumptablehi       5251              (R )
-0.L0328jumptablelo       5259              (R )
-0.L0329                  5261                  
+0.L0320                  518e                  
+0.L0321                  5196                  
+0.L0322                  51a8                  
+0.L0323                  51ae                  
+0.L0324                  51b4                  
+0.L0325                  51b8                  
+0.L0326                  51c9                  
+0.L0327                  51cd                  
+0.L0328                  51d1                  
+0.L0329                  51d3                  
 0.L033                   1000                  
-0.L0330                  5279                  
-0.L0331                  5286                  
-0.L0332                  528f                  
-0.L0333                  52a2                  
-0.L0334                  52a8                  
-0.L0335                  52ac                  
-0.L0336                  52be                  
-0.L0337                  52c7                  
-0.L0338                  52d3                  
-0.L0339                  52d9                  
+0.L0330                  51dc                  
+0.L0331                  51e0                  
+0.L0332                  51f1                  
+0.L0333                  5221                  
+0.L0334                  5225                  
+0.L0335                  522b                  
+0.L0336                  5246                  
+0.L0336jumptablehi       5251              (R )
+0.L0336jumptablelo       5259              (R )
+0.L0337                  5261                  
+0.L0338                  5279                  
+0.L0339                  5286                  
 0.L034                   1000                  
-0.L0340                  52dd                  
-0.L0341                  52e1                  
-0.L0342                  52e4                  
-0.L0343                  52f0                  
-0.L0344                  52f6                  
-0.L0345                  52fa                  
-0.L0346                  52fe                  
-0.L0347                  5301                  
-0.L0348                  530a                  
-0.L0349                  5316                  
+0.L0340                  528f                  
+0.L0341                  52a2                  
+0.L0342                  52a8                  
+0.L0343                  52ac                  
+0.L0344                  52be                  
+0.L0345                  52c7                  
+0.L0346                  52d3                  
+0.L0347                  52d9                  
+0.L0348                  52dd                  
+0.L0349                  52e1                  
 0.L035                   1000                  
-0.L0350                  531c                  
-0.L0351                  5320                  
-0.L0352                  5324                  
-0.L0353                  5327                  
-0.L0354                  5333                  
-0.L0355                  5339                  
-0.L0356                  533d                  
-0.L0357                  5341                  
-0.L0358                  5344                  
-0.L0359                  534d                  
+0.L0350                  52e4                  
+0.L0351                  52f0                  
+0.L0352                  52f6                  
+0.L0353                  52fa                  
+0.L0354                  52fe                  
+0.L0355                  5301                  
+0.L0356                  530a                  
+0.L0357                  5316                  
+0.L0358                  531c                  
+0.L0359                  5320                  
 0.L036                   1000                  
-0.L0360                  5359                  
-0.L0361                  535f                  
-0.L0362                  5363                  
-0.L0363                  5367                  
-0.L0364                  536a                  
-0.L0365                  5376                  
-0.L0366                  537c                  
-0.L0367                  5380                  
-0.L0368                  5384                  
-0.L0369                  5387                  
+0.L0360                  5324                  
+0.L0361                  5327                  
+0.L0362                  5333                  
+0.L0363                  5339                  
+0.L0364                  533d                  
+0.L0365                  5341                  
+0.L0366                  5344                  
+0.L0367                  534d                  
+0.L0368                  5359                  
+0.L0369                  535f                  
 0.L037                   1000                  
-0.L0370                  5390                  
-0.L0371                  539c                  
-0.L0372                  53a2                  
-0.L0373                  53a6                  
-0.L0374                  53aa                  
-0.L0375                  53ad                  
-0.L0376                  53b9                  
-0.L0377                  53bf                  
-0.L0378                  53c3                  
-0.L0379                  53c7                  
+0.L0370                  5363                  
+0.L0371                  5367                  
+0.L0372                  536a                  
+0.L0373                  5376                  
+0.L0374                  537c                  
+0.L0375                  5380                  
+0.L0376                  5384                  
+0.L0377                  5387                  
+0.L0378                  5390                  
+0.L0379                  539c                  
 0.L038                   1000                  
-0.L0380                  53ca                  
-0.L0381                  53d3                  
-0.L0382                  53df                  
-0.L0383                  53e5                  
-0.L0384                  53e9                  
-0.L0385                  53ed                  
-0.L0386                  53f0                  
-0.L0387                  53fc                  
-0.L0388                  5402                  
-0.L0389                  5406                  
+0.L0380                  53a2                  
+0.L0381                  53a6                  
+0.L0382                  53aa                  
+0.L0383                  53ad                  
+0.L0384                  53b9                  
+0.L0385                  53bf                  
+0.L0386                  53c3                  
+0.L0387                  53c7                  
+0.L0388                  53ca                  
+0.L0389                  53d3                  
 0.L039                   1000                  
-0.L0390                  540a                  
-0.L0391                  540d                  
-0.L0392                  5416                  
-0.L0393                  5422                  
-0.L0394                  5428                  
-0.L0395                  542c                  
-0.L0396                  5430                  
-0.L0397                  5433                  
-0.L0398                  543f                  
-0.L0399                  5445                  
+0.L0390                  53df                  
+0.L0391                  53e5                  
+0.L0392                  53e9                  
+0.L0393                  53ed                  
+0.L0394                  53f0                  
+0.L0395                  53fc                  
+0.L0396                  5402                  
+0.L0397                  5406                  
+0.L0398                  540a                  
+0.L0399                  540d                  
 0.L04                    1000                  
 0.L040                   1000                  
-0.L0400                  5449                  
-0.L0401                  544d                  
-0.L0402                  5450                  
-0.L0403                  5459                  
-0.L0404                  5465                  
-0.L0405                  546b                  
-0.L0406                  546f                  
-0.L0407                  5473                  
-0.L0408                  5476                  
-0.L0409                  5482                  
+0.L0400                  5416                  
+0.L0401                  5422                  
+0.L0402                  5428                  
+0.L0403                  542c                  
+0.L0404                  5430                  
+0.L0405                  5433                  
+0.L0406                  543f                  
+0.L0407                  5445                  
+0.L0408                  5449                  
+0.L0409                  544d                  
 0.L041                   1000                  
-0.L0410                  5488                  
-0.L0411                  548c                  
-0.L0412                  5490                  
-0.L0413                  5493                  
-0.L0414                  549c                  
-0.L0415                  54a8                  
-0.L0416                  54ae                  
-0.L0417                  54b2                  
-0.L0418                  54b6                  
-0.L0419                  54b9                  
+0.L0410                  5450                  
+0.L0411                  5459                  
+0.L0412                  5465                  
+0.L0413                  546b                  
+0.L0414                  546f                  
+0.L0415                  5473                  
+0.L0416                  5476                  
+0.L0417                  5482                  
+0.L0418                  5488                  
+0.L0419                  548c                  
 0.L042                   1000                  
-0.L0420                  54c5                  
-0.L0421                  54cb                  
-0.L0422                  54cf                  
-0.L0423                  54d3                  
-0.L0424                  54d6                  
-0.L0425                  7000                  
-0.L0426                  7640                  
-0.L0427                  9000                  
-0.L0428                  9008                  
-0.L0428jumptablehi       9013              (R )
-0.L0428jumptablelo       9017              (R )
-0.L0429                  901b                  
+0.L0420                  5490                  
+0.L0421                  5493                  
+0.L0422                  549c                  
+0.L0423                  54a8                  
+0.L0424                  54ae                  
+0.L0425                  54b2                  
+0.L0426                  54b6                  
+0.L0427                  54b9                  
+0.L0428                  54c5                  
+0.L0429                  54cb                  
 0.L043                   1000                  
-0.L0430                  9028                  
-0.L0431                  9034                  
-0.L0432                  9037                  
-0.L0433                  9043                  
-0.L0434                  9046                  
-0.L0435                  9052                  
-0.L0436                  9055                  
-0.L0437                  9061                  
-0.L0438                  9064                  
-0.L0439                  9071                  
+0.L0430                  54cf                  
+0.L0431                  54d3                  
+0.L0432                  54d6                  
+0.L0433                  7000                  
+0.L0434                  7640                  
+0.L0435                  9000                  
+0.L0436                  9008                  
+0.L0436jumptablehi       9013              (R )
+0.L0436jumptablelo       9017              (R )
+0.L0437                  901b                  
+0.L0438                  9028                  
+0.L0439                  9034                  
 0.L044                   1000                  
-0.L0440                  9079                  
-0.L0440jumptablehi       9084              (R )
-0.L0440jumptablelo       9088              (R )
-0.L0441                  908c                  
-0.L0442                  9099                  
-0.L0443                  90a5                  
-0.L0444                  90a8                  
-0.L0445                  90b4                  
-0.L0446                  90b7                  
-0.L0447                  90c3                  
-0.L0448                  90c6                  
-0.L0449                  90d2                  
+0.L0440                  9037                  
+0.L0441                  9043                  
+0.L0442                  9046                  
+0.L0443                  9052                  
+0.L0444                  9055                  
+0.L0445                  9061                  
+0.L0446                  9064                  
+0.L0447                  9071                  
+0.L0448                  9079                  
+0.L0448jumptablehi       9084              (R )
+0.L0448jumptablelo       9088              (R )
+0.L0449                  908c                  
 0.L045                   1000                  
-0.L0450                  90d5                  
-0.L0451                  90e2                  
-0.L0452                  90ea                  
-0.L0452jumptablehi       90f5              (R )
-0.L0452jumptablelo       90f9              (R )
-0.L0453                  90fd                  
-0.L0454                  910a                  
-0.L0455                  9116                  
-0.L0456                  9119                  
-0.L0457                  9125                  
-0.L0458                  9128                  
-0.L0459                  9134                  
+0.L0450                  9099                  
+0.L0451                  90a5                  
+0.L0452                  90a8                  
+0.L0453                  90b4                  
+0.L0454                  90b7                  
+0.L0455                  90c3                  
+0.L0456                  90c6                  
+0.L0457                  90d2                  
+0.L0458                  90d5                  
+0.L0459                  90e2                  
 0.L046                   1000                  
-0.L0460                  9137                  
-0.L0461                  9143                  
-0.L0462                  9146                  
-0.L0463                  9153                  
-0.L0464                  915b                  
-0.L0464jumptablehi       9166              (R )
-0.L0464jumptablelo       916a              (R )
-0.L0465                  916e                  
-0.L0466                  917b                  
-0.L0467                  9187                  
-0.L0468                  918a                  
-0.L0469                  9196                  
+0.L0460                  90ea                  
+0.L0460jumptablehi       90f5              (R )
+0.L0460jumptablelo       90f9              (R )
+0.L0461                  90fd                  
+0.L0462                  910a                  
+0.L0463                  9116                  
+0.L0464                  9119                  
+0.L0465                  9125                  
+0.L0466                  9128                  
+0.L0467                  9134                  
+0.L0468                  9137                  
+0.L0469                  9143                  
 0.L047                   1000                  
-0.L0470                  9199                  
-0.L0471                  91a5                  
-0.L0472                  91a8                  
-0.L0473                  91b4                  
-0.L0474                  91b7                  
-0.L0475                  91c4                  
-0.L0476                  b000                  
-0.L0477                  d000                  
+0.L0470                  9146                  
+0.L0471                  9153                  
+0.L0472                  915b                  
+0.L0472jumptablehi       9166              (R )
+0.L0472jumptablelo       916a              (R )
+0.L0473                  916e                  
+0.L0474                  917b                  
+0.L0475                  9187                  
+0.L0476                  918a                  
+0.L0477                  9196                  
+0.L0478                  9199                  
+0.L0479                  91a5                  
 0.L048                   1000                  
+0.L0480                  91a8                  
+0.L0481                  91b4                  
+0.L0482                  91b7                  
+0.L0483                  91c4                  
+0.L0484                  b000                  
+0.L0485                  d000                  
 0.L049                   1000                  
 0.L05                    1000                  
 0.L050                   1000                  
@@ -713,211 +719,208 @@
 0.L064                   1000                  
 0.L065                   1000                  
 0.L066                   1000                  
-0.L067                   1006                  
-0.L068                   101a                  
-0.L069                   102e                  
+0.L067                   1000                  
+0.L068                   1000                  
+0.L069                   1000                  
 0.L07                    1000                  
-0.L070                   1036                  
-0.L071                   103c                  
-0.L072                   1044                  
-0.L073                   104a                  
-0.L074                   1054                  
-0.L075                   105d                  
-0.L076                   1066                  
-0.L077                   107e                  
-0.L078                   1086                  
-0.L079                   108a                  
+0.L070                   1006                  
+0.L071                   101a                  
+0.L072                   102e                  
+0.L073                   1036                  
+0.L074                   103c                  
+0.L075                   1044                  
+0.L076                   104a                  
+0.L077                   1054                  
+0.L078                   105d                  
+0.L079                   1066                  
 0.L08                    1000                  
-0.L080                   1090                  
-0.L081                   1094                  
-0.L082                   10ac                  
-0.L083                   10ae                  
-0.L084                   10b7                  
-0.L085                   10bd                  
-0.L086                   10db                  
-0.L087                   10f3                  
-0.L088                   1107                  
-0.L089                   110f                  
+0.L080                   107e                  
+0.L081                   1086                  
+0.L082                   108a                  
+0.L083                   1090                  
+0.L084                   1094                  
+0.L085                   10ac                  
+0.L086                   10ae                  
+0.L087                   10b7                  
+0.L088                   10bd                  
+0.L089                   10db                  
 0.L09                    1000                  
-0.L090                   1115                  
-0.L091                   1118                  
-0.L092                   3000                  
-0.L093                   3006                  
-0.L094                   300c                  
-0.L095                   3012                  
-0.L096                   301a                  
-0.L097                   301e                  
-0.L098                   302a                  
-0.L099                   302e                  
-0.skip109then            3956              (R )
-0.skip120then            3a7e              (R )
-0.skip122then            3a9b              (R )
-0.skip124then            3ab8              (R )
-0.skip126then            3ad4              (R )
-0.skip12OR               3b7a              (R )
-0.skip147then            518e              (R )
-0.skip151then            5221              (R )
-0.skip15then             31c6              (R )
-0.skip16then             31c6              (R )
-0.skip17then             31c6              (R )
-0.skip23then             326c              (R )
-0.skip25then             328f              (R )
-0.skip27then             32b2              (R )
-0.skip29then             32d5              (R )
-0.skip31then             32f8              (R )
-0.skip42then             339c              (R )
-0.skip45then             33f6              (R )
-0.skip47then             341d              (R )
-0.skip49then             3444              (R )
-0.skip51then             3487              (R )
-0.skip54then             34e1              (R )
-0.skip56then             3508              (R )
-0.skip58then             352f              (R )
-0.skip60then             3572              (R )
-0.skip63then             35c1              (R )
-0.skip65then             35e8              (R )
-0.skip67then             362b              (R )
+0.L090                   10f3                  
+0.L091                   1107                  
+0.L092                   110f                  
+0.L093                   1115                  
+0.L094                   1118                  
+0.L095                   3000                  
+0.L096                   3006                  
+0.L097                   300c                  
+0.L098                   3012                  
+0.L099                   301a                  
+0.skip117then            39d7              (R )
+0.skip119then            39f4              (R )
+0.skip11OR               3ad3              (R )
+0.skip121then            3a11              (R )
+0.skip123then            3a2d              (R )
+0.skip144then            518e              (R )
+0.skip148then            5221              (R )
+0.skip14then             3180              (R )
+0.skip15then             3180              (R )
+0.skip16then             3180              (R )
+0.skip22then             3226              (R )
+0.skip24then             3249              (R )
+0.skip26then             326c              (R )
+0.skip28then             328f              (R )
+0.skip30then             32b2              (R )
+0.skip41then             3356              (R )
+0.skip44then             33b0              (R )
+0.skip46then             33d7              (R )
+0.skip48then             33fe              (R )
+0.skip50then             3441              (R )
+0.skip53then             349b              (R )
+0.skip55then             34c2              (R )
+0.skip57then             34e9              (R )
+0.skip59then             352c              (R )
+0.skip62then             357b              (R )
+0.skip64then             35a2              (R )
+0.skip66then             35e5              (R )
+0.skip69then             3634              (R )
 0.skip6then              1107              (R )
-0.skip70then             367a              (R )
-0.skip72then             36a1              (R )
-0.skip79then             370e              (R )
+0.skip71then             365b              (R )
+0.skip78then             36c8              (R )
 0.skipDrawlastP0         f167              (R )
 0.skipDrawlastP1         f100              (R )
 0.skipDrawP0             f04f              (R )
 0.skipDrawP1             f055              (R )
-0.skipL0105              30e6              (R )
-0.skipL0107              3122              (R )
-0.skipL0108              3137              (R )
-0.skipL0112              3154              (R )
-0.skipL0114              3164              (R )
-0.skipL0124              31ab              (R )
-0.skipL0125              31c6              (R )
-0.skipL0127              31d5              (R )
-0.skipL0129              31e0              (R )
-0.skipL0131              31fd              (R )
-0.skipL0133              3215              (R )
-0.skipL0135              326c              (R )
-0.skipL0136              328f              (R )
-0.skipL0137              32b2              (R )
-0.skipL0138              32d5              (R )
-0.skipL0139              32f8              (R )
-0.skipL0140              330c              (R )
-0.skipL0142              3322              (R )
-0.skipL0143              3334              (R )
-0.skipL0144              3340              (R )
-0.skipL0145              3352              (R )
-0.skipL0146              335e              (R )
-0.skipL0147              3370              (R )
-0.skipL0148              337c              (R )
-0.skipL0149              338e              (R )
-0.skipL0150              339c              (R )
-0.skipL0151              33a6              (R )
-0.skipL0157              33f6              (R )
-0.skipL0158              341d              (R )
-0.skipL0159              3444              (R )
-0.skipL0162              3487              (R )
-0.skipL0163              3491              (R )
-0.skipL0169              34e1              (R )
-0.skipL0170              3508              (R )
-0.skipL0171              352f              (R )
-0.skipL0174              3572              (R )
-0.skipL0175              357a              (R )
-0.skipL0180              35c1              (R )
-0.skipL0181              35e8              (R )
-0.skipL0184              362b              (R )
-0.skipL0185              3633              (R )
-0.skipL0190              367a              (R )
-0.skipL0191              36a1              (R )
-0.skipL0194              36dd              (R )
-0.skipL0195              36e5              (R )
-0.skipL0196              36ed              (R )
-0.skipL0197              36f5              (R )
-0.skipL0198              36fe              (R )
-0.skipL0199              370e              (R )
-0.skipL0201              371f              (R )
-0.skipL0202              3737              (R )
-0.skipL0204              3747              (R )
-0.skipL0205              3750              (R )
-0.skipL0206              3757              (R )
-0.skipL0212              37b1              (R )
-0.skipL0213              37c5              (R )
-0.skipL0214              37d7              (R )
-0.skipL0215              37e9              (R )
-0.skipL0216              37f0              (R )
-0.skipL0217              37fd              (R )
-0.skipL0218              380a              (R )
-0.skipL0219              3815              (R )
-0.skipL0220              3820              (R )
-0.skipL0221              3829              (R )
-0.skipL0222              3832              (R )
-0.skipL0223              383b              (R )
-0.skipL0224              3844              (R )
-0.skipL0225              384b              (R )
-0.skipL0226              3854              (R )
-0.skipL0228              3867              (R )
-0.skipL0229              3882              (R )
-0.skipL0230              388c              (R )
-0.skipL0231              3896              (R )
-0.skipL0232              38a0              (R )
-0.skipL0234              390c              (R )
-0.skipL0236              3921              (R )
-0.skipL0238              3943              (R )
-0.skipL0239              3956              (R )
-0.skipL0241              3962              (R )
-0.skipL0242              396c              (R )
-0.skipL0243              3976              (R )
-0.skipL0245              39d5              (R )
-0.skipL0247              3a0a              (R )
-0.skipL0249              3a15              (R )
-0.skipL0251              3a30              (R )
-0.skipL0257              3a5c              (R )
-0.skipL0259              3a6f              (R )
-0.skipL0260              3a7e              (R )
-0.skipL0261              3a9b              (R )
-0.skipL0262              3ab8              (R )
-0.skipL0263              3ad4              (R )
-0.skipL0267              3b09              (R )
-0.skipL0268              3b33              (R )
-0.skipL0270              3b4e              (R )
-0.skipL0271              3b58              (R )
-0.skipL0272              3b8a              (R )
-0.skipL0273              3b92              (R )
-0.skipL0277              5009              (R )
-0.skipL0278              5012              (R )
-0.skipL0279              501b              (R )
-0.skipL0280              5024              (R )
-0.skipL0281              502d              (R )
-0.skipL0282              5036              (R )
-0.skipL0285              505d              (R )
-0.skipL0293              50c5              (R )
-0.skipL0295              50f5              (R )
-0.skipL0297              510c              (R )
-0.skipL0303              5136              (R )
-0.skipL0310              517a              (R )
-0.skipL0311              518e              (R )
-0.skipL0312              5196              (R )
-0.skipL0321              51dc              (R )
-0.skipL0324              5221              (R )
-0.skipL0327              5246              (R )
-0.skipL0330              5286              (R )
-0.skipL0331              528f              (R )
-0.skipL0332              52a2              (R )
-0.skipL0336              52c7              (R )
-0.skipL0347              530a              (R )
-0.skipL0358              534d              (R )
-0.skipL0369              5390              (R )
-0.skipL0380              53d3              (R )
-0.skipL0391              5416              (R )
-0.skipL0402              5459              (R )
-0.skipL0413              549c              (R )
-0.skipL073               1054              (R )
-0.skipL074               105d              (R )
-0.skipL075               1066              (R )
-0.skipL076               107e              (R )
-0.skipL083               10b7              (R )
-0.skipL085               10db              (R )
-0.skipL087               1107              (R )
-0.skipL088               110f              (R )
+0.skipL0113              30dc              (R )
+0.skipL0114              30f1              (R )
+0.skipL0118              310e              (R )
+0.skipL0120              311e              (R )
+0.skipL0130              3165              (R )
+0.skipL0131              3180              (R )
+0.skipL0133              318f              (R )
+0.skipL0135              319a              (R )
+0.skipL0137              31b7              (R )
+0.skipL0139              31cf              (R )
+0.skipL0141              3226              (R )
+0.skipL0142              3249              (R )
+0.skipL0143              326c              (R )
+0.skipL0144              328f              (R )
+0.skipL0145              32b2              (R )
+0.skipL0146              32c6              (R )
+0.skipL0148              32dc              (R )
+0.skipL0149              32ee              (R )
+0.skipL0150              32fa              (R )
+0.skipL0151              330c              (R )
+0.skipL0152              3318              (R )
+0.skipL0153              332a              (R )
+0.skipL0154              3336              (R )
+0.skipL0155              3348              (R )
+0.skipL0156              3356              (R )
+0.skipL0157              3360              (R )
+0.skipL0163              33b0              (R )
+0.skipL0164              33d7              (R )
+0.skipL0165              33fe              (R )
+0.skipL0168              3441              (R )
+0.skipL0169              344b              (R )
+0.skipL0175              349b              (R )
+0.skipL0176              34c2              (R )
+0.skipL0177              34e9              (R )
+0.skipL0180              352c              (R )
+0.skipL0181              3534              (R )
+0.skipL0186              357b              (R )
+0.skipL0187              35a2              (R )
+0.skipL0190              35e5              (R )
+0.skipL0191              35ed              (R )
+0.skipL0196              3634              (R )
+0.skipL0197              365b              (R )
+0.skipL0200              3697              (R )
+0.skipL0201              369f              (R )
+0.skipL0202              36a7              (R )
+0.skipL0203              36af              (R )
+0.skipL0204              36b8              (R )
+0.skipL0205              36c8              (R )
+0.skipL0207              36d9              (R )
+0.skipL0208              36f1              (R )
+0.skipL0210              3701              (R )
+0.skipL0211              370a              (R )
+0.skipL0212              3711              (R )
+0.skipL0218              376b              (R )
+0.skipL0219              377f              (R )
+0.skipL0220              3791              (R )
+0.skipL0221              37a3              (R )
+0.skipL0222              37aa              (R )
+0.skipL0223              37b7              (R )
+0.skipL0224              37c4              (R )
+0.skipL0225              37cf              (R )
+0.skipL0226              37da              (R )
+0.skipL0227              37e3              (R )
+0.skipL0228              37ec              (R )
+0.skipL0229              37f5              (R )
+0.skipL0230              37fe              (R )
+0.skipL0231              3805              (R )
+0.skipL0232              380e              (R )
+0.skipL0234              3821              (R )
+0.skipL0235              383c              (R )
+0.skipL0236              3846              (R )
+0.skipL0237              3850              (R )
+0.skipL0238              385a              (R )
+0.skipL0240              38c6              (R )
+0.skipL0242              38db              (R )
+0.skipL0244              38fc              (R )
+0.skipL0249              3914              (R )
+0.skipL0250              391e              (R )
+0.skipL0251              3928              (R )
+0.skipL0252              3932              (R )
+0.skipL0255              3963              (R )
+0.skipL0257              396e              (R )
+0.skipL0259              3989              (R )
+0.skipL0265              39b5              (R )
+0.skipL0267              39c8              (R )
+0.skipL0268              39d7              (R )
+0.skipL0269              39f4              (R )
+0.skipL0270              3a11              (R )
+0.skipL0271              3a2d              (R )
+0.skipL0275              3a62              (R )
+0.skipL0276              3a8c              (R )
+0.skipL0278              3aa7              (R )
+0.skipL0279              3ab1              (R )
+0.skipL0280              3ae3              (R )
+0.skipL0281              3aeb              (R )
+0.skipL0285              5009              (R )
+0.skipL0286              5012              (R )
+0.skipL0287              501b              (R )
+0.skipL0288              5024              (R )
+0.skipL0289              502d              (R )
+0.skipL0290              5036              (R )
+0.skipL0293              505d              (R )
+0.skipL0301              50c5              (R )
+0.skipL0303              50f5              (R )
+0.skipL0305              510c              (R )
+0.skipL0311              5136              (R )
+0.skipL0318              517a              (R )
+0.skipL0319              518e              (R )
+0.skipL0320              5196              (R )
+0.skipL0329              51dc              (R )
+0.skipL0332              5221              (R )
+0.skipL0335              5246              (R )
+0.skipL0338              5286              (R )
+0.skipL0339              528f              (R )
+0.skipL0340              52a2              (R )
+0.skipL0344              52c7              (R )
+0.skipL0355              530a              (R )
+0.skipL0366              534d              (R )
+0.skipL0377              5390              (R )
+0.skipL0388              53d3              (R )
+0.skipL0399              5416              (R )
+0.skipL0410              5459              (R )
+0.skipL0421              549c              (R )
+0.skipL076               1054              (R )
+0.skipL077               105d              (R )
+0.skipL078               1066              (R )
+0.skipL079               107e              (R )
+0.skipL086               10b7              (R )
+0.skipL088               10db              (R )
+0.skipL090               1107              (R )
+0.skipL091               110f              (R )
 0.startkernel            f074              (R )
 0.title_vblank           0000 ????         (R )
 0.titledrawscreen        7000              (R )
@@ -965,6 +968,7 @@ _Ch0_Counter             00d7
 _Ch0_Duration            00d6                  
 _Ch0_Sound               00d5                  
 _Ch1_Duration            00e0                  
+_Evade_Dir               0000 ????             
 _Frame_Counter           00d9              (R )
 _High_Score1             00e9              (R )
 _High_Score2             00ea              (R )
@@ -991,6 +995,8 @@ _Score2_Mem              00e7              (R )
 _Score3_Mem              00e8              (R )
 _T5_AP_Dir               00a0              (R )
 _Will_Aftn_AI            00e1              (R )
+_Will_AI_State           00ee              (R )
+_Will_Stun_Timer         00a1              (R )
 _WillX                   0080              (R )
 _WillY                   0085              (R )
 A                        00d4                  
@@ -998,9 +1004,9 @@ a                        00d4              (R )
 alarmclock               0002                  
 altkernel                f0b0                  
 AUDC0                    0015                  
-AUDC1                    0016                  
+AUDC1                    0016              (R )
 AUDF0                    0017                  
-AUDF1                    0018                  
+AUDF1                    0018              (R )
 AUDV0                    0019              (R )
 AUDV1                    001a              (R )
 aux1                     00f0                  
@@ -1009,8 +1015,8 @@ aux3                     00f2
 aux4                     00f3              (R )
 aux5                     00f4              (R )
 aux6                     00f5              (R )
-b                        00d5              (R )
 B                        00d5                  
+b                        00d5              (R )
 backgroundchange         0000 ????         (R )
 ballheight               0092              (R )
 ballx                    0084              (R )
@@ -1068,8 +1074,8 @@ BS_jsr                   ffeb              (R )
 bs_mask                  0007              (R )
 BS_return                ffdd              (R )
 bscode_length            0020              (R )
-c                        00d6              (R )
 C                        00d6                  
+c                        00d6              (R )
 clearmem                 f266              (R )
 COLUBK                   0009              (R )
 COLUP0                   0006              (R )
@@ -1088,8 +1094,8 @@ CXM1P                    0001
 CXP0FB                   0002              (R )
 CXP1FB                   0003                  
 CXPPMM                   0007              (R )
-D                        00d7                  
 d                        00d7              (R )
+D                        00d7                  
 debugcycles              0000 ????         (R )
 debugscore               0000 ????         (R )
 DivideLoop               f460              (R )
@@ -1117,8 +1123,8 @@ ENAM0                    001d              (R )
 ENAM1                    001e              (R )
 endkernel                f16d              (R )
 enterlastkernel          f11b              (R )
-F                        00d9                  
 f                        00d9              (R )
+F                        00d9                  
 FASTFETCH                0000 ????         (R )
 font                     0000 ????         (R )
 g                        00da              (R )
@@ -1140,8 +1146,8 @@ HMOVE                    002a              (R )
 HMP0                     0020              (R )
 HMP1                     0021              (R )
 HorPosLoop               f45d              (R )
-i                        00dc              (R )
 I                        00dc                  
+i                        00dc              (R )
 initscore                f273              (R )
 INPT0                    0008                  
 INPT1                    0009              (R )
@@ -1160,8 +1166,8 @@ keepgoing                f2f1              (R )
 keepgoingy               f30f              (R )
 kernel                   f000              (R )
 kernelmacrodef           0000 ????         (R )
-l                        00df              (R )
 L                        00df                  
+l                        00df              (R )
 lastkernelline           f0cd              (R )
 leftloop                 f368              (R )
 legacy                   0000 ????         (R )
@@ -1169,8 +1175,8 @@ lifecolor                00f4
 lifepointer              00f2                  
 lives                    00f3                  
 loop2                    f200              (R )
-M                        00e0                  
 m                        00e0              (R )
+M                        00e0                  
 MachineIs2600            f263              (R )
 mincycles                0000 ????         (R )
 minikernel               0000 ????         (R )
@@ -1229,8 +1235,8 @@ o                        00e2              (R )
 objecty                  0085                  
 onedecup                 f39b              (R )
 oneincup                 f3e6              (R )
-overscan                 f43c                  
 OVERSCAN                 7281                  
+overscan                 f43c                  
 overscan_time            0025              (R )
 overscanloop             f43c              (R )
 p                        00e3              (R )
@@ -1248,7 +1254,7 @@ pf48x1_X_loop            718b              (R )
 pf48x1_X_loop_entry      718b              (R )
 pf48x2_X_codeend         7264                  
 pf48x2_X_loop            7212              (R )
-PF_data0                 3045              (R )
+PF_data0                 3055              (R )
 PF_data1                 5086              (R )
 pfadjust                 0000              (R )
 pfcenter                 0000 ????         (R )
@@ -1266,7 +1272,7 @@ pfhalfwidth              0000 ????         (R )
 PFheights                0000 ????         (R )
 pfheighttable            00f0                  
 pfhline                  f2eb                  
-pflabel0                 3075              (R )
+pflabel0                 3085              (R )
 pflabel1                 50b2              (R )
 PFmaskvalue              0000 ????         (R )
 pfpixel                  f2bb                  
@@ -1302,43 +1308,43 @@ player1pointerlo         008c              (R )
 player1x                 0081              (R )
 player1y                 0086              (R )
 player9height            0000 ????         (R )
-playercolorL0102_1       f588              (R )
-playercolorL0116_1       f5b6              (R )
-playercolorL0264_0       f5e4              (R )
-playercolorL0427_1       f784              (R )
-playercolorL0439_1       f800              (R )
-playercolorL0451_1       f876              (R )
-playercolorL0463_1       f900              (R )
+playercolorL0109_1       f588              (R )
+playercolorL0122_1       f5b6              (R )
+playercolorL0272_0       f5e4              (R )
+playercolorL0435_1       f784              (R )
+playercolorL0447_1       f800              (R )
+playercolorL0459_1       f876              (R )
+playercolorL0471_1       f900              (R )
 playercolors             0001              (R )
-playerL0103_1            f59f              (R )
-playerL0117_1            f5cd              (R )
-playerL0265_0            f600              (R )
-playerL0430_1            f79c              (R )
-playerL0432_1            f7b3              (R )
-playerL0434_1            f7ca              (R )
-playerL0436_1            f7e2              (R )
-playerL0442_1            f818              (R )
-playerL0444_1            f82f              (R )
-playerL0446_1            f846              (R )
-playerL0448_1            f85e              (R )
-playerL0454_1            f88e              (R )
-playerL0456_1            f8a5              (R )
-playerL0458_1            f8bc              (R )
-playerL0460_1            f8d4              (R )
-playerL0466_1            f918              (R )
-playerL0468_1            f92f              (R )
-playerL0470_1            f946              (R )
-playerL0472_1            f95e              (R )
+playerL0110_1            f59f              (R )
+playerL0123_1            f5cd              (R )
+playerL0273_0            f600              (R )
+playerL0438_1            f79c              (R )
+playerL0440_1            f7b3              (R )
+playerL0442_1            f7ca              (R )
+playerL0444_1            f7e2              (R )
+playerL0450_1            f818              (R )
+playerL0452_1            f82f              (R )
+playerL0454_1            f846              (R )
+playerL0456_1            f85e              (R )
+playerL0462_1            f88e              (R )
+playerL0464_1            f8a5              (R )
+playerL0466_1            f8bc              (R )
+playerL0468_1            f8d4              (R )
+playerL0474_1            f918              (R )
+playerL0476_1            f92f              (R )
+playerL0478_1            f946              (R )
+playerL0480_1            f95e              (R )
 playfield                00a4              (R )
 playfieldbase            00a4              (R )
 playfieldpos             00ef              (R )
 plotpoint                f31d              (R )
 position48               7052              (R )
-Q                        00e4                  
 q                        00e4              (R )
+Q                        00e4                  
 qtcontroller             0000 ????         (R )
-r                        00e5              (R )
 R                        00e5                  
+r                        00e5              (R )
 rand                     00a2              (R )
 rand16                   00ed              (R )
 randomize                f42c                  
@@ -1354,28 +1360,28 @@ RESMP1                   0029
 RESP0                    0010              (R )
 RESP1                    0011              (R )
 ret_point1               10ac              (R )
-ret_point10              352a              (R )
-ret_point11              354b              (R )
-ret_point12              3563              (R )
-ret_point13              35bc              (R )
-ret_point14              35e3              (R )
-ret_point15              3604              (R )
-ret_point16              361c              (R )
-ret_point17              3675              (R )
-ret_point18              369c              (R )
-ret_point19              36bd              (R )
+ret_point10              34e4              (R )
+ret_point11              3505              (R )
+ret_point12              351d              (R )
+ret_point13              3576              (R )
+ret_point14              359d              (R )
+ret_point15              35be              (R )
+ret_point16              35d6              (R )
+ret_point17              362f              (R )
+ret_point18              3656              (R )
+ret_point19              3677              (R )
 ret_point2               10f3              (R )
-ret_point20              36d5              (R )
-ret_point21              3b00              (R )
+ret_point20              368f              (R )
+ret_point21              3a59              (R )
 ret_point22              5171              (R )
 ret_point23              5279              (R )
-ret_point3               33f1              (R )
-ret_point4               3418              (R )
-ret_point5               343f              (R )
-ret_point6               3460              (R )
-ret_point7               3478              (R )
-ret_point8               34dc              (R )
-ret_point9               3503              (R )
+ret_point3               33ab              (R )
+ret_point4               33d2              (R )
+ret_point5               33f9              (R )
+ret_point6               341a              (R )
+ret_point7               3432              (R )
+ret_point8               3496              (R )
+ret_point9               34bd              (R )
 retroputer               0005                  
 rightloop                f380              (R )
 ROM2k                    0000 ????         (R )
@@ -1420,6 +1426,7 @@ temp4                    009f              (R )
 temp5                    00a0              (R )
 temp6                    00a1              (R )
 temp7                    00ee              (R )
+temp8                    0000 ????         (R )
 TIA_BASE_ADDRESS         0000              (R )
 TIA_BASE_READ_ADDRESS    0000              (R )
 TIA_BASE_WRITE_ADDRESS   0000              (R )
@@ -1434,11 +1441,11 @@ title_playfield          702f
 title_vblank_loop        7020              (R )
 titleframe               0082              (R )
 titlescreencolor         707a              (R )
-u                        00e8              (R )
 U                        00e8                  
+u                        00e8              (R )
 up2                      f3b7              (R )
-V                        00e9                  
 v                        00e9              (R )
+V                        00e9                  
 var0                     00a4                  
 var1                     00a5                  
 var10                    00ae                  
@@ -1499,14 +1506,14 @@ VERSION_MACRO            0069
 VERSION_VCS              0069                  
 vertical_reflect         0000 ????         (R )
 VSYNC                    0000              (R )
-W                        00ea                  
 w                        00ea              (R )
+W                        00ea                  
 whimsey                  0006                  
 WSYNC                    0002              (R )
 x                        00eb              (R )
 X                        00eb                  
 Y                        00ec                  
 y                        00ec              (R )
-Z                        00ed                  
 z                        00ed              (R )
+Z                        00ed                  
 --- End of Symbol List.

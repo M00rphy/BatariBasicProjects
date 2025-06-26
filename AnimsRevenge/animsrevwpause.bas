@@ -72,10 +72,13 @@
    ;
    dim _Ch1_Duration = m
 
-   ;```````````````````````````````````````````````````````````````
+   ;`````````````````````````````````
    ;     AI attempt counter variable.
    ;
    dim _Will_Aftn_AI = n
+   dim _Will_Stun_Timer = temp6 ; NEW: For stun/evade duration
+   dim _Will_AI_State = temp7  ; NEW: To track AI behavior (chase, stun, evade)
+   dim _Evade_Dir = temp8      ; NEW: Direction for evasion
 
    ;```````````````````````````````````````````````````````````````
    ;          Kill counter.
@@ -546,6 +549,10 @@ __Main_Loop_Setup
    ;11100000 = 224
    ;11000000 = 192
    ;10000000 = 128
+   _Will_AI_State = 0 ; NEW: Initialize AI state to chasing
+   _Will_Stun_Timer = 0 ; NEW: Initialize stun timer
+   _Will_Aftn_AI = 0 ; NEW: Initialize AI difficulty
+   _Kill_Count = 0 ; NEW: Initialize kill count
 
    ;***************************************************************
    ;
@@ -664,16 +671,12 @@ end
 
 
 
-
    ;***************************************************************
    ;
    ;  Sets starting position of enemy.
    ;
-   _WillY = (rand&63) + 15 : temp5 = rand
-
-   if temp5 > 128 then _WillX = (rand&127) + (rand/16) : goto __Skip_Enemy_Setup
-
-   _WillX = (rand&127) + (rand/16)
+   _WillX = (rand & 150) + 5 ; NEW: More random initial placement (X from 5 to 155)
+   _WillY = (rand & 80) + 5  ; NEW: More random initial placement (Y from 5 to 85)
 
 __Skip_Enemy_Setup
 
@@ -1380,16 +1383,21 @@ _Skip_touch
    _Bit7_M1_Moving{7} = 0 : _Lost_Soul_X = 200 : _Lost_Soul_Y = 200
 
    ;```````````````````````````````````````````````````````````````
-   ;  Skips points if auto-play is on.
+   ;  Skips score update if auto-play is on.
    ;
-   if _Bit3_Auto_Play{3} then goto __AP_Skip_Enemy_Points
+   if _Bit3_Auto_Play{3} then goto __AP_Skip_Enemy_Points_And_Difficulty
 
-   ;```````````````````````````````````````````````````````````````
-   ;  Adds 1 points to the score.
+;```````````````````````````````````````````````````````````````
+   ;  Adds 1 point to the score and potentially restores health.
    ;
-   score = score + 1 
-   if pfscore2 < 255 then pfscore2 = pfscore2*2|1
-   if pfscore1 > 255 && pfscore2 = 255 then pfscore1 = pfscore1*2|1
+   score = score + 1
+   ; Restore a small amount of health (e.g., 1 bit, or 10% if 8-bit scale)
+   if pfscore2 < %11111111 then pfscore2 = pfscore2 | 1 ; Fill one bit
+
+   ; Play a sound for hitting the enemy
+   AUDC1 = %01010000 ; Example: higher pitch, different channel
+   AUDF1 = 10
+   AUDV1 = 10
 
    ;```````````````````````````````````````````````````````````````
    ; Adds one point to the kill count to control William's AI
@@ -1397,42 +1405,28 @@ _Skip_touch
    _Kill_Count = _Kill_Count + 1
 
    ;```````````````````````````````````````````````````````````````
-   ;    Controls kill count so that it doesn't glitch or overflow the
-   ; 	Dificulty level.
+   ; Controls kill count so that it doesn't glitch or overflow the
+   ; Dificulty level.
 
    if _Kill_Count >= 3 then _Kill_Count = 0
 
-__AP_Skip_Enemy_Points
 
-
-    ;``````````````````````````````````````````````````````````````
-    ;           WIP
-    ;
-
-
-    ;``````````````````````````````````````````````````````````````
-    ;      Kill Count definitions.
-    ;
-
-    if _Kill_Count = 3 then _Will_Aftn_AI = 1
-
-    ;`````````````````````````````````````````````````````````````
-    ; Will Aften difficulty level definitions.
-    ;
-    if _Will_Aftn_AI = 1 then _Lost_Soul_Y = 250
-
+__AP_Skip_Enemy_Points ; This label marks the skip point if auto-play is on
 
    ;```````````````````````````````````````````````````````````````
-   ;  Places enemy in new location based on location of player.
+   ; Will Afton difficulty level definitions.
+   ; _Will_Aftn_AI is set based on Kill_Count for external use
+   if _Kill_Count = 1 then _Will_Aftn_AI = 1 ; After 1 kill, AI Level 1
+   if _Kill_Count = 2 then _Will_Aftn_AI = 2 ; After 2 kills, AI Level 2
+   if _Kill_Count = 0 then _Will_Aftn_AI = 0 ; After 3 kills (reset to 0), AI Level 0
+
+   ;```````````````````````````````````````````````````````````````
+   ;  Places enemy in new location (more randomly across the screen).
    ;
-   _WillY = (rand/4) + (rand&63) + 15
+   _WillX = (rand & 150) + 5 ; X from 5 to 155
+   _WillY = (rand & 80) + 5  ; Y from 5 to 85 (within reasonable playfield bounds)
 
-   if _Main_CharX >= 77 then _WillX = (rand&127) + (rand/16) + 5 : goto __Skip_Shot_Enemy
-
-   _WillX = (rand&127) + (rand/16) + 140
-
-
-__Skip_Shot_Enemy
+__Skip_Shot_Enemy ; This label marks the end of the entire collision section
 
 
 
@@ -1674,7 +1668,7 @@ __AP_Skip_Reset
    ;```````````````````````````````````````````````````````````````
 
 
-
+__AP_Skip_Enemy_Points_And_Difficulty ; TEMPORARY PLACEHOLDER LABEL
 
 
    bank 3
