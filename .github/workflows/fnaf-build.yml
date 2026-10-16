@@ -1,0 +1,57 @@
+name: FNAF 2600 Build
+
+on:
+  push:
+    branches:
+      - rescue/fnaf-2600
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Wasmtime
+        run: |
+          curl https://wasmtime.dev/install.sh -sSf | bash
+          echo "$HOME/.wasmtime/bin" >> "$GITHUB_PATH"
+
+      - name: Install batari Basic 1.9
+        run: |
+          curl -L -o /tmp/bb.tar.gz https://github.com/batari-Basic/batari-Basic/releases/download/v1.9/bB-1.9-wasm.tar.gz
+          echo "f6042c6e2318f8a272cabb2a8838d15372309075ef876aa19999ffaa8875c5eb  /tmp/bb.tar.gz" | sha256sum -c -
+          mkdir -p "$HOME/bb"
+          tar -xzf /tmp/bb.tar.gz -C "$HOME/bb" --strip-components=1
+          chmod +x "$HOME/bb"/*.sh || true
+
+      - name: Restore VisualbB title kernel path
+        run: |
+          rm -rf titlescreen
+          cp -a visualbB/titlescreen ./titlescreen
+
+      - name: Compile FNAF baseline
+        env:
+          bB: ${{ github.workspace }}/.bb-link
+        run: |
+          ln -s "$HOME/bb" .bb-link
+          export PATH="$HOME/.wasmtime/bin:$HOME/bb:$PATH"
+          wasmtime --version
+          cd "$GITHUB_WORKSPACE"
+          "$HOME/bb/2600basic.sh" fnaf.bas
+          test -s fnaf.bas.bin
+          sha256sum fnaf.bas.bin | tee fnaf.bas.bin.sha256
+          ls -lh fnaf.bas.bin fnaf.bas.lst fnaf.bas.sym
+
+      - name: Package baseline ROM
+        run: |
+          mkdir -p build/fnaf-baseline
+          cp fnaf.bas.bin fnaf.bas.lst fnaf.bas.sym fnaf.bas.bin.sha256 build/fnaf-baseline/
+
+      - name: Upload ROM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fnaf-2600-baseline
+          path: build/fnaf-baseline/
+          if-no-files-found: error
