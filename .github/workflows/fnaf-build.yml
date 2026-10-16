@@ -1,3 +1,4 @@
+# Reproducible FNAF 2600 build runner
 name: FNAF 2600 Build
 
 on:
@@ -32,13 +33,10 @@ jobs:
           cp -a visualbB/titlescreen ./titlescreen
 
       - name: Compile FNAF baseline
-        env:
-          bB: ${{ github.workspace }}/.bb-link
         run: |
-          ln -s "$HOME/bb" .bb-link
+          export bB="$HOME/bb"
           export PATH="$HOME/.wasmtime/bin:$HOME/bb:$PATH"
           wasmtime --version
-          cd "$GITHUB_WORKSPACE"
           "$HOME/bb/2600basic.sh" fnaf.bas
           test -s fnaf.bas.bin
           sha256sum fnaf.bas.bin | tee fnaf.bas.bin.sha256
